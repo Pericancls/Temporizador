@@ -99,7 +99,7 @@ nav button.on{color:#0a84ff}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v13</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v14</span></h2>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
     <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
@@ -152,7 +152,7 @@ nav button.on{color:#0a84ff}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v13</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v14</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -237,16 +237,16 @@ function mv(i,d){const j=i+d;if(j<0)return;[acts[i],acts[j]]=[acts[j],acts[i]];s
 $('aName').addEventListener('keydown',e=>{if(e.key==='Enter')add()});
 
 /* ---- Corredor ---- */
-let queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
-function startList(){if(!acts.length)return;queue=acts.map(a=>({...a}));go(0)}
-function startSingle(){const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
+let warned=false,queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
+function startList(){if(!acts.length)return;unlockAudio();queue=acts.map(a=>({...a}));go(0)}
+function startSingle(){unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
 function go(i){
   idx=i;const a=queue[i];
   cur={n:a.n,plan:a.m,start:Date.now(),elapsed:0,ext:[]};
   begin(a.m*60);
 }
 function begin(secs){
-  total=secs;remain=secs;
+  total=secs;remain=secs;warned=false;stopAlarm();
   $('run').classList.add('on');$('clock').textContent='';requestAnimationFrame(fit);$('label').textContent=cur.n;subText();
   running=true;last=Date.now();setPP(true);draw();clearInterval(timer);timer=setInterval(tick,200);lock();
 }
@@ -258,7 +258,8 @@ function subText(){
 function tick(){
   if(!running)return;const now=Date.now(),dt=(now-last)/1000;last=now;
   remain-=dt;cur.elapsed+=dt;
-  if(remain<=0){remain=0;draw();running=false;clearInterval(timer);beep();ask();return}
+  if(!warned&&total>1800&&remain<=900&&remain>0){warned=true;say('Te faltan 15 minutos')}
+  if(remain<=0){remain=0;draw();running=false;clearInterval(timer);startAlarm();ask();return}
   draw();
 }
 function draw(){const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
@@ -283,7 +284,7 @@ function ask(){
   modal(`<h1>¿Misión cumplida?</h1><div class="muted">${esc(cur.n)}</div>
   <div class="row"><button class="btn" style="background:#34c759" onclick="yes()">Sí ✅</button><button class="btn red" onclick="no()">No</button></div>`);
 }
-function no(){
+function no(){stopAlarm();
   modal(`<h1>¿Qué faltó?</h1><div class="muted">${esc(cur.n)}</div>
   <label>¿Cuánto te faltó? (%)</label><input id="pct" type="number" inputmode="numeric" placeholder="ej. 30">
   <label>¿Cuánto tiempo extra necesitas? (min)</label><input id="xmin" type="number" inputmode="numeric" placeholder="ej. 10">
@@ -313,12 +314,36 @@ function stop(){running=false;clearInterval(timer);
   else quit()}
 function quit(){$('run').classList.remove('on');release()}
 function modal(h){$('mCard').innerHTML=h;$('modal').classList.add('on')}
-function closeModal(){$('modal').classList.remove('on')}
+function closeModal(){stopAlarm();$('modal').classList.remove('on')}
 async function lock(){try{wake=await navigator.wakeLock.request('screen')}catch(e){}}
 function release(){try{wake&&wake.release()}catch(e){}}
 let ac;function beep(short){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();(short?[0]:[0,.35,.7]).forEach(d=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.3,ac.currentTime+d);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d+.3);o.start(ac.currentTime+d);o.stop(ac.currentTime+d+.3)})}catch(e){}
  try{navigator.vibrate&&navigator.vibrate([300,100,300])}catch(e){}}
 document.addEventListener('click',()=>{try{ac=ac||new(window.AudioContext||window.webkitAudioContext)()}catch(e){}},{once:true});
+
+
+/* ---- Voz y alarma ---- */
+function unlockAudio(){
+  try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume()}catch(e){}
+  try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}
+}
+function say(t){
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-MX';u.rate=1;u.volume=1;
+    const v=speechSynthesis.getVoices().find(v=>/^es(-|_)MX/i.test(v.lang))||speechSynthesis.getVoices().find(v=>/^es/i.test(v.lang));if(v)u.voice=v;
+    speechSynthesis.speak(u)}catch(e){}
+}
+let alarmT=null,alarmEnd=0;
+function alarmBurst(){
+  try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
+    const t0=ac.currentTime;
+    [0,.18,.36,.54].forEach((d,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type='square';o.frequency.value=i%2?1050:880;o.connect(g);g.connect(ac.destination);
+      g.gain.setValueAtTime(0.0001,t0+d);g.gain.exponentialRampToValueAtTime(0.5,t0+d+.02);g.gain.exponentialRampToValueAtTime(0.0001,t0+d+.15);o.start(t0+d);o.stop(t0+d+.16)})
+  }catch(e){}
+  try{navigator.vibrate&&navigator.vibrate([400,150,400])}catch(e){}
+}
+function startAlarm(){stopAlarm();alarmEnd=Date.now()+60000;alarmBurst();alarmT=setInterval(()=>{if(Date.now()>alarmEnd)return stopAlarm();alarmBurst()},1200)}
+function stopAlarm(){if(alarmT){clearInterval(alarmT);alarmT=null}}
+try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}catch(e){}
 
 /* ---- Registro ---- */
 let cm=new Date();cm.setDate(1);let selDay=dkey(new Date());
