@@ -54,6 +54,16 @@ nav button.on{color:#0a84ff}
 .sync span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sync button{background:#0a84ff;color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;font-weight:600;white-space:nowrap}
 .sync button.lnk{background:none;color:#0a84ff;padding:4px}
+@media (orientation:portrait){
+  #run{display:none;flex-direction:column;padding:max(24px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
+  #run.on{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;grid-template-areas:"mid mid" "l r";align-items:end}
+  #run .mid{grid-area:mid;align-self:center}
+  #run .side{width:auto;flex-direction:row;justify-content:space-evenly;padding:0 0 8px}
+  #run .side:first-of-type{grid-area:l}
+  #run .side:last-of-type{grid-area:r}
+  #label{font-size:7vw;margin-top:2vh}
+  #sub{font-size:4vw}
+}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -89,7 +99,7 @@ nav button.on{color:#0a84ff}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v12</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v13</span></h2>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
     <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
@@ -142,7 +152,7 @@ nav button.on{color:#0a84ff}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v12</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v13</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -237,7 +247,7 @@ function go(i){
 }
 function begin(secs){
   total=secs;remain=secs;
-  $('run').classList.add('on');$('clock').textContent='';$('label').textContent=cur.n;subText();
+  $('run').classList.add('on');$('clock').textContent='';requestAnimationFrame(fit);$('label').textContent=cur.n;subText();
   running=true;last=Date.now();setPP(true);draw();clearInterval(timer);timer=setInterval(tick,200);lock();
 }
 function subText(){
@@ -252,7 +262,8 @@ function tick(){
   draw();
 }
 function draw(){const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
-  const txt=pad(Math.floor(s/60))+':'+pad(x);if($('clock').textContent!==txt){const L=$('clock').textContent.length;$('clock').textContent=txt;if(L!==txt.length)fit()}$('clock').style.color=color(total?remain/total:0)}
+  const txt=pad(Math.floor(s/60))+':'+pad(x);if($('clock').textContent!==txt){const L=$('clock').textContent.length;$('clock').textContent=txt;if(L!==txt.length)fit()}
+  const mm=document.querySelector('.mid');if(mm.clientWidth&&$('clock').scrollWidth>mm.clientWidth+2)fit();$('clock').style.color=color(total?remain/total:0)}
 function color(r){
   if(r>0.3)return'rgb(52,199,89)';
   if(r<=0.1)return'rgb(255,59,48)';
@@ -262,8 +273,8 @@ const PAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></sv
 function setPP(r){$('clock').style.opacity=r?1:.45}
 function pause(){running=false;setPP(false)}
 function play(){if(!running){running=true;last=Date.now();setPP(true)}}
-function fit(){const c=$('clock'),m=document.querySelector('.mid');if(!m.clientWidth)return;c.style.fontSize='100px';const w=c.scrollWidth,H=window.innerHeight;const fs=Math.min(100*m.clientWidth*0.98/w,H*0.68/1.0);c.style.fontSize=fs+'px'}
-window.addEventListener('resize',fit);
+function fit(){const c=$('clock'),m=document.querySelector('.mid');if(!m.clientWidth)return;c.style.fontSize='100px';const w=c.scrollWidth,H=window.innerHeight;const fs=Math.min(100*m.clientWidth*0.96/w,H*(window.innerHeight>window.innerWidth?0.4:0.68));c.style.fontSize=fs+'px'}
+window.addEventListener('resize',fit);window.addEventListener('orientationchange',()=>setTimeout(fit,300));
 function toggle(){running=!running;last=Date.now();setPP(running)}
 function restart(){remain=total;last=Date.now();draw()}
 
