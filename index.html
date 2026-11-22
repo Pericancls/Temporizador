@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Temporizador del día</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -49,6 +48,12 @@ nav button.on{color:#0a84ff}
 .side button{background:none;border:none;color:#0a84ff;padding:12px;display:flex;align-items:center;justify-content:center}
 .side svg{width:min(9vw,56px);height:min(9vw,56px);fill:#0a84ff}
 .side .txt{font-size:min(4.5vw,24px);font-weight:600}
+.sync{display:flex;align-items:center;gap:10px;background:#1c1c1e;border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:14px;color:#aaa}
+.sync .dot{width:9px;height:9px;border-radius:50%;background:#666;flex-shrink:0}
+.sync .dot.ok{background:#34c759}.sync .dot.busy{background:#ffd60a}.sync .dot.err{background:#ff3b30}
+.sync span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync button{background:#0a84ff;color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;font-weight:600;white-space:nowrap}
+.sync button.lnk{background:none;color:#0a84ff;padding:4px}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -84,7 +89,7 @@ nav button.on{color:#0a84ff}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v11</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v12</span></h2>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
     <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
@@ -101,6 +106,7 @@ nav button.on{color:#0a84ff}
 
 <section id="s1">
   <h2>Plan de hoy</h2>
+  <div class="sync" id="syncBar1"></div>
   <div class="row">
     <input class="name" id="aName" placeholder="Actividad" list="known">
     <input class="min" id="aMin" type="number" inputmode="numeric" placeholder="min" value="25">
@@ -115,6 +121,7 @@ nav button.on{color:#0a84ff}
 
 <section id="s2">
   <h2>Registro</h2>
+  <div class="sync" id="syncBar2"></div>
   <div class="seg"><button id="vCal" class="on" onclick="view('cal')">Por día</button><button id="vAct" onclick="view('act')">Por actividad</button></div>
   <div id="calView">
     <div class="calhead"><button onclick="month(-1)">‹</button><b id="mLabel"></b><button onclick="month(1)">›</button></div>
@@ -135,7 +142,7 @@ nav button.on{color:#0a84ff}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v11</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v12</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -154,10 +161,13 @@ nav button.on{color:#0a84ff}
 
 <div id="modal"><div class="card" id="mCard"></div></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
-const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='acts'||k==='log')queueSync()};
 let acts=load('acts',[]), log=load('log',[]);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
@@ -352,6 +362,49 @@ function importData(inp){
   catch(e){modal(`<h1>Archivo no válido</h1><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}inp.value=''};
   r.readAsText(f);
 }
+
+/* ---- Sincronización con Firebase ---- */
+const fbConfig={apiKey:"AIzaSyBjd6EOuM9VtEodZ7GtEeGY1KG66Umwzgo",authDomain:"temporizador-de-actividades.firebaseapp.com",projectId:"temporizador-de-actividades",storageBucket:"temporizador-de-actividades.firebasestorage.app",messagingSenderId:"150673495434",appId:"1:150673495434:web:468eb73e3bfde86f77a473"};
+let fbAuth=null,fbDb=null,user=null,unsub=null,syncT=null,syncState='off',applying=false;
+const keyOf=e=>e.d+'|'+e.h+'|'+e.n;
+function mergeLogs(a,b){const m=new Map();a.concat(b).forEach(e=>m.set(keyOf(e),e));return [...m.values()]}
+function setSync(st){syncState=st;drawSync()}
+function drawSync(){
+  let h;
+  if(!fbAuth)h='<div class="dot err"></div><span>Sin conexión a la nube</span>';
+  else if(!user)h='<div class="dot"></div><span>Solo en este dispositivo</span><button onclick="login()">Iniciar sesión con Google</button>';
+  else{const t={ok:'Sincronizado',busy:'Guardando…',err:'Error al sincronizar'}[syncState]||'Conectando…';
+    h=`<div class="dot ${syncState}"></div><span>☁︎ ${t} · ${esc(user.email||'')}</span><button class="lnk" onclick="logout()">Salir</button>`}
+  ['syncBar1','syncBar2'].forEach(id=>{const el=$(id);if(el)el.innerHTML=h});
+}
+function queueSync(){if(!user||applying)return;setSync('busy');clearTimeout(syncT);syncT=setTimeout(pushSync,800)}
+function pushSync(){if(!user)return;fbDb.collection('users').doc(user.uid).set({acts,log,updated:Date.now()}).then(()=>setSync('ok')).catch(e=>{console.error(e);setSync('err')})}
+function applyRemote(d){applying=true;acts=d.acts||[];log=d.log||[];try{localStorage.setItem('acts',JSON.stringify(acts));localStorage.setItem('log',JSON.stringify(log))}catch(e){}applying=false;
+  render();if($('s2').classList.contains('on')){renderLog();renderAct()}}
+async function onLogin(u){
+  user=u;if(unsub){unsub();unsub=null}
+  if(!u){setSync('off');return}
+  setSync('busy');
+  try{
+    const ref=fbDb.collection('users').doc(u.uid),snap=await ref.get();
+    if(snap.exists){const d=snap.data();
+      const merged={acts:(d.acts&&d.acts.length)?d.acts:acts,log:mergeLogs(d.log||[],log)};
+      applyRemote(merged);
+      if(merged.log.length!==(d.log||[]).length||!(d.acts&&d.acts.length))await ref.set({...merged,updated:Date.now()});
+    }else await ref.set({acts,log,updated:Date.now()});
+    setSync('ok');
+    unsub=ref.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;applyRemote(s.data());setSync('ok')},e=>{console.error(e);setSync('err')});
+  }catch(e){console.error(e);setSync('err')}
+}
+function login(){const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+  fbAuth.signInWithPopup(p).catch(e=>{if(e&&(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'))fbAuth.signInWithRedirect(p);else if(e&&e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')modal(`<h1>No se pudo iniciar sesión</h1><div class="muted">${esc(e.message||e.code||'')}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)})}
+function logout(){fbAuth.signOut()}
+try{
+  firebase.initializeApp(fbConfig);fbAuth=firebase.auth();fbDb=firebase.firestore();
+  fbAuth.getRedirectResult().catch(()=>{});
+  fbAuth.onAuthStateChanged(onLogin);
+}catch(e){console.error(e)}
+drawSync();
 render();prev();
 </script>
 </body>
