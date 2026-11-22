@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Temporizador del día</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#000;color:#fff;font-family:-apple-system,system-ui,sans-serif;min-height:100vh;padding-bottom:90px}
+section{padding:16px;padding-top:max(20px,env(safe-area-inset-top));display:none;max-width:720px;margin:0 auto}
+section.on{display:block}
+h2{font-size:26px;margin-bottom:14px}
+h3{font-size:18px;margin:18px 0 8px;color:#ddd}
+.row{display:flex;gap:8px;margin-bottom:12px}
+input{background:#1c1c1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px;font-size:16px;min-width:0}
+input.name{flex:1}
+input.min{width:84px;text-align:center}
+.btn{background:#0a84ff;color:#fff;border:none;border-radius:10px;padding:12px 16px;font-size:16px;font-weight:600}
+.btn.big{width:100%;padding:16px;font-size:18px;background:#34c759;margin-top:8px}
+.btn.gray{background:#2c2c2e}
+.btn.red{background:#ff3b30}
+ul{list-style:none}
+li{display:flex;align-items:center;gap:10px;background:#1c1c1e;border-radius:12px;padding:12px;margin-bottom:8px}
+li .n{flex:1;font-size:17px}
+li .t{color:#34c759;font-variant-numeric:tabular-nums;padding:6px 8px;border-radius:8px;background:#0f2a17}
+li{touch-action:pan-y;user-select:none;-webkit-user-select:none;position:relative}
+li.drag{z-index:3;background:#2c2c2e;box-shadow:0 8px 24px rgba(0,0,0,.6);transition:none;touch-action:none}
+.grip{color:#666;font-size:20px;padding:0 4px;touch-action:none;cursor:grab}
+li input.min{width:80px;padding:8px}
+li button{background:none;border:none;color:#888;font-size:20px;padding:0 6px}
+.muted{color:#888}
+.empty{color:#666;text-align:center;padding:30px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.presets button{background:#1c1c1e;color:#fff;border:1px solid #333;border-radius:20px;padding:8px 16px;font-size:15px}
+.preview{font-size:72px;font-weight:700;color:#34c759;text-align:center;font-variant-numeric:tabular-nums;margin:10px 0 16px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#111;border-top:1px solid #222;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;background:none;border:none;color:#777;padding:10px 0 12px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:24px}
+nav button.on{color:#0a84ff}
+/* corredor */
+#run{position:fixed;inset:0;background:#000;display:none;flex-direction:row;align-items:stretch;z-index:9;padding:max(12px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+#run.on{display:flex}
+.mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+#clock{font-size:min(26vw,66vh);font-weight:700;font-variant-numeric:tabular-nums;line-height:1;color:#34c759;transition:color .5s;letter-spacing:-.02em}
+#label{font-size:min(5vw,7vh);margin-top:0;text-align:center;line-height:1.15}
+#sub{color:#777;margin-top:.8vh;font-size:min(3.2vw,3.6vh);text-align:center}
+.side{width:min(13vw,120px);display:flex;flex-direction:column;align-items:center;justify-content:space-around;flex-shrink:0;padding:70px 0}
+.side button{background:none;border:none;color:#0a84ff;padding:12px;display:flex;align-items:center;justify-content:center}
+.side svg{width:min(9vw,56px);height:min(9vw,56px);fill:#0a84ff}
+.side .txt{font-size:min(4.5vw,24px);font-weight:600}
+/* modal */
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+#modal.on{display:flex}
+.card{background:#1c1c1e;border-radius:18px;padding:24px;width:100%;max-width:420px;text-align:center}
+.card h1{font-size:28px;margin-bottom:6px}
+.card .row{justify-content:center;margin-top:16px}
+.card .btn{flex:1}
+.card label{display:block;text-align:left;color:#aaa;margin:14px 0 6px;font-size:15px}
+.card input{width:100%}
+/* calendario */
+.calhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.calhead button{background:#1c1c1e;border:none;color:#fff;font-size:20px;border-radius:10px;width:44px;height:44px}
+.calhead b{font-size:19px;text-transform:capitalize}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.grid .dw{text-align:center;color:#666;font-size:12px;padding:4px 0}
+.day{aspect-ratio:1;background:#1c1c1e;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:16px;border:2px solid transparent}
+.day.blank{background:none}
+.day.has{background:#14361f}
+.day.today{border-color:#0a84ff}
+.day.sel{background:#0a84ff}
+.day small{font-size:10px;color:#34c759}
+.day.sel small{color:#fff}
+.entry{background:#1c1c1e;border-radius:12px;padding:12px;margin-bottom:8px}
+.entry .top{display:flex;justify-content:space-between;gap:8px}
+.entry .top b{font-size:16px}
+.entry .meta{color:#999;font-size:14px;margin-top:4px}
+.over{color:#ff9f0a}.under{color:#34c759}
+.seg{display:flex;background:#1c1c1e;border-radius:10px;padding:3px;margin:10px 0}
+.seg button{flex:1;background:none;border:none;color:#aaa;padding:9px;border-radius:8px;font-size:15px}
+.seg button.on{background:#3a3a3c;color:#fff}
+</style>
+</head>
+<body>
+
+<section id="s0" class="on">
+  <h2>Temporizador <span style="color:#444;font-size:12px">v11</span></h2>
+  <div class="preview" id="tPrev">20:00</div>
+  <div class="presets">
+    <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
+    <button onclick="setT(15)">15</button><button onclick="setT(20)">20</button>
+    <button onclick="setT(30)">30</button><button onclick="setT(45)">45</button>
+    <button onclick="setT(60)">60</button>
+  </div>
+  <div class="row">
+    <input class="name" id="tName" placeholder="Nombre (opcional)">
+    <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
+  </div>
+  <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
+</section>
+
+<section id="s1">
+  <h2>Plan de hoy</h2>
+  <div class="row">
+    <input class="name" id="aName" placeholder="Actividad" list="known">
+    <input class="min" id="aMin" type="number" inputmode="numeric" placeholder="min" value="25">
+    <button class="btn" onclick="add()">+</button>
+  </div>
+  <datalist id="known"></datalist>
+  <div class="muted" id="hint" style="margin:-4px 0 10px;font-size:14px"></div>
+  <ul id="list"></ul>
+  <div class="muted" id="total"></div>
+  <button class="btn big" onclick="startList()">▶ Empezar</button>
+</section>
+
+<section id="s2">
+  <h2>Registro</h2>
+  <div class="seg"><button id="vCal" class="on" onclick="view('cal')">Por día</button><button id="vAct" onclick="view('act')">Por actividad</button></div>
+  <div id="calView">
+    <div class="calhead"><button onclick="month(-1)">‹</button><b id="mLabel"></b><button onclick="month(1)">›</button></div>
+    <div class="grid" id="grid"></div>
+    <h3 id="dayTitle"></h3>
+    <div id="dayList"></div>
+  </div>
+  <div id="actView" style="display:none"></div>
+  <h3>Respaldo</h3>
+  <div class="muted" style="font-size:14px;margin-bottom:8px">Pasa tu plan y tu registro a otro dispositivo, o guarda un respaldo.</div>
+  <div class="row"><button class="btn gray" style="flex:1" onclick="exportData()">⬇︎ Exportar</button><button class="btn gray" style="flex:1" onclick="$('imp').click()">⬆︎ Importar</button></div>
+  <input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="importData(this)">
+</section>
+
+<nav>
+  <button id="n0" class="on" onclick="tab(0)"><span>⏱</span>Temporizador</button>
+  <button id="n1" onclick="tab(1)"><span>📋</span>Actividades</button>
+  <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
+</nav>
+
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v11</div>
+  <div class="side">
+    <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+    <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+  </div>
+  <div class="mid">
+    <div id="clock">00:00</div>
+    <div id="label"></div>
+    <div id="sub"></div>
+  </div>
+  <div class="side">
+    <button class="txt" onclick="stop()">Salir</button>
+    <button onclick="play()"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
+    <button onclick="finish()"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+  </div>
+</div>
+
+<div id="modal"><div class="card" id="mCard"></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let acts=load('acts',[]), log=load('log',[]);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const fmtMin=m=>{m=Math.round(m);return m>=60?Math.floor(m/60)+'h '+(m%60)+'min':m+' min'};
+
+function tab(i){[0,1,2].forEach(k=>{$('s'+k).classList.toggle('on',k===i);$('n'+k).classList.toggle('on',k===i)});if(i===2)renderLog();if(i===1)render()}
+
+/* ---- Temporizador simple ---- */
+function setT(m){$('tMin').value=m;prev()}
+function prev(){const m=parseFloat($('tMin').value)||0;$('tPrev').textContent=pad(Math.floor(m))+':'+pad(Math.round((m%1)*60))}
+
+/* ---- Plan ---- */
+function render(){
+  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}"><span class="grip">☰</span><span class="n">${esc(a.n)}</span><span class="t" onclick="editT(${i},this)">${a.m} min ✎</span><button onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
+  const t=acts.reduce((s,a)=>s+a.m,0);
+  $('total').textContent=acts.length?'Total planeado: '+fmtMin(t):'';
+  const names=[...new Set(log.map(e=>e.n))];
+  $('known').innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
+}
+$('aName').addEventListener('input',()=>{
+  const s=stats()[$('aName').value.trim().toLowerCase()];
+  if(s){$('hint').textContent=`Histórico: promedio real ${fmtMin(s.avg)} (${s.c} veces)`;$('aMin').value=Math.round(s.avg)}
+  else $('hint').textContent='';
+});
+function add(){const n=$('aName').value.trim(),m=parseFloat($('aMin').value);if(!n||!(m>0))return;acts.push({n,m});$('aName').value='';$('hint').textContent='';store('acts',acts);render()}
+function del(i){acts.splice(i,1);store('acts',acts);render()}
+function editT(i,el){
+  el.outerHTML=`<input class="min" id="ed" type="number" inputmode="decimal" value="${acts[i].m}">`;
+  const inp=$('ed');inp.focus();inp.select();
+  const ok=()=>{const v=parseFloat(inp.value);if(v>0){acts[i].m=v;store('acts',acts)}render()};
+  inp.addEventListener('blur',ok);inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur()});
+}
+/* Arrastrar para reordenar: mantén presionada la actividad */
+(function(){
+  let drag=null,holdT=null,startY=0;
+  const L=$('list');
+  L.addEventListener('pointerdown',e=>{
+    const li=e.target.closest('li');if(!li||e.target.closest('button,input,.t'))return;
+    startY=e.clientY;
+    holdT=setTimeout(()=>{drag={li,from:+li.dataset.i,y0:e.clientY};li.classList.add('drag');try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}},e.target.closest('.grip')?0:300);
+  });
+  L.addEventListener('pointermove',e=>{
+    if(!drag){if(Math.abs(e.clientY-startY)>8)clearTimeout(holdT);return}
+    e.preventDefault();
+    drag.li.style.transform=`translateY(${e.clientY-drag.y0}px)`;
+  });
+  const end=e=>{
+    clearTimeout(holdT);if(!drag)return;
+    const items=[...L.querySelectorAll('li')];let to=items.length-1;
+    for(let k=0;k<items.length;k++){if(items[k]===drag.li)continue;const r=items[k].getBoundingClientRect();if(e.clientY<r.top+r.height/2){to=k>drag.from?k-1:k;break}}
+    const [a]=acts.splice(drag.from,1);acts.splice(to,0,a);drag=null;store('acts',acts);render();
+  };
+  L.addEventListener('pointerup',end);L.addEventListener('pointercancel',end);
+})();
+function mv(i,d){const j=i+d;if(j<0)return;[acts[i],acts[j]]=[acts[j],acts[i]];store('acts',acts);render()}
+$('aName').addEventListener('keydown',e=>{if(e.key==='Enter')add()});
+
+/* ---- Corredor ---- */
+let queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
+function startList(){if(!acts.length)return;queue=acts.map(a=>({...a}));go(0)}
+function startSingle(){const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
+function go(i){
+  idx=i;const a=queue[i];
+  cur={n:a.n,plan:a.m,start:Date.now(),elapsed:0,ext:[]};
+  begin(a.m*60);
+}
+function begin(secs){
+  total=secs;remain=secs;
+  $('run').classList.add('on');$('clock').textContent='';$('label').textContent=cur.n;subText();
+  running=true;last=Date.now();setPP(true);draw();clearInterval(timer);timer=setInterval(tick,200);lock();
+}
+function subText(){
+  let s=queue.length>1?`${idx+1} de ${queue.length}`+(queue[idx+1]?` · Sigue: ${queue[idx+1].n}`:''):'';
+  if(cur.ext.length)s=(s?s+' · ':'')+`Tiempo extra #${cur.ext.length}`;
+  $('sub').textContent=s;
+}
+function tick(){
+  if(!running)return;const now=Date.now(),dt=(now-last)/1000;last=now;
+  remain-=dt;cur.elapsed+=dt;
+  if(remain<=0){remain=0;draw();running=false;clearInterval(timer);beep();ask();return}
+  draw();
+}
+function draw(){const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
+  const txt=pad(Math.floor(s/60))+':'+pad(x);if($('clock').textContent!==txt){const L=$('clock').textContent.length;$('clock').textContent=txt;if(L!==txt.length)fit()}$('clock').style.color=color(total?remain/total:0)}
+function color(r){
+  if(r>0.3)return'rgb(52,199,89)';
+  if(r<=0.1)return'rgb(255,59,48)';
+  const t=(0.3-r)/0.2,g=[52,199,89],y=[255,214,10];
+  return`rgb(${g.map((v,k)=>Math.round(v+(y[k]-v)*t)).join(',')})`}
+const PAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',PLAY='<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>';
+function setPP(r){$('clock').style.opacity=r?1:.45}
+function pause(){running=false;setPP(false)}
+function play(){if(!running){running=true;last=Date.now();setPP(true)}}
+function fit(){const c=$('clock'),m=document.querySelector('.mid');if(!m.clientWidth)return;c.style.fontSize='100px';const w=c.scrollWidth,H=window.innerHeight;const fs=Math.min(100*m.clientWidth*0.98/w,H*0.68/1.0);c.style.fontSize=fs+'px'}
+window.addEventListener('resize',fit);
+function toggle(){running=!running;last=Date.now();setPP(running)}
+function restart(){remain=total;last=Date.now();draw()}
+
+/* Misión cumplida */
+function ask(){
+  modal(`<h1>¿Misión cumplida?</h1><div class="muted">${esc(cur.n)}</div>
+  <div class="row"><button class="btn" style="background:#34c759" onclick="yes()">Sí ✅</button><button class="btn red" onclick="no()">No</button></div>`);
+}
+function no(){
+  modal(`<h1>¿Qué faltó?</h1><div class="muted">${esc(cur.n)}</div>
+  <label>¿Cuánto te faltó? (%)</label><input id="pct" type="number" inputmode="numeric" placeholder="ej. 30">
+  <label>¿Cuánto tiempo extra necesitas? (min)</label><input id="xmin" type="number" inputmode="numeric" placeholder="ej. 10">
+  <div class="row"><button class="btn gray" onclick="ask()">Atrás</button><button class="btn" onclick="extend()">Continuar ▶</button></div>`);
+  setTimeout(()=>$('pct').focus(),50);
+}
+function extend(){
+  const p=parseFloat($('pct').value),x=parseFloat($('xmin').value);
+  if(!(x>0)){$('xmin').style.borderColor='#ff3b30';return}
+  cur.ext.push({pct:isNaN(p)?null:p,min:x});closeModal();begin(x*60);
+}
+function yes(){closeModal();save(true);advance()}
+function finish(){running=false;clearInterval(timer);save(true);beep(true);advance()}
+function skip(){running=false;clearInterval(timer);if(cur.elapsed>=60)save(false);advance()}
+function advance(){if(idx+1<queue.length)go(idx+1);else{done()}}
+function done(){
+  $('run').classList.remove('on');release();
+  modal(`<h1>¡Listo! 🎉</h1><div class="muted">Todo quedó guardado en el Registro.</div><div class="row"><button class="btn" onclick="closeModal();tab(2)">Ver registro</button><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`);
+}
+function save(ok){
+  const st=new Date(cur.start);
+  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10,ext:cur.ext,ok});
+  store('log',log);
+}
+function stop(){running=false;clearInterval(timer);
+  if(cur&&cur.elapsed>=60){modal(`<h1>¿Guardar en el registro?</h1><div class="muted">${esc(cur.n)} · ${fmtMin(cur.elapsed/60)}</div><div class="row"><button class="btn" onclick="save(true);closeModal();quit()">Sí, la terminé</button><button class="btn gray" onclick="closeModal();quit()">No guardar</button></div>`)}
+  else quit()}
+function quit(){$('run').classList.remove('on');release()}
+function modal(h){$('mCard').innerHTML=h;$('modal').classList.add('on')}
+function closeModal(){$('modal').classList.remove('on')}
+async function lock(){try{wake=await navigator.wakeLock.request('screen')}catch(e){}}
+function release(){try{wake&&wake.release()}catch(e){}}
+let ac;function beep(short){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();(short?[0]:[0,.35,.7]).forEach(d=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.3,ac.currentTime+d);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d+.3);o.start(ac.currentTime+d);o.stop(ac.currentTime+d+.3)})}catch(e){}
+ try{navigator.vibrate&&navigator.vibrate([300,100,300])}catch(e){}}
+document.addEventListener('click',()=>{try{ac=ac||new(window.AudioContext||window.webkitAudioContext)()}catch(e){}},{once:true});
+
+/* ---- Registro ---- */
+let cm=new Date();cm.setDate(1);let selDay=dkey(new Date());
+function view(v){$('vCal').classList.toggle('on',v==='cal');$('vAct').classList.toggle('on',v==='act');$('calView').style.display=v==='cal'?'':'none';$('actView').style.display=v==='act'?'':'none';if(v==='act')renderAct()}
+function month(d){cm.setMonth(cm.getMonth()+d);renderLog()}
+function pick(k){selDay=k;renderLog()}
+function renderLog(){
+  $('mLabel').textContent=cm.toLocaleDateString('es-MX',{month:'long',year:'numeric'});
+  const counts={};log.forEach(e=>counts[e.d]=(counts[e.d]||0)+1);
+  const first=(cm.getDay()+6)%7, days=new Date(cm.getFullYear(),cm.getMonth()+1,0).getDate(), today=dkey(new Date());
+  let h=['L','M','M','J','V','S','D'].map(x=>`<div class="dw">${x}</div>`).join('');
+  for(let i=0;i<first;i++)h+='<div class="day blank"></div>';
+  for(let d=1;d<=days;d++){const k=cm.getFullYear()+'-'+pad(cm.getMonth()+1)+'-'+pad(d);
+    h+=`<div class="day${counts[k]?' has':''}${k===today?' today':''}${k===selDay?' sel':''}" onclick="pick('${k}')">${d}${counts[k]?`<small>${counts[k]}</small>`:''}</div>`}
+  $('grid').innerHTML=h;
+  const [y,m,dd]=selDay.split('-').map(Number);
+  $('dayTitle').textContent=new Date(y,m-1,dd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+  const items=log.map((e,i)=>({...e,i})).filter(e=>e.d===selDay).sort((a,b)=>a.h.localeCompare(b.h));
+  $('dayList').innerHTML=items.length?items.map(entry).join('')+`<div class="muted" style="margin-top:6px">Total del día: ${fmtMin(items.reduce((s,e)=>s+e.real,0))}</div>`:'<div class="empty">Sin actividades este día</div>';
+}
+function entry(e){
+  const diff=e.real-e.plan;
+  const ext=e.ext&&e.ext.length?`<div class="meta">Extensiones: ${e.ext.map(x=>`+${x.min} min${x.pct!=null?` (faltaba ${x.pct}%)`:''}`).join(', ')}</div>`:'';
+  return`<div class="entry"><div class="top"><b>${esc(e.n)}</b><span class="muted">${e.h}</span></div>
+  <div class="meta">Planeado ${fmtMin(e.plan)} · Real <span class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</span> (${diff>=0?'+':''}${Math.round(diff)} min)${e.ok?'':' · <span class="over">sin terminar</span>'}</div>${ext}
+  <div style="text-align:right"><button onclick="rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></div></div>`;
+}
+function rm(i){if(confirmDel(i)){log.splice(i,1);store('log',log);renderLog();renderAct()}}
+function confirmDel(){return true}
+function stats(){const s={};log.filter(e=>e.ok).forEach(e=>{const k=e.n.toLowerCase();s[k]=s[k]||{n:e.n,c:0,sum:0,plan:0,min:1e9,max:0};const o=s[k];o.c++;o.sum+=e.real;o.plan+=e.plan;o.min=Math.min(o.min,e.real);o.max=Math.max(o.max,e.real)});
+  Object.values(s).forEach(o=>{o.avg=o.sum/o.c;o.pavg=o.plan/o.c});return s}
+function renderAct(){
+  const s=Object.values(stats()).sort((a,b)=>b.c-a.c);
+  $('actView').innerHTML=s.length?s.map(o=>{const r=o.avg/o.pavg;return`<div class="entry"><div class="top"><b>${esc(o.n)}</b><span class="muted">${o.c} ${o.c>1?'veces':'vez'}</span></div>
+  <div class="meta">Promedio real <b style="color:#fff">${fmtMin(o.avg)}</b> · planeabas ${fmtMin(o.pavg)}</div>
+  <div class="meta">Rango ${fmtMin(o.min)} – ${fmtMin(o.max)} · <span class="${r>1.05?'over':'under'}">${r>1.05?'tardas '+Math.round((r-1)*100)+'% más de lo que estimas':r<0.95?'terminas '+Math.round((1-r)*100)+'% antes':'estimas bien'}</span></div></div>`}).join(''):'<div class="empty">Aún no hay registros</div>';
+}
+
+function exportData(){
+  const data=JSON.stringify({app:'temporizador',v:1,acts,log});
+  const blob=new Blob([data],{type:'application/json'}),name='temporizador-'+dkey(new Date())+'.json';
+  try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f]}).catch(()=>{});return}}catch(e){}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+function importData(inp){
+  const f=inp.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.log))throw 0;
+    const seen=new Set(log.map(e=>e.d+e.h+e.n));let n=0;d.log.forEach(e=>{if(!seen.has(e.d+e.h+e.n)){log.push(e);n++}});
+    if(Array.isArray(d.acts)&&d.acts.length)acts=d.acts;
+    store('log',log);store('acts',acts);render();renderLog();renderAct();
+    modal(`<h1>Importado ✅</h1><div class="muted">${n} registros nuevos y tu plan del día.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
+  catch(e){modal(`<h1>Archivo no válido</h1><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}inp.value=''};
+  r.readAsText(f);
+}
+render();prev();
+</script>
+</body>
+</html>
