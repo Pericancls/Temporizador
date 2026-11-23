@@ -87,6 +87,11 @@ nav button.on{color:#0a84ff}
 .picklist button{display:flex;justify-content:space-between;gap:10px;background:#2c2c2e;border:2px solid transparent;color:#fff;border-radius:12px;padding:14px;font-size:17px;text-align:left}
 .picklist button.on{border-color:#34c759}
 .linkbtn{background:none;border:none;color:#0a84ff;font-size:15px;padding:14px 0;width:100%}
+.chk{width:28px;height:28px;border-radius:50%;border:2px solid #555!important;background:none;color:#fff!important;font-size:16px!important;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0!important;flex-shrink:0}
+li.done{opacity:.6}
+li.done .n{text-decoration:line-through;color:#999}
+li.done .t{background:none;color:#888}
+li.done .chk{background:#34c759!important;border-color:#34c759!important}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -122,7 +127,7 @@ nav button.on{color:#0a84ff}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v19</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v20</span></h2>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
     <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
@@ -181,7 +186,7 @@ nav button.on{color:#0a84ff}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v19</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v20</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -233,14 +238,15 @@ function prev(){const m=parseFloat($('tMin').value)||0;$('tPrev').textContent=pa
 
 /* ---- Plan ---- */
 function render(){
-  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}"><span class="grip">☰</span><span class="n">${esc(a.n)}</span><span class="t" onclick="editT(${i},this)">${a.m} min ✎</span><button onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
+  acts.forEach(a=>{if(!a.id)a.id=uid()});
+  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button><span class="n">${esc(a.n)}</span><span class="t" onclick="${a.done?'':`editT(${i},this)`}">${a.m} min${a.done?'':' ✎'}</span><button onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   $('planPick').value=planDay;$('brkMin').value=brk;
-  $('copyBox').innerHTML=acts.length?`<div class="copyrow"><button onclick="copyPlan(1)">Copiar al día siguiente</button><button onclick="clearPlan()">Vaciar este día</button></div>`:'';
-  const t=acts.reduce((s,a)=>s+a.m,0);
-  $('total').textContent=acts.length?'Total planeado: '+fmtMin(t):'';
+  $('copyBox').innerHTML=acts.length?`<div class="copyrow"><button onclick="copyPlan(1)">${acts.some(a=>a.done)?'Copiar pendientes al día siguiente':'Copiar al día siguiente'}</button><button onclick="clearPlan()">Vaciar este día</button></div>`:'';
+  const pend=acts.filter(a=>!a.done),t=pend.reduce((s,a)=>s+a.m,0),nd=acts.length-pend.length;
+  $('total').textContent=!acts.length?'':nd?`✓ ${nd} de ${acts.length} hechas · Pendiente: ${fmtMin(t)}`:'Total planeado: '+fmtMin(t);
   const names=[...new Set(log.map(e=>e.n))];
   $('known').innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
 }
@@ -249,9 +255,12 @@ $('aName').addEventListener('input',()=>{
   if(s){$('hint').textContent=`Histórico: promedio real ${fmtMin(s.avg)} (${s.c} veces)`;$('aMin').value=Math.round(s.avg)}
   else $('hint').textContent='';
 });
-function add(){const n=$('aName').value.trim(),m=parseFloat($('aMin').value);if(!n||!(m>0))return;acts.push({n,m});$('aName').value='';$('hint').textContent='';store('acts',acts);render()}
-function copyPlan(n){const k=shiftDay(planDay,n);plans[k]=(plans[k]||[]).concat(acts.map(a=>({...a})));store('plans',plans);
-  modal(`<h1>Copiado ✅</h1><div class="muted">Se agregaron ${acts.length} actividades al plan de ${dayName(k)}.</div><div class="row"><button class="btn gray" onclick="closeModal()">Quedarme aquí</button><button class="btn" onclick="closeModal();setPlanDay('${k}');render()">Ir a ${dayName(k)}</button></div>`)}
+function add(){const n=$('aName').value.trim(),m=parseFloat($('aMin').value);if(!n||!(m>0))return;acts.push({n,m,id:uid()});$('aName').value='';$('hint').textContent='';store('acts',acts);render()}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function toggleDone(i){acts[i].done=!acts[i].done;store('acts',acts);render()}
+function markDone(id){let hit=false;Object.values(plans).forEach(l=>l.forEach(a=>{if(a.id===id){a.done=true;hit=true}}));if(hit){store('plans',plans);render()}}
+function copyPlan(n){const k=shiftDay(planDay,n),src=acts.filter(a=>!a.done),cp=src.map(a=>({n:a.n,m:a.m,id:uid()}));plans[k]=(plans[k]||[]).concat(cp);store('plans',plans);
+  modal(`<h1>Copiado ✅</h1><div class="muted">Se agregaron ${cp.length} actividades al plan de ${dayName(k)}.</div><div class="row"><button class="btn gray" onclick="closeModal()">Quedarme aquí</button><button class="btn" onclick="closeModal();setPlanDay('${k}');render()">Ir a ${dayName(k)}</button></div>`)}
 function clearPlan(){modal(`<h1>¿Vaciar el plan?</h1><div class="muted">Se borran las actividades del plan de ${dayName(planDay)}. Tu registro no se toca.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();acts=[];store('acts',acts);render()">Vaciar</button></div>`)}
 function del(i){acts.splice(i,1);store('acts',acts);render()}
 function editT(i,el){
@@ -288,12 +297,14 @@ $('aName').addEventListener('keydown',e=>{if(e.key==='Enter')add()});
 /* ---- Corredor ---- */
 let inBreak=false,brk=(()=>{const v=load('brk',10);return v>=0?v:10})(),warned=false,queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
 function setBrk(v){v=parseFloat(v);brk=v>=0?v:10;$('brkMin').value=brk;store('brk',brk)}
-function startList(){if(!acts.length)return;unlockAudio();queue=acts.map(a=>({...a}));go(0)}
+function startList(){if(!acts.length)return;const pend=acts.filter(a=>!a.done);
+  if(!pend.length){modal(`<h1>¡Todo hecho! 🎉</h1><div class="muted">Ya terminaste todas las actividades de este plan.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
+  unlockAudio();queue=pend.map(a=>({...a}));go(0)}
 function startSingle(){unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
 function go(i){
   inBreak=false;$('run').classList.remove('brk');
   idx=i;const a=queue[i];
-  cur={n:a.n,plan:a.m,start:Date.now(),elapsed:0,ext:[]};
+  cur={n:a.n,plan:a.m,start:Date.now(),elapsed:0,ext:[],id:a.id};
   begin(a.m*60);
 }
 function begin(secs,rem){
@@ -376,6 +387,7 @@ function save(ok){
   const st=new Date(cur.start);
   log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10,ext:cur.ext,ok});
   store('log',log);
+  if(ok&&cur.id)markDone(cur.id);
 }
 function stop(){running=false;clearInterval(timer);
   if(inBreak){inBreak=false;$('run').classList.remove('brk');return quit()}
@@ -433,11 +445,11 @@ function recPrev(){const c=recCalc();if(!c){$('rPrev').textContent='';return}
    (c.left>0?`Tu tiempo termina a las <b style="color:#fff">${f(en)}</b> · te quedan <b style="color:#34c759">${fmtMin(c.left/60)}</b>`:`Tu tiempo se acabó a las <b style="color:#fff">${f(en)}</b>`)}
 function recover(cont){
   const c=recCalc();if(!c){['rN','rP'].forEach(id=>{if(!$(id).value)$(id).style.borderColor='#ff3b30'});if(!$('rS').value&&!$('rE').value){$('rS').style.borderColor='#ff3b30';$('rE').style.borderColor='#ff3b30'}return}
-  cur={n:c.n,plan:c.P,start:c.S,elapsed:c.el,ext:c.X>0?[{pct:null,min:c.X}]:[]};
+  const ma=acts.find(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());cur={n:c.n,plan:c.P,start:c.S,elapsed:c.el,ext:c.X>0?[{pct:null,min:c.X}]:[],id:ma&&ma.id};
   closeModal();unlockAudio();
   if(!cont){save(true);renderLog();modal(`<h1>Guardado ✅</h1><div class="muted">${esc(c.n)} · ${fmtMin(c.el/60)} reales</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
-  const k=acts.findIndex(a=>a.n.toLowerCase()===c.n.toLowerCase());
-  queue=k>=0?acts.slice(k).map(a=>({...a})):[{n:c.n,m:c.P}];idx=0;queue[0]={n:c.n,m:c.P};
+  const k=acts.findIndex(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());
+  queue=k>=0?acts.slice(k).filter(a=>!a.done).map(a=>({...a})):[{n:c.n,m:c.P}];idx=0;queue[0]={n:c.n,m:c.P,id:cur.id};
   inBreak=false;$('run').classList.remove('brk');
   const seg=(c.X>0?c.X:c.P)*60;
   if(c.left<=0){begin(seg,0);running=false;clearInterval(timer);remain=0;draw();saveRun();ask()}else begin(seg,c.left);
