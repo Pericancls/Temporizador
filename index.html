@@ -86,6 +86,7 @@ nav button.on{color:#0a84ff}
 .picklist{display:flex;flex-direction:column;gap:8px;margin-top:14px;max-height:50vh;overflow:auto}
 .picklist button{display:flex;justify-content:space-between;gap:10px;background:#2c2c2e;border:2px solid transparent;color:#fff;border-radius:12px;padding:14px;font-size:17px;text-align:left}
 .picklist button.on{border-color:#34c759}
+.linkbtn{background:none;border:none;color:#0a84ff;font-size:15px;padding:14px 0;width:100%}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -121,7 +122,7 @@ nav button.on{color:#0a84ff}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v18</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v19</span></h2>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
     <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
@@ -152,6 +153,7 @@ nav button.on{color:#0a84ff}
   <div class="brkset">☕ Descanso entre actividades <input class="min" id="brkMin" type="number" inputmode="numeric" min="0" onchange="setBrk(this.value)"> min</div>
   <button class="btn big" onclick="startList()">▶ Empezar</button>
   <div id="copyBox"></div>
+  <button class="linkbtn" onclick="recoverForm()">↺ ¿Se cerró la app? Recuperar actividad en curso</button>
 </section>
 
 <section id="s2">
@@ -164,6 +166,7 @@ nav button.on{color:#0a84ff}
     <h3 id="dayTitle"></h3>
     <div id="dayList"></div>
     <button class="btn gray" style="width:100%;margin-top:6px" onclick="manualForm()">＋ Agregar registro manual</button>
+    <button class="btn gray" style="width:100%;margin-top:8px" onclick="recoverForm()">↺ ¿Se borró tu actividad? Recuperarla</button>
   </div>
   <div id="actView" style="display:none"></div>
   <h3>Respaldo</h3>
@@ -178,7 +181,7 @@ nav button.on{color:#0a84ff}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v18</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v19</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -293,22 +296,23 @@ function go(i){
   cur={n:a.n,plan:a.m,start:Date.now(),elapsed:0,ext:[]};
   begin(a.m*60);
 }
-function begin(secs){
-  total=secs;remain=secs;warned=false;stopAlarm();
+function begin(secs,rem){
+  total=secs;remain=rem!=null?rem:secs;warned=false;stopAlarm();
   $('run').classList.add('on');$('clock').textContent='';requestAnimationFrame(fit);$('label').textContent=cur.n;subText();
-  running=true;last=Date.now();setPP(true);draw();clearInterval(timer);timer=setInterval(tick,200);lock();
+  running=true;last=Date.now();setPP(true);draw();clearInterval(timer);timer=setInterval(tick,200);lock();saveRun();
 }
 function subText(){
   let s=queue.length>1?`${idx+1} de ${queue.length}`+(queue[idx+1]?` · Sigue: ${queue[idx+1].n}`:''):'';
   if(cur.ext.length)s=(s?s+' · ':'')+`Tiempo extra #${cur.ext.length}`;
   $('sub').textContent=s;
 }
+let lastSave=0;
 function tick(){
-  if(!running)return;const now=Date.now(),dt=(now-last)/1000;last=now;
+  if(!running)return;const now=Date.now(),dt=(now-last)/1000;last=now;if(now-lastSave>2000){lastSave=now;saveRun()}
   remain-=dt;if(inBreak){if(remain<=0){remain=0;draw();endBreak(true)}else draw();return}
   cur.elapsed+=dt;
   if(!warned&&total>1800&&remain<=900&&remain>0){warned=true;say('Te faltan 15 minutos')}
-  if(remain<=0){remain=0;draw();running=false;clearInterval(timer);startAlarm();ask();return}
+  if(remain<=0){remain=0;draw();running=false;clearInterval(timer);saveRun();startAlarm();ask();return}
   draw();
 }
 function draw(){const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
@@ -321,8 +325,8 @@ function color(r){
   return`rgb(${g.map((v,k)=>Math.round(v+(y[k]-v)*t)).join(',')})`}
 const PAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',PLAY='<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>';
 function setPP(r){$('clock').style.opacity=r?1:.45}
-function pause(){running=false;setPP(false)}
-function play(){if(!running){running=true;last=Date.now();setPP(true)}}
+function pause(){running=false;setPP(false);saveRun()}
+function play(){if(!running&&remain>0){running=true;last=Date.now();setPP(true);saveRun()}}
 function fit(){const c=$('clock'),m=document.querySelector('.mid');if(!m.clientWidth)return;c.style.fontSize='100px';const w=c.scrollWidth,H=window.innerHeight;const fs=Math.min(100*m.clientWidth*0.96/w,H*(inBreak?(window.innerHeight>window.innerWidth?0.3:0.42):(window.innerHeight>window.innerWidth?0.4:0.68)));c.style.fontSize=fs+'px'}
 window.addEventListener('resize',fit);window.addEventListener('orientationchange',()=>setTimeout(fit,300));
 function toggle(){running=!running;last=Date.now();setPP(running)}
@@ -353,7 +357,7 @@ function startBreak(){
   inBreak=true;cur=null;stopAlarm();total=brk*60;remain=total;
   const r=$('run');r.classList.add('on','brk');$('clock').textContent='';
   $('label').textContent='Descanso';brkSub();
-  running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();
+  running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();saveRun();
 }
 function brkSub(){const nx=queue[idx+1];
   $('sub').innerHTML=`Sigue: <b>${esc(nx.n)}</b> (${nx.m} min)`+(queue.length-idx-1>1?` <button class="chg" onclick="pickNext()">Cambiar ▾</button>`:'');}
@@ -362,10 +366,10 @@ function pickNext(){
   modal(`<h1>¿Qué sigue?</h1><div class="muted">Elige la siguiente actividad</div><div class="picklist">${rest.map((a,k)=>`<button class="${k?'':'on'}" onclick="setNext(${idx+1+k})"><span>${esc(a.n)}</span><span class="muted">${a.m} min</span></button>`).join('')}</div>
   <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`);
 }
-function setNext(j){const [a]=queue.splice(j,1);queue.splice(idx+1,0,a);closeModal();brkSub()}
+function setNext(j){const [a]=queue.splice(j,1);queue.splice(idx+1,0,a);closeModal();brkSub();saveRun()}
 function endBreak(sound){running=false;clearInterval(timer);if(sound){beep();say('Se acabó el descanso')}go(idx+1)}
 function done(){
-  $('run').classList.remove('on');release();
+  $('run').classList.remove('on');release();clearRun();
   modal(`<h1>¡Listo! 🎉</h1><div class="muted">Todo quedó guardado en el Registro.</div><div class="row"><button class="btn" onclick="closeModal();tab(2)">Ver registro</button><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`);
 }
 function save(ok){
@@ -377,7 +381,67 @@ function stop(){running=false;clearInterval(timer);
   if(inBreak){inBreak=false;$('run').classList.remove('brk');return quit()}
   if(cur&&cur.elapsed>=60){modal(`<h1>¿Guardar en el registro?</h1><div class="muted">${esc(cur.n)} · ${fmtMin(cur.elapsed/60)}</div><div class="row"><button class="btn" onclick="save(true);closeModal();quit()">Sí, la terminé</button><button class="btn gray" onclick="closeModal();quit()">No guardar</button></div>`)}
   else quit()}
-function quit(){$('run').classList.remove('on');release()}
+function quit(){$('run').classList.remove('on');release();clearRun()}
+/* ---- Guardar estado en curso (por si se cierra la app) ---- */
+function saveRun(){if(!$('run').classList.contains('on'))return;try{localStorage.setItem('run',JSON.stringify({queue,idx,inBreak,cur,total,remain,running,at:Date.now()}))}catch(e){}}
+function clearRun(){try{localStorage.removeItem('run')}catch(e){}}
+function checkRun(){
+  const r=load('run',null);if(!r||!r.queue||Date.now()-r.at>24*3600e3){clearRun();return}
+  const nm=r.inBreak?'Descanso':(r.cur&&r.cur.n);
+  modal(`<h1>Tienes algo en curso</h1><div class="muted">${esc(nm||'')} — la app se cerró mientras corría.</div>
+  <div class="row"><button class="btn gray" onclick="closeModal();clearRun()">Descartar</button><button class="btn" onclick="closeModal();restoreRun()">▶ Continuar</button></div>`);
+}
+function restoreRun(){
+  const r=load('run',null);if(!r)return;
+  queue=r.queue;idx=r.idx;inBreak=!!r.inBreak;cur=r.cur;total=r.total;remain=r.remain;
+  const gone=r.running?(Date.now()-r.at)/1000:0;remain-=gone;if(cur&&!inBreak)cur.elapsed+=gone;
+  if(inBreak){if(remain<=0)return go(idx+1);startBreakAt(total,remain);return}
+  $('run').classList.remove('brk');
+  if(remain<=0){begin(total,0);running=false;clearInterval(timer);remain=0;draw();saveRun();ask();return}
+  begin(total,remain);if(!r.running)pause();
+}
+function startBreakAt(t,rem){inBreak=true;stopAlarm();total=t;remain=rem;const el=$('run');el.classList.add('on','brk');$('clock').textContent='';$('label').textContent='Descanso';brkSub();
+  running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();saveRun()}
+
+/* ---- Recuperar actividad interrumpida (a mano) ---- */
+function recoverForm(){
+  const opts=[...new Set(log.map(e=>e.n).concat(acts.map(a=>a.n)))].map(n=>`<option value="${esc(n)}">`).join('');
+  modal(`<h1>¿Se borró tu actividad?</h1><div class="muted">Dime cómo iba y la retomo donde te quedaste.</div>
+  <label>Actividad</label><input id="rN" list="rList" placeholder="ej. Lavar el carro"><datalist id="rList">${opts}</datalist>
+  <label>Tiempo estimado original (min)</label><input id="rP" type="number" inputmode="numeric" placeholder="ej. 40">
+  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora en que empezaste</label><input id="rS" type="time"></div>
+  <div style="flex:1"><label>…o hora en que se acabó el estimado</label><input id="rE" type="time"></div></div>
+  <label>Tiempo extra que agregaste (min)</label><input id="rX" type="number" inputmode="numeric" placeholder="0">
+  <div id="rPrev" class="muted" style="margin-top:12px;min-height:20px"></div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" style="background:#2c2c2e" onclick="recover(false)">Ya la terminé</button></div>
+  <div class="row" style="margin-top:8px"><button class="btn" style="background:#34c759" onclick="recover(true)">▶ Continuar donde me quedé</button></div>`);
+  ['rN','rP','rS','rE','rX'].forEach(id=>$(id).addEventListener('input',recPrev));
+  $('rN').addEventListener('input',()=>{const a=acts.find(a=>a.n.toLowerCase()===$('rN').value.trim().toLowerCase());if(a&&!$('rP').value)$('rP').value=a.m;recPrev()});
+}
+function recCalc(){
+  const n=$('rN').value.trim(),P=parseFloat($('rP').value),X=parseFloat($('rX').value)||0;
+  if(!n||!(P>0))return null;
+  const t=($('rS').value||$('rE').value);if(!t)return null;
+  const [h,m]=t.split(':').map(Number),d=new Date();d.setHours(h,m,0,0);
+  let S=d.getTime();if(!$('rS').value)S-=P*60000;
+  if(S>Date.now())S-=24*3600e3;
+  const end=S+(P+X)*60000;return{n,P,X,S,end,left:(end-Date.now())/1000,el:(Date.now()-S)/1000};
+}
+function recPrev(){const c=recCalc();if(!c){$('rPrev').textContent='';return}
+  const st=new Date(c.S),en=new Date(c.end),f=x=>pad(x.getHours())+':'+pad(x.getMinutes());
+  $('rPrev').innerHTML=`Empezaste a las <b style="color:#fff">${f(st)}</b> · llevas <b style="color:#fff">${fmtMin(c.el/60)}</b><br>`+
+   (c.left>0?`Tu tiempo termina a las <b style="color:#fff">${f(en)}</b> · te quedan <b style="color:#34c759">${fmtMin(c.left/60)}</b>`:`Tu tiempo se acabó a las <b style="color:#fff">${f(en)}</b>`)}
+function recover(cont){
+  const c=recCalc();if(!c){['rN','rP'].forEach(id=>{if(!$(id).value)$(id).style.borderColor='#ff3b30'});if(!$('rS').value&&!$('rE').value){$('rS').style.borderColor='#ff3b30';$('rE').style.borderColor='#ff3b30'}return}
+  cur={n:c.n,plan:c.P,start:c.S,elapsed:c.el,ext:c.X>0?[{pct:null,min:c.X}]:[]};
+  closeModal();unlockAudio();
+  if(!cont){save(true);renderLog();modal(`<h1>Guardado ✅</h1><div class="muted">${esc(c.n)} · ${fmtMin(c.el/60)} reales</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
+  const k=acts.findIndex(a=>a.n.toLowerCase()===c.n.toLowerCase());
+  queue=k>=0?acts.slice(k).map(a=>({...a})):[{n:c.n,m:c.P}];idx=0;queue[0]={n:c.n,m:c.P};
+  inBreak=false;$('run').classList.remove('brk');
+  const seg=(c.X>0?c.X:c.P)*60;
+  if(c.left<=0){begin(seg,0);running=false;clearInterval(timer);remain=0;draw();saveRun();ask()}else begin(seg,c.left);
+}
 function modal(h){$('mCard').innerHTML=h;$('modal').classList.add('on')}
 function closeModal(){stopAlarm();$('modal').classList.remove('on')}
 async function lock(){try{wake=await navigator.wakeLock.request('screen')}catch(e){}}
@@ -530,7 +594,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-initPlans();render();prev();
+initPlans();render();prev();setTimeout(checkRun,300);
 </script>
 </body>
 </html>
