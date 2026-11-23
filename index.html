@@ -137,7 +137,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v26</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v27</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -151,7 +151,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v26)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v27)</button>
 </section>
 
 <section id="s1">
@@ -198,7 +198,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v26</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v27</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -377,16 +377,11 @@ function ask(){
 function no(){stopAlarm();
   modal(`<h1>¿Qué faltó?</h1><div class="muted">${esc(cur.n)}</div>
   <label>¿Cuánto te faltó? (%)</label><input id="pct" type="number" inputmode="numeric" placeholder="ej. 30">
-  <div id="sug" class="sug" style="display:none"></div>
   <label>¿Cuánto tiempo extra necesitas? (min)</label><input id="xmin" type="number" inputmode="numeric" placeholder="ej. 10">
   <label>Notas</label><textarea id="xnote" rows="3" placeholder="Qué faltó, qué aprendiste…"></textarea>
   <div class="row"><button class="btn gray" onclick="ask()">Atrás</button><button class="btn" onclick="extend()">Continuar ▶</button></div>`);
   let typed=false;$('xmin').addEventListener('input',()=>typed=true);
-  $('pct').addEventListener('input',()=>{const v=sugExtra(parseFloat($('pct').value));
-    if(v==null){$('sug').style.display='none';return}
-    const done=100-parseFloat($('pct').value);
-    $('sug').style.display='block';$('sug').innerHTML=`💡 Sugerido: <b>${v} min</b><br><span>Hiciste ${Math.round(done)}% en ${fmtMin(cur.elapsed/60)}; a ese ritmo te faltan unos ${fmtMin(v)}.</span> <button onclick="$('xmin').value=${v}">Usar</button>`;
-    if(!typed)$('xmin').value=v});
+  $('pct').addEventListener('input',()=>{const v=sugExtra(parseFloat($('pct').value));if(v!=null&&!typed)$('xmin').value=v});
   setTimeout(()=>$('pct').focus(),50);
 }
 function sugExtra(p){if(!(p>0&&p<100)||!(cur.elapsed>0))return null;const m=cur.elapsed/60*p/(100-p);return Math.max(1,Math.round(m/5)*5||Math.ceil(m))}
@@ -671,7 +666,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=26;
+const APP_VER=27;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
