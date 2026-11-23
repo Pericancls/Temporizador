@@ -96,6 +96,8 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
 .upd span{flex:1}.upd button{background:#fff;color:#0a84ff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;font-size:14px}
 .sel{width:100%;background:#2c2c2e;color:#fff;border:1px solid #333;border-radius:10px;padding:12px;font-size:16px;-webkit-appearance:none;appearance:none;padding-right:38px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M0 0l6 8 6-8z' fill='%23aaa'/></svg>");background-repeat:no-repeat;background-position:right 14px center}
 .minib{margin-top:2vh;background:#1c1c1e;color:#fff;border:1px solid #3a3a3c;border-radius:22px;padding:10px 18px;font-size:min(4vw,17px);font-weight:600}
+.prog{display:block;font-size:13px;color:#ff9f0a;margin-top:3px}
+.contb{display:inline-block;margin-top:6px;background:#ff9f0a;color:#000;border:none;border-radius:14px;padding:6px 12px;font-size:14px;font-weight:700}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -131,7 +133,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v23</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v24</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -145,7 +147,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v23)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v24)</button>
 </section>
 
 <section id="s1">
@@ -192,7 +194,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v23</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v24</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -245,14 +247,14 @@ function prev(){const m=parseFloat($('tMin').value)||0;$('tPrev').textContent=pa
 /* ---- Plan ---- */
 function render(){
   acts.forEach(a=>{if(!a.id)a.id=uid()});
-  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button><span class="n">${esc(a.n)}</span><span class="t" onclick="${a.done?'':`editT(${i},this)`}">${a.m} min${a.done?'':' ✎'}</span><button onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
+  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button><span class="n">${esc(a.n)}${a.prog&&!a.done?`<small class="prog">⏸ llevas ${fmtMin(a.prog.el/60)} · quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</small><button class="contb" onclick="resumeItem(${i})">▶ Continuar</button>`:''}</span><span class="t" onclick="${a.done?'':`editT(${i},this)`}">${a.m} min${a.done?'':' ✎'}</span><button onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   $('planPick').value=planDay;$('brkMin').value=brk;
   $('copyBox').innerHTML=acts.length?`<div class="copyrow"><button onclick="copyPlan(1)">${acts.some(a=>a.done)?'Copiar pendientes al día siguiente':'Copiar al día siguiente'}</button><button onclick="clearPlan()">Vaciar este día</button></div>`:'';
-  const pend=acts.filter(a=>!a.done),t=pend.reduce((s,a)=>s+a.m,0),nd=acts.length-pend.length;
-  $('total').textContent=!acts.length?'':nd?`✓ ${nd} de ${acts.length} hechas · Pendiente: ${fmtMin(t)}`:'Total planeado: '+fmtMin(t);
+  const pend=acts.filter(a=>!a.done),t=pend.reduce((s,a)=>s+(a.prog?Math.max(0,a.prog.rem)/60:a.m),0),nd=acts.length-pend.length;
+  $('total').textContent=!acts.length?'':nd?`✓ ${nd} de ${acts.length} hechas · Pendiente: ${fmtMin(t)}`:(acts.some(a=>a.prog)?'Pendiente: ':'Total planeado: ')+fmtMin(t);
   const names=[...new Set(log.map(e=>e.n))];
   $('known').innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
 }
@@ -263,9 +265,9 @@ $('aName').addEventListener('input',()=>{
 });
 function add(){const n=$('aName').value.trim(),m=parseFloat($('aMin').value);if(!n||!(m>0))return;acts.push({n,m,id:uid()});$('aName').value='';$('hint').textContent='';store('acts',acts);render()}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function toggleDone(i){acts[i].done=!acts[i].done;store('acts',acts);render()}
-function markDone(id){let hit=false;Object.values(plans).forEach(l=>l.forEach(a=>{if(a.id===id){a.done=true;hit=true}}));if(hit){store('plans',plans);render()}}
-function copyPlan(n){const k=shiftDay(planDay,n),src=acts.filter(a=>!a.done),cp=src.map(a=>({n:a.n,m:a.m,id:uid()}));plans[k]=(plans[k]||[]).concat(cp);store('plans',plans);
+function toggleDone(i){acts[i].done=!acts[i].done;if(acts[i].done)delete acts[i].prog;store('acts',acts);render()}
+function markDone(id){let hit=false;Object.values(plans).forEach(l=>l.forEach(a=>{if(a.id===id){a.done=true;delete a.prog;hit=true}}));if(hit){store('plans',plans);render()}}
+function copyPlan(n){const k=shiftDay(planDay,n),src=acts.filter(a=>!a.done),cp=src.map(a=>({n:a.n,m:a.m,id:uid(),...(a.prog?{prog:a.prog}:{})}));plans[k]=(plans[k]||[]).concat(cp);store('plans',plans);
   modal(`<h1>Copiado ✅</h1><div class="muted">Se agregaron ${cp.length} actividades al plan de ${dayName(k)}.</div><div class="row"><button class="btn gray" onclick="closeModal()">Quedarme aquí</button><button class="btn" onclick="closeModal();setPlanDay('${k}');render()">Ir a ${dayName(k)}</button></div>`)}
 function clearPlan(){modal(`<h1>¿Vaciar el plan?</h1><div class="muted">Se borran las actividades del plan de ${dayName(planDay)}. Tu registro no se toca.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();acts=[];store('acts',acts);render()">Vaciar</button></div>`)}
 function del(i){acts.splice(i,1);store('acts',acts);render()}
@@ -310,9 +312,22 @@ function startSingle(){unlockAudio();const m=parseFloat($('tMin').value)||20;que
 function go(i){
   inBreak=false;$('run').classList.remove('brk');
   idx=i;const a=queue[i];
-  cur={n:a.n,plan:a.m,start:Date.now(),elapsed:0,ext:[],id:a.id};
+  const pr=a.prog;
+  cur={n:a.n,plan:a.m,start:pr?pr.st:Date.now(),elapsed:pr?pr.el:0,ext:pr?(pr.ext||[]):[],mb:pr?(pr.mb||0):0,id:a.id};
+  if(pr){clearProg(a.id);delete a.prog;if(pr.rem<=0){begin(pr.tot,0);running=false;clearInterval(timer);remain=0;draw();saveRun();startAlarm();ask();return}begin(pr.tot,pr.rem);return}
   begin(a.m*60);
 }
+function findItem(id){let r=null;Object.values(plans).forEach(l=>l.forEach(a=>{if(a.id===id)r=a}));return r}
+function clearProg(id){const it=findItem(id);if(it&&it.prog){delete it.prog;store('plans',plans);render()}}
+function pauseExit(){
+  let it=cur.id&&findItem(cur.id);
+  if(!it){const tk=dkey(new Date());plans[tk]=plans[tk]||[];it={n:cur.n,m:cur.plan,id:uid()};plans[tk].push(it);if(planDay===tk)acts=plans[tk]}
+  it.prog={el:cur.elapsed,rem:Math.max(0,remain),tot:total,ext:cur.ext,mb:cur.mb||0,st:cur.start};it.done=false;
+  store('plans',plans);closeModal();quit();render();
+  modal(`<h1>⏸ Pausada</h1><div class="muted">${esc(cur.n)} · llevas ${fmtMin(cur.elapsed/60)}. La encuentras en tu plan con "Continuar".</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);
+}
+function resumeItem(i){const a=acts[i];if(!a||a.done)return;unlockAudio();
+  queue=[a].concat(acts.filter(x=>!x.done&&x!==a)).map(x=>({...x}));go(0)}
 function begin(secs,rem){
   total=secs;remain=rem!=null?rem:secs;warned=false;stopAlarm();
   $('run').classList.add('on');$('clock').textContent='';requestAnimationFrame(fit);$('label').textContent=cur.n;subText();
@@ -398,13 +413,17 @@ function save(ok){
 }
 function stop(){if(inMini)endMini(false,true);running=false;clearInterval(timer);
   if(inBreak){inBreak=false;$('run').classList.remove('brk');return quit()}
-  if(cur&&cur.elapsed>=60){modal(`<h1>¿Guardar en el registro?</h1><div class="muted">${esc(cur.n)} · ${fmtMin(cur.elapsed/60)}</div><div class="row"><button class="btn" onclick="save(true);closeModal();quit()">Sí, la terminé</button><button class="btn gray" onclick="closeModal();quit()">No guardar</button></div>`)}
+  if(cur&&cur.elapsed>=60){modal(`<h1>¿Qué hacemos?</h1><div class="muted">${esc(cur.n)} · llevas ${fmtMin(cur.elapsed/60)}</div>
+    <div class="row"><button class="btn" style="background:#ff9f0a" onclick="pauseExit()">⏸ Pausar y salir</button></div>
+    <div class="muted" style="font-size:13px;margin-top:6px">Guarda tu avance para continuar después donde te quedaste.</div>
+    <div class="row"><button class="btn" style="background:#34c759" onclick="save(true);closeModal();quit()">✓ Ya la terminé</button></div>
+    <div class="row"><button class="btn gray" onclick="closeModal();play()">Seguir</button><button class="btn gray" onclick="closeModal();quit()">Salir sin guardar</button></div>`)}
   else quit()}
 function quit(){$('run').classList.remove('on');release();clearRun()}
 /* ---- Guardar estado en curso (por si se cierra la app) ---- */
 function saveRun(){if(!$('run').classList.contains('on'))return;try{localStorage.setItem('run',JSON.stringify({queue,idx,inBreak,inMini,miniSaved,cur,total,remain,running,at:Date.now()}))}catch(e){}}
 function clearRun(){try{localStorage.removeItem('run')}catch(e){}}
-function checkRun(){
+function checkRun(){if($('run').classList.contains('on'))return;
   const r=load('run',null);if(!r||!r.queue||Date.now()-r.at>24*3600e3){clearRun();return}
   const nm=r.inBreak?'Descanso':r.inMini?'Mini descanso · '+(r.cur&&r.cur.n):(r.cur&&r.cur.n);
   modal(`<h1>Tienes algo en curso</h1><div class="muted">${esc(nm||'')} — la app se cerró mientras corría.</div>
@@ -639,7 +658,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=23;
+const APP_VER=24;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
