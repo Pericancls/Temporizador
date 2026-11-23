@@ -24,6 +24,8 @@ li{display:flex;align-items:center;gap:10px;background:#1c1c1e;border-radius:12p
 li .n{flex:1;font-size:17px}
 li .t{color:#34c759;font-variant-numeric:tabular-nums;padding:6px 8px;border-radius:8px;background:#0f2a17}
 li{touch-action:pan-y;user-select:none;-webkit-user-select:none;position:relative}
+li.over{box-shadow:inset 0 3px 0 #0a84ff}
+li{-webkit-touch-callout:none}
 li.drag{z-index:3;background:#2c2c2e;box-shadow:0 8px 24px rgba(0,0,0,.6);transition:none;touch-action:none}
 .grip{color:#666;font-size:20px;padding:0 4px;touch-action:none;cursor:grab}
 li input.min{width:80px;padding:8px}
@@ -147,7 +149,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v29</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v30</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -161,7 +163,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v29)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v30)</button>
 </section>
 
 <section id="s1">
@@ -210,7 +212,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v29</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v30</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -263,7 +265,7 @@ function prev(){const m=parseFloat($('tMin').value)||0;$('tPrev').textContent=pa
 /* ---- Plan ---- */
 function render(){
   acts.forEach(a=>{if(!a.id)a.id=uid()});
-  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i},this)">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${esc(a.n)}${a.prog&&!a.done?`<small class="prog">⏸ llevas ${fmtMin(a.prog.el/60)} · quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</small><button class="contb" onclick="resumeItem(${i})">▶ Continuar</button>`:''}</span><span class="t" onclick="${a.done?'':`editT(${i},this)`}">${a.m} min${a.done?'':' ✎'}</span><button onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
+  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${esc(a.n)}${a.prog&&!a.done?`<small class="prog">⏸ llevas ${fmtMin(a.prog.el/60)} · quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</small><button class="contb" onclick="resumeItem(${i})">▶ Continuar</button>`:''}</span><span class="t" onclick="${a.done?'':`editT(${i})`}">${a.m} min${a.done?'':' ✎'}</span><button onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
@@ -290,12 +292,21 @@ function copyPlan(n){const k=shiftDay(planDay,n),src=acts.filter(a=>!a.done),cp=
 function clearPlan(){modal(`<h1>¿Vaciar el plan?</h1><div class="muted">Se borran las actividades del plan de ${dayName(planDay)}. Tu registro no se toca.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();acts=[];store('acts',acts);render()">Vaciar</button></div>`)}
 function del(i){acts.splice(i,1);store('acts',acts);render()}
 function fmt12(t){let [h,m]=t.split(':').map(Number);const ap=h>=12?'pm':'am';h=h%12||12;return h+':'+pad(m)+' '+ap}
-function editTime(i,el){
-  el.outerHTML=`<span class="tedit"><input type="time" id="edT" value="${acts[i].t||''}"><button onclick="acts[${i}].t='';delete acts[${i}].t;store('acts',acts);render()">✕</button></span>`;
-  const inp=$('edT');inp.focus();try{inp.showPicker&&inp.showPicker()}catch(e){}
-  const ok=()=>{if(inp.value){acts[i].t=inp.value;delete acts[i].warned30;store('acts',acts)}setTimeout(render,150)};
-  inp.addEventListener('change',ok);inp.addEventListener('blur',ok);
+function editTime(i){editAct(i,'t')}
+function editAct(i,focus){const a=acts[i];
+  modal(`<h1>Editar actividad</h1>
+  <label>Actividad</label><input id="eN" value="${esc(a.n)}">
+  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Tiempo (min)</label><input id="eM" type="number" inputmode="decimal" value="${a.m}"></div>
+  <div style="flex:1"><label>⏰ Hora (opcional)</label><input id="eT" type="time" value="${a.t||''}"></div></div>
+  ${a.t?`<button class="linkbtn" style="padding:8px 0;color:#ff453a" onclick="$('eT').value=''">Quitar hora</button>`:''}
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="saveEdit(${i})">✓ Aceptar</button></div>`);
+  setTimeout(()=>{const e=$(focus==='t'?'eT':'eM');if(e&&focus!=='t'){e.focus();e.select&&e.select()}},60);
 }
+function saveEdit(i){const a=acts[i];if(!a)return closeModal();
+  const n=$('eN').value.trim(),m=parseFloat($('eM').value),t=$('eT').value;
+  if(!n){$('eN').style.borderColor='#ff3b30';return}if(!(m>0)){$('eM').style.borderColor='#ff3b30';return}
+  a.n=n;a.m=m;if(t){if(a.t!==t)delete a.warned30;a.t=t}else delete a.t;
+  store('acts',acts);closeModal();render()}
 function toCalendar(){
   const ev=acts.filter(a=>a.t&&!a.done);if(!ev.length)return;
   const d=planDay.replace(/-/g,''),st=(t,add)=>{const [y,mo,da]=planDay.split('-').map(Number),[h,m]=t.split(':').map(Number);const x=new Date(y,mo-1,da,h,m+(add||0));return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate())+'T'+pad(x.getHours())+pad(x.getMinutes())+'00'};
@@ -329,33 +340,28 @@ function checkSched(){
     }
   }
 }
-function editT(i,el){
-  el.outerHTML=`<input class="min" id="ed" type="number" inputmode="decimal" value="${acts[i].m}">`;
-  const inp=$('ed');inp.focus();inp.select();
-  const ok=()=>{const v=parseFloat(inp.value);if(v>0){acts[i].m=v;store('acts',acts)}render()};
-  inp.addEventListener('blur',ok);inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur()});
-}
-/* Arrastrar para reordenar: mantén presionada la actividad */
+function editT(i){editAct(i,'m')}
+/* Arrastrar para reordenar: mantén presionada la actividad y muévela */
 (function(){
-  let drag=null,holdT=null,startY=0;
-  const L=$('list');
-  L.addEventListener('pointerdown',e=>{
-    const li=e.target.closest('li');if(!li||e.target.closest('button,input,.t'))return;
-    startY=e.clientY;
-    holdT=setTimeout(()=>{drag={li,from:+li.dataset.i,y0:e.clientY};li.classList.add('drag');try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}},e.target.closest('.grip')?0:300);
-  });
-  L.addEventListener('pointermove',e=>{
-    if(!drag){if(Math.abs(e.clientY-startY)>8)clearTimeout(holdT);return}
-    e.preventDefault();
-    drag.li.style.transform=`translateY(${e.clientY-drag.y0}px)`;
-  });
-  const end=e=>{
-    clearTimeout(holdT);if(!drag)return;
-    const items=[...L.querySelectorAll('li')];let to=items.length-1;
-    for(let k=0;k<items.length;k++){if(items[k]===drag.li)continue;const r=items[k].getBoundingClientRect();if(e.clientY<r.top+r.height/2){to=k>drag.from?k-1:k;break}}
-    const [a]=acts.splice(drag.from,1);acts.splice(to,0,a);drag=null;store('acts',acts);render();
-  };
-  L.addEventListener('pointerup',end);L.addEventListener('pointercancel',end);
+  const L=$('list');let holdT=null,drag=null,sx=0,sy=0,lastY=0;
+  const startHold=(li,x,y)=>{sx=x;sy=y;lastY=y;clearTimeout(holdT);
+    holdT=setTimeout(()=>{drag={li,from:+li.dataset.i,y0:y};li.classList.add('drag');try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}},350)};
+  const move=(x,y,ev)=>{lastY=y;if(!drag){if(Math.abs(y-sy)>8||Math.abs(x-sx)>8)clearTimeout(holdT);return}
+    if(ev&&ev.cancelable)ev.preventDefault();drag.li.style.transform=`translateY(${y-drag.y0}px)`;
+    [...L.querySelectorAll('li')].forEach(o=>{if(o===drag.li)return;const r=o.getBoundingClientRect();o.classList.toggle('over',y>r.top&&y<r.bottom)})};
+  const end=cancel=>{clearTimeout(holdT);if(!drag)return;const d=drag;drag=null;
+    L.querySelectorAll('li.over').forEach(o=>o.classList.remove('over'));
+    if(cancel||Math.abs(lastY-d.y0)<10){d.li.classList.remove('drag');d.li.style.transform='';return}
+    const items=[...L.querySelectorAll('li')].filter(o=>o!==d.li);let to=items.length;
+    for(let k=0;k<items.length;k++){const r=items[k].getBoundingClientRect();if(lastY<r.top+r.height/2){to=k;break}}
+    const [a]=acts.splice(d.from,1);acts.splice(to,0,a);store('acts',acts);render()};
+  const ok=t=>{const li=t.closest&&t.closest('li');return li&&L.contains(li)&&!t.closest('button,input,.t,.tchip,.contb')?li:null};
+  L.addEventListener('touchstart',e=>{const li=ok(e.target);if(!li||e.touches.length>1)return;const t=e.touches[0];startHold(li,t.clientX,t.clientY)},{passive:true});
+  L.addEventListener('touchmove',e=>{const t=e.touches[0];move(t.clientX,t.clientY,e)},{passive:false});
+  L.addEventListener('touchend',()=>end(false));L.addEventListener('touchcancel',()=>end(true));
+  L.addEventListener('mousedown',e=>{const li=ok(e.target);if(li)startHold(li,e.clientX,e.clientY)});
+  window.addEventListener('mousemove',e=>move(e.clientX,e.clientY,e));window.addEventListener('mouseup',()=>end(false));
+  L.addEventListener('contextmenu',e=>{if(e.target.closest('li'))e.preventDefault()});
 })();
 function mv(i,d){const j=i+d;if(j<0)return;[acts[i],acts[j]]=[acts[j],acts[i]];store('acts',acts);render()}
 $('aName').addEventListener('keydown',e=>{if(e.key==='Enter')add()});
@@ -731,7 +737,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=29;
+const APP_VER=30;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
