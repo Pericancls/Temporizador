@@ -98,6 +98,8 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
 .minib{margin-top:2vh;background:#1c1c1e;color:#fff;border:1px solid #3a3a3c;border-radius:22px;padding:10px 18px;font-size:min(4vw,17px);font-weight:600}
 .prog{display:block;font-size:13px;color:#ff9f0a;margin-top:3px}
 .contb{display:inline-block;margin-top:6px;background:#ff9f0a;color:#000;border:none;border-radius:14px;padding:6px 12px;font-size:14px;font-weight:700}
+textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-radius:10px;padding:12px;font-size:16px;font-family:inherit;resize:vertical}
+.note{background:#2c2c2e;border-radius:8px;padding:8px 10px;margin-top:6px;font-size:14px;color:#ddd;line-height:1.35}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -133,7 +135,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v24</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v25</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -147,7 +149,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v24)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v25)</button>
 </section>
 
 <section id="s1">
@@ -194,7 +196,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v24</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v25</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -374,13 +376,14 @@ function no(){stopAlarm();
   modal(`<h1>¿Qué faltó?</h1><div class="muted">${esc(cur.n)}</div>
   <label>¿Cuánto te faltó? (%)</label><input id="pct" type="number" inputmode="numeric" placeholder="ej. 30">
   <label>¿Cuánto tiempo extra necesitas? (min)</label><input id="xmin" type="number" inputmode="numeric" placeholder="ej. 10">
+  <label>Notas</label><textarea id="xnote" rows="3" placeholder="Qué faltó, qué aprendiste…"></textarea>
   <div class="row"><button class="btn gray" onclick="ask()">Atrás</button><button class="btn" onclick="extend()">Continuar ▶</button></div>`);
   setTimeout(()=>$('pct').focus(),50);
 }
 function extend(){
   const p=parseFloat($('pct').value),x=parseFloat($('xmin').value);
   if(!(x>0)){$('xmin').style.borderColor='#ff3b30';return}
-  cur.ext.push({pct:isNaN(p)?null:p,min:x});closeModal();begin(x*60);
+  const nt=$('xnote').value.trim();cur.ext.push({pct:isNaN(p)?null:p,min:x,...(nt?{note:nt}:{})});closeModal();begin(x*60);
 }
 function yes(){closeModal();save(true);advance()}
 function finish(){if(inMini)return endMini(false);if(inBreak)return endBreak(false);running=false;clearInterval(timer);save(true);beep(true);advance()}
@@ -559,7 +562,7 @@ function renderLog(){
 }
 function entry(e){
   const diff=e.real-e.plan;
-  const ext=e.ext&&e.ext.length?`<div class="meta">Extensiones: ${e.ext.map(x=>`+${x.min} min${x.pct!=null?` (faltaba ${x.pct}%)`:''}`).join(', ')}</div>`:'';
+  const ext=e.ext&&e.ext.length?`<div class="meta">Extensiones: ${e.ext.map(x=>`+${x.min} min${x.pct!=null?` (faltaba ${x.pct}%)`:''}`).join(', ')}</div>`+e.ext.filter(x=>x.note).map(x=>`<div class="note">📝 ${esc(x.note).replace(/\n/g,'<br>')}</div>`).join(''):'';
   return`<div class="entry"><div class="top"><b>${esc(e.n)}</b><span class="muted">${e.manual?'✍︎ ':''}${e.h}</span></div>
   <div class="meta">Planeado ${fmtMin(e.plan)} · Real <span class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</span> (${diff>=0?'+':''}${Math.round(diff)} min)${e.ok?'':' · <span class="over">sin terminar</span>'}</div>${ext}
   <div style="text-align:right"><button onclick="rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></div></div>`;
@@ -658,7 +661,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=24;
+const APP_VER=25;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
