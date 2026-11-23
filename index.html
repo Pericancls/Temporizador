@@ -94,6 +94,7 @@ li.done .t{background:none;color:#888}
 li.done .chk{background:#34c759!important;border-color:#34c759!important}
 .upd{display:flex;align-items:center;gap:10px;background:#0a84ff;color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:15px}
 .upd span{flex:1}.upd button{background:#fff;color:#0a84ff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;font-size:14px}
+.sel{width:100%;background:#2c2c2e;color:#fff;border:1px solid #333;border-radius:10px;padding:12px;font-size:16px;-webkit-appearance:none;appearance:none;padding-right:38px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M0 0l6 8 6-8z' fill='%23aaa'/></svg>");background-repeat:no-repeat;background-position:right 14px center}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -129,7 +130,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v21</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v22</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -143,7 +144,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v21)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v22)</button>
 </section>
 
 <section id="s1">
@@ -190,7 +191,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v21</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v22</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -421,9 +422,12 @@ function startBreakAt(t,rem){inBreak=true;stopAlarm();total=t;remain=rem;const e
 
 /* ---- Recuperar actividad interrumpida (a mano) ---- */
 function recoverForm(){
+  setPlanDay(dkey(new Date()));render();
+  const pend=acts.filter(a=>!a.done);
   const opts=[...new Set(log.map(e=>e.n).concat(acts.map(a=>a.n)))].map(n=>`<option value="${esc(n)}">`).join('');
+  const sel=`<select id="rSel" class="sel">${pend.length?'<option value="">Elige una actividad…</option>':''}${pend.map((a,i)=>`<option value="${i}">${esc(a.n)} · ${a.m} min</option>`).join('')}<option value="__otra">Otra actividad (escribir)…</option></select>`;
   modal(`<h1>¿Se borró tu actividad?</h1><div class="muted">Dime cómo iba y la retomo donde te quedaste.</div>
-  <label>Actividad</label><input id="rN" list="rList" placeholder="ej. Lavar el carro"><datalist id="rList">${opts}</datalist>
+  <label>Actividad</label>${sel}<input id="rN" list="rList" placeholder="Escribe la actividad" style="display:none;width:100%;margin-top:8px"><datalist id="rList">${opts}</datalist>
   <label>Tiempo estimado original (min)</label><input id="rP" type="number" inputmode="numeric" placeholder="ej. 40">
   <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora en que empezaste</label><input id="rS" type="time"></div>
   <div style="flex:1"><label>…o hora en que se acabó el estimado</label><input id="rE" type="time"></div></div>
@@ -432,6 +436,11 @@ function recoverForm(){
   <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" style="background:#2c2c2e" onclick="recover(false)">Ya la terminé</button></div>
   <div class="row" style="margin-top:8px"><button class="btn" style="background:#34c759" onclick="recover(true)">▶ Continuar donde me quedé</button></div>`);
   ['rN','rP','rS','rE','rX'].forEach(id=>$(id).addEventListener('input',recPrev));
+  $('rSel').addEventListener('change',()=>{const v=$('rSel').value;$('rSel').style.borderColor='';
+    if(v==='__otra'){$('rN').style.display='block';$('rN').value='';$('rN').focus()}
+    else{$('rN').style.display='none';const a=pend[+v];$('rN').value=a?a.n:'';if(a)$('rP').value=a.m}
+    recPrev()});
+  if(!pend.length){$('rSel').value='__otra';$('rN').style.display='block'}
   $('rN').addEventListener('input',()=>{const a=acts.find(a=>a.n.toLowerCase()===$('rN').value.trim().toLowerCase());if(a&&!$('rP').value)$('rP').value=a.m;recPrev()});
 }
 function recCalc(){
@@ -448,7 +457,7 @@ function recPrev(){const c=recCalc();if(!c){$('rPrev').textContent='';return}
   $('rPrev').innerHTML=`Empezaste a las <b style="color:#fff">${f(st)}</b> · llevas <b style="color:#fff">${fmtMin(c.el/60)}</b><br>`+
    (c.left>0?`Tu tiempo termina a las <b style="color:#fff">${f(en)}</b> · te quedan <b style="color:#34c759">${fmtMin(c.left/60)}</b>`:`Tu tiempo se acabó a las <b style="color:#fff">${f(en)}</b>`)}
 function recover(cont){
-  const c=recCalc();if(!c){['rN','rP'].forEach(id=>{if(!$(id).value)$(id).style.borderColor='#ff3b30'});if(!$('rS').value&&!$('rE').value){$('rS').style.borderColor='#ff3b30';$('rE').style.borderColor='#ff3b30'}return}
+  const c=recCalc();if(!c){if(!$('rN').value)$('rSel').style.borderColor='#ff3b30';['rN','rP'].forEach(id=>{if(!$(id).value)$(id).style.borderColor='#ff3b30'});if(!$('rS').value&&!$('rE').value){$('rS').style.borderColor='#ff3b30';$('rE').style.borderColor='#ff3b30'}return}
   const ma=acts.find(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());cur={n:c.n,plan:c.P,start:c.S,elapsed:c.el,ext:c.X>0?[{pct:null,min:c.X}]:[],id:ma&&ma.id};
   closeModal();unlockAudio();
   if(!cont){save(true);renderLog();modal(`<h1>Guardado ✅</h1><div class="muted">${esc(c.n)} · ${fmtMin(c.el/60)} reales</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
@@ -610,7 +619,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=21;
+const APP_VER=22;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
