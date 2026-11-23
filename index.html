@@ -95,6 +95,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
 .upd{display:flex;align-items:center;gap:10px;background:#0a84ff;color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:15px}
 .upd span{flex:1}.upd button{background:#fff;color:#0a84ff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;font-size:14px}
 .sel{width:100%;background:#2c2c2e;color:#fff;border:1px solid #333;border-radius:10px;padding:12px;font-size:16px;-webkit-appearance:none;appearance:none;padding-right:38px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M0 0l6 8 6-8z' fill='%23aaa'/></svg>");background-repeat:no-repeat;background-position:right 14px center}
+.minib{margin-top:2vh;background:#1c1c1e;color:#fff;border:1px solid #3a3a3c;border-radius:22px;padding:10px 18px;font-size:min(4vw,17px);font-weight:600}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -130,7 +131,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v22</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v23</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -144,7 +145,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v22)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v23)</button>
 </section>
 
 <section id="s1">
@@ -191,7 +192,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v22</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v23</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -199,7 +200,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
   <div class="mid">
     <div id="clock">00:00</div>
     <div class="lbl"><div id="label"></div>
-    <div id="sub"></div></div>
+    <div id="sub"></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button></div>
   </div>
   <div class="side">
     <button class="txt" onclick="stop()">Salir</button>
@@ -300,7 +301,7 @@ function mv(i,d){const j=i+d;if(j<0)return;[acts[i],acts[j]]=[acts[j],acts[i]];s
 $('aName').addEventListener('keydown',e=>{if(e.key==='Enter')add()});
 
 /* ---- Corredor ---- */
-let inBreak=false,brk=(()=>{const v=load('brk',10);return v>=0?v:10})(),warned=false,queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
+let inMini=false,miniSaved=null,inBreak=false,brk=(()=>{const v=load('brk',10);return v>=0?v:10})(),warned=false,queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
 function setBrk(v){v=parseFloat(v);brk=v>=0?v:10;$('brkMin').value=brk;store('brk',brk)}
 function startList(){if(!acts.length)return;const pend=acts.filter(a=>!a.done);
   if(!pend.length){modal(`<h1>¡Todo hecho! 🎉</h1><div class="muted">Ya terminaste todas las actividades de este plan.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
@@ -320,12 +321,13 @@ function begin(secs,rem){
 function subText(){
   let s=queue.length>1?`${idx+1} de ${queue.length}`+(queue[idx+1]?` · Sigue: ${queue[idx+1].n}`:''):'';
   if(cur.ext.length)s=(s?s+' · ':'')+`Tiempo extra #${cur.ext.length}`;
-  $('sub').textContent=s;
+  $('sub').textContent=s;miniBtnUpd();
 }
 let lastSave=0;
 function tick(){
   if(!running)return;const now=Date.now(),dt=(now-last)/1000;last=now;if(now-lastSave>2000){lastSave=now;saveRun()}
-  remain-=dt;if(inBreak){if(remain<=0){remain=0;draw();endBreak(true)}else draw();return}
+  remain-=dt;if(inMini){if(remain<=0){remain=0;draw();endMini(true)}else draw();return}
+  if(inBreak){if(remain<=0){remain=0;draw();endBreak(true)}else draw();return}
   cur.elapsed+=dt;
   if(!warned&&total>1800&&remain<=900&&remain>0){warned=true;say('Te faltan 15 minutos')}
   if(remain<=0){remain=0;draw();running=false;clearInterval(timer);saveRun();startAlarm();ask();return}
@@ -333,7 +335,7 @@ function tick(){
 }
 function draw(){const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
   const txt=pad(Math.floor(s/60))+':'+pad(x);if($('clock').textContent!==txt){const L=$('clock').textContent.length;$('clock').textContent=txt;if(L!==txt.length)fit()}
-  const mm=document.querySelector('.mid');if(mm.clientWidth&&$('clock').scrollWidth>mm.clientWidth+2)fit();$('clock').style.color=inBreak?'#fff':color(total?remain/total:0)}
+  const mm=document.querySelector('.mid');if(mm.clientWidth&&$('clock').scrollWidth>mm.clientWidth+2)fit();$('clock').style.color=(inBreak||inMini)?'#fff':color(total?remain/total:0)}
 function color(r){
   if(r>0.3)return'rgb(52,199,89)';
   if(r<=0.1)return'rgb(255,59,48)';
@@ -343,7 +345,7 @@ const PAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></sv
 function setPP(r){$('clock').style.opacity=r?1:.45}
 function pause(){running=false;setPP(false);saveRun()}
 function play(){if(!running&&remain>0){running=true;last=Date.now();setPP(true);saveRun()}}
-function fit(){const c=$('clock'),m=document.querySelector('.mid');if(!m.clientWidth)return;c.style.fontSize='100px';const w=c.scrollWidth,H=window.innerHeight;const fs=Math.min(100*m.clientWidth*0.96/w,H*(inBreak?(window.innerHeight>window.innerWidth?0.3:0.42):(window.innerHeight>window.innerWidth?0.4:0.68)));c.style.fontSize=fs+'px'}
+function fit(){const c=$('clock'),m=document.querySelector('.mid');if(!m.clientWidth)return;c.style.fontSize='100px';const w=c.scrollWidth,H=window.innerHeight;const fs=Math.min(100*m.clientWidth*0.96/w,H*((inBreak||inMini)?(window.innerHeight>window.innerWidth?0.3:0.42):(window.innerHeight>window.innerWidth?0.4:0.68)));c.style.fontSize=fs+'px'}
 window.addEventListener('resize',fit);window.addEventListener('orientationchange',()=>setTimeout(fit,300));
 function toggle(){running=!running;last=Date.now();setPP(running)}
 function restart(){remain=total;last=Date.now();draw()}
@@ -366,7 +368,7 @@ function extend(){
   cur.ext.push({pct:isNaN(p)?null:p,min:x});closeModal();begin(x*60);
 }
 function yes(){closeModal();save(true);advance()}
-function finish(){if(inBreak)return endBreak(false);running=false;clearInterval(timer);save(true);beep(true);advance()}
+function finish(){if(inMini)return endMini(false);if(inBreak)return endBreak(false);running=false;clearInterval(timer);save(true);beep(true);advance()}
 function skip(){running=false;clearInterval(timer);if(cur.elapsed>=60)save(false);advance()}
 function advance(){if(idx+1<queue.length){if(brk>0)startBreak();else go(idx+1)}else{done()}}
 function startBreak(){
@@ -394,29 +396,47 @@ function save(ok){
   store('log',log);
   if(ok&&cur.id)markDone(cur.id);
 }
-function stop(){running=false;clearInterval(timer);
+function stop(){if(inMini)endMini(false,true);running=false;clearInterval(timer);
   if(inBreak){inBreak=false;$('run').classList.remove('brk');return quit()}
   if(cur&&cur.elapsed>=60){modal(`<h1>¿Guardar en el registro?</h1><div class="muted">${esc(cur.n)} · ${fmtMin(cur.elapsed/60)}</div><div class="row"><button class="btn" onclick="save(true);closeModal();quit()">Sí, la terminé</button><button class="btn gray" onclick="closeModal();quit()">No guardar</button></div>`)}
   else quit()}
 function quit(){$('run').classList.remove('on');release();clearRun()}
 /* ---- Guardar estado en curso (por si se cierra la app) ---- */
-function saveRun(){if(!$('run').classList.contains('on'))return;try{localStorage.setItem('run',JSON.stringify({queue,idx,inBreak,cur,total,remain,running,at:Date.now()}))}catch(e){}}
+function saveRun(){if(!$('run').classList.contains('on'))return;try{localStorage.setItem('run',JSON.stringify({queue,idx,inBreak,inMini,miniSaved,cur,total,remain,running,at:Date.now()}))}catch(e){}}
 function clearRun(){try{localStorage.removeItem('run')}catch(e){}}
 function checkRun(){
   const r=load('run',null);if(!r||!r.queue||Date.now()-r.at>24*3600e3){clearRun();return}
-  const nm=r.inBreak?'Descanso':(r.cur&&r.cur.n);
+  const nm=r.inBreak?'Descanso':r.inMini?'Mini descanso · '+(r.cur&&r.cur.n):(r.cur&&r.cur.n);
   modal(`<h1>Tienes algo en curso</h1><div class="muted">${esc(nm||'')} — la app se cerró mientras corría.</div>
   <div class="row"><button class="btn gray" onclick="closeModal();clearRun()">Descartar</button><button class="btn" onclick="closeModal();restoreRun()">▶ Continuar</button></div>`);
 }
 function restoreRun(){
   const r=load('run',null);if(!r)return;
   queue=r.queue;idx=r.idx;inBreak=!!r.inBreak;cur=r.cur;total=r.total;remain=r.remain;
-  const gone=r.running?(Date.now()-r.at)/1000:0;remain-=gone;if(cur&&!inBreak)cur.elapsed+=gone;
+  const gone=r.running?(Date.now()-r.at)/1000:0;
+  if(r.inMini&&r.miniSaved){miniSaved=r.miniSaved;const left=remain-gone;
+    if(left>0){$('run').classList.remove('brk');begin(miniSaved.total,miniSaved.remain);running=false;clearInterval(timer);startMiniAt(left);return}
+    const over=-left;total=miniSaved.total;remain=miniSaved.remain-over;cur.elapsed+=over;miniSaved=null;inMini=false;inBreak=false;
+    $('run').classList.remove('brk');if(remain<=0){begin(total,0);running=false;clearInterval(timer);remain=0;draw();saveRun();ask();return}begin(total,remain);return}
+  remain-=gone;if(cur&&!inBreak)cur.elapsed+=gone;
   if(inBreak){if(remain<=0)return go(idx+1);startBreakAt(total,remain);return}
   $('run').classList.remove('brk');
   if(remain<=0){begin(total,0);running=false;clearInterval(timer);remain=0;draw();saveRun();ask();return}
   begin(total,remain);if(!r.running)pause();
 }
+/* ---- Mini descanso de 5 min ---- */
+function miniLeft(){if(!cur||inBreak||inMini)return 0;const allot=cur.plan+(cur.ext||[]).reduce((a,x)=>a+x.min,0);return Math.floor(allot/60)-(cur.mb||0)}
+function miniBtnUpd(){const b=$('miniBtn');if(!b)return;const n=miniLeft();
+  if(n>0&&remain>0){b.style.display='inline-block';b.textContent=`☕ Mini descanso 5 min${n>1?` (${n} disponibles)`:''}`}else b.style.display='none'}
+function startMini(){if(miniLeft()<=0)return;cur.mb=(cur.mb||0)+1;miniSaved={total,remain,warned};startMiniAt(300)}
+function startMiniAt(rem){inMini=true;stopAlarm();total=300;remain=rem;
+  const el=$('run');el.classList.add('on','brk');$('clock').textContent='';$('label').textContent='Mini descanso';
+  $('sub').textContent=`Luego sigues con: ${cur.n} (te quedan ${fmtMin(miniSaved.remain/60)})`;$('miniBtn').style.display='none';
+  running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();saveRun()}
+function endMini(sound,silent){if(!inMini)return;inMini=false;const m=miniSaved;miniSaved=null;$('run').classList.remove('brk');
+  clearInterval(timer);if(sound){beep();say('Se acabó el mini descanso')}
+  if(silent){total=m.total;remain=m.remain;warned=m.warned;return}
+  begin(m.total,m.remain);warned=m.warned;}
 function startBreakAt(t,rem){inBreak=true;stopAlarm();total=t;remain=rem;const el=$('run');el.classList.add('on','brk');$('clock').textContent='';$('label').textContent='Descanso';brkSub();
   running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();saveRun()}
 
@@ -619,7 +639,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=22;
+const APP_VER=23;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
