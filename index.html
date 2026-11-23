@@ -64,6 +64,12 @@ nav button.on{color:#0a84ff}
   #label{font-size:7vw;margin-top:2vh}
   #sub{font-size:4vw}
 }
+.daynav{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.daynav button{background:#1c1c1e;border:none;color:#fff;font-size:22px;border-radius:10px;width:48px;height:44px}
+.daynav label{flex:1;position:relative;background:#1c1c1e;border-radius:10px;height:44px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#ddd;text-transform:capitalize}
+.daynav input{position:absolute;inset:0;opacity:0;width:100%;height:100%}
+.copyrow{display:flex;gap:8px;margin-top:8px}
+.copyrow button{flex:1;background:none;border:1px solid #333;color:#aaa;border-radius:10px;padding:10px;font-size:14px}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -99,7 +105,7 @@ nav button.on{color:#0a84ff}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v15</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v16</span></h2>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
     <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
@@ -115,8 +121,9 @@ nav button.on{color:#0a84ff}
 </section>
 
 <section id="s1">
-  <h2>Plan de hoy</h2>
+  <h2 id="planTitle">Plan de hoy</h2>
   <div class="sync" id="syncBar1"></div>
+  <div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
   <div class="row">
     <input class="name" id="aName" placeholder="Actividad" list="known">
     <input class="min" id="aMin" type="number" inputmode="numeric" placeholder="min" value="25">
@@ -127,6 +134,7 @@ nav button.on{color:#0a84ff}
   <ul id="list"></ul>
   <div class="muted" id="total"></div>
   <button class="btn big" onclick="startList()">▶ Empezar</button>
+  <div id="copyBox"></div>
 </section>
 
 <section id="s2">
@@ -153,7 +161,7 @@ nav button.on{color:#0a84ff}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v15</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v16</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -178,11 +186,23 @@ nav button.on{color:#0a84ff}
 <script>
 const $=id=>document.getElementById(id);
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
-const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='acts'||k==='log')queueSync()};
-let acts=load('acts',[]), log=load('log',[]);
+const store=(k,v)=>{if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
+let log=load('log',[]),plans={},acts=[],planDay='';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
 const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+function initPlans(){
+  plans=load('plans',null);
+  if(!plans||typeof plans!=='object'){plans={};const old=load('acts',[]);if(old.length)plans[dkey(new Date())]=old}
+  setPlanDay(dkey(new Date()));
+}
+function cleanPlans(){Object.keys(plans).forEach(k=>{if(!plans[k]||!plans[k].length)delete plans[k]})}
+function setPlanDay(k){planDay=k;acts=plans[k]?plans[k]:[]}
+function shiftDay(k,n){const [y,m,d]=k.split('-').map(Number);return dkey(new Date(y,m-1,d+n))}
+function dayName(k){const t=dkey(new Date());if(k===t)return'hoy';if(k===shiftDay(t,1))return'mañana';if(k===shiftDay(t,2))return'pasado mañana';if(k===shiftDay(t,-1))return'ayer';
+  const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})}
+function moveDay(n){setPlanDay(shiftDay(planDay,n));render()}
+function pickDay(v){if(v){setPlanDay(v);render()}}
 const fmtMin=m=>{m=Math.round(m);return m>=60?Math.floor(m/60)+'h '+(m%60)+'min':m+' min'};
 
 function tab(i){[0,1,2].forEach(k=>{$('s'+k).classList.toggle('on',k===i);$('n'+k).classList.toggle('on',k===i)});if(i===2)renderLog();if(i===1)render()}
@@ -194,6 +214,11 @@ function prev(){const m=parseFloat($('tMin').value)||0;$('tPrev').textContent=pa
 /* ---- Plan ---- */
 function render(){
   $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}"><span class="grip">☰</span><span class="n">${esc(a.n)}</span><span class="t" onclick="editT(${i},this)">${a.m} min ✎</span><button onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
+  const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
+  $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
+  $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+  $('planPick').value=planDay;
+  $('copyBox').innerHTML=acts.length?`<div class="copyrow"><button onclick="copyPlan(1)">Copiar al día siguiente</button><button onclick="clearPlan()">Vaciar este día</button></div>`:'';
   const t=acts.reduce((s,a)=>s+a.m,0);
   $('total').textContent=acts.length?'Total planeado: '+fmtMin(t):'';
   const names=[...new Set(log.map(e=>e.n))];
@@ -205,6 +230,9 @@ $('aName').addEventListener('input',()=>{
   else $('hint').textContent='';
 });
 function add(){const n=$('aName').value.trim(),m=parseFloat($('aMin').value);if(!n||!(m>0))return;acts.push({n,m});$('aName').value='';$('hint').textContent='';store('acts',acts);render()}
+function copyPlan(n){const k=shiftDay(planDay,n);plans[k]=(plans[k]||[]).concat(acts.map(a=>({...a})));store('plans',plans);
+  modal(`<h1>Copiado ✅</h1><div class="muted">Se agregaron ${acts.length} actividades al plan de ${dayName(k)}.</div><div class="row"><button class="btn gray" onclick="closeModal()">Quedarme aquí</button><button class="btn" onclick="closeModal();setPlanDay('${k}');render()">Ir a ${dayName(k)}</button></div>`)}
+function clearPlan(){modal(`<h1>¿Vaciar el plan?</h1><div class="muted">Se borran las actividades del plan de ${dayName(planDay)}. Tu registro no se toca.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();acts=[];store('acts',acts);render()">Vaciar</button></div>`)}
 function del(i){acts.splice(i,1);store('acts',acts);render()}
 function editT(i,el){
   el.outerHTML=`<input class="min" id="ed" type="number" inputmode="decimal" value="${acts[i].m}">`;
@@ -403,7 +431,7 @@ function renderAct(){
 }
 
 function exportData(){
-  const data=JSON.stringify({app:'temporizador',v:1,acts,log});
+  const data=JSON.stringify({app:'temporizador',v:2,plans,log});
   const blob=new Blob([data],{type:'application/json'}),name='temporizador-'+dkey(new Date())+'.json';
   try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f]}).catch(()=>{});return}}catch(e){}
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
@@ -412,8 +440,8 @@ function importData(inp){
   const f=inp.files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.log))throw 0;
     const seen=new Set(log.map(e=>e.d+e.h+e.n));let n=0;d.log.forEach(e=>{if(!seen.has(e.d+e.h+e.n)){log.push(e);n++}});
-    if(Array.isArray(d.acts)&&d.acts.length)acts=d.acts;
-    store('log',log);store('acts',acts);render();renderLog();renderAct();
+    if(d.plans&&typeof d.plans==='object')Object.keys(d.plans).forEach(k=>{if(d.plans[k]&&d.plans[k].length)plans[k]=d.plans[k]});else if(Array.isArray(d.acts)&&d.acts.length)plans[dkey(new Date())]=d.acts;
+    setPlanDay(planDay);store('log',log);store('plans',plans);render();renderLog();renderAct();
     modal(`<h1>Importado ✅</h1><div class="muted">${n} registros nuevos y tu plan del día.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
   catch(e){modal(`<h1>Archivo no válido</h1><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}inp.value=''};
   r.readAsText(f);
@@ -434,8 +462,11 @@ function drawSync(){
   ['syncBar1','syncBar2'].forEach(id=>{const el=$(id);if(el)el.innerHTML=h});
 }
 function queueSync(){if(!user||applying)return;setSync('busy');clearTimeout(syncT);syncT=setTimeout(pushSync,800)}
-function pushSync(){if(!user)return;fbDb.collection('users').doc(user.uid).set({acts,log,updated:Date.now()}).then(()=>setSync('ok')).catch(e=>{console.error(e);setSync('err')})}
-function applyRemote(d){applying=true;acts=d.acts||[];log=d.log||[];try{localStorage.setItem('acts',JSON.stringify(acts));localStorage.setItem('log',JSON.stringify(log))}catch(e){}applying=false;
+function pushSync(){if(!user)return;fbDb.collection('users').doc(user.uid).set({plans,log,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>setSync('ok')).catch(e=>{console.error(e);setSync('err')})}
+function applyRemote(d){applying=true;
+  if(d.plans&&typeof d.plans==='object')plans=d.plans;else if(Array.isArray(d.acts)){plans={...plans};if(d.acts.length)plans[dkey(new Date())]=d.acts}
+  log=d.log||[];setPlanDay(planDay);
+  try{localStorage.setItem('plans',JSON.stringify(plans));localStorage.setItem('log',JSON.stringify(log))}catch(e){}applying=false;
   render();if($('s2').classList.contains('on')){renderLog();renderAct()}}
 async function onLogin(u){
   user=u;if(unsub){unsub();unsub=null}
@@ -444,10 +475,12 @@ async function onLogin(u){
   try{
     const ref=fbDb.collection('users').doc(u.uid),snap=await ref.get();
     if(snap.exists){const d=snap.data();
-      const merged={acts:(d.acts&&d.acts.length)?d.acts:acts,log:mergeLogs(d.log||[],log)};
-      applyRemote(merged);
-      if(merged.log.length!==(d.log||[]).length||!(d.acts&&d.acts.length))await ref.set({...merged,updated:Date.now()});
-    }else await ref.set({acts,log,updated:Date.now()});
+      const rp=(d.plans&&typeof d.plans==='object')?{...d.plans}:{};
+      if(!d.plans&&d.acts&&d.acts.length)rp[dkey(new Date())]=d.acts;
+      Object.keys(plans).forEach(k=>{if(!(rp[k]&&rp[k].length))rp[k]=plans[k]});
+      applyRemote({plans:rp,log:mergeLogs(d.log||[],log)});
+      await ref.set({plans,log,acts:plans[dkey(new Date())]||[],updated:Date.now()});
+    }else await ref.set({plans,log,acts:plans[dkey(new Date())]||[],updated:Date.now()});
     setSync('ok');
     unsub=ref.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;applyRemote(s.data());setSync('ok')},e=>{console.error(e);setSync('err')});
   }catch(e){console.error(e);setSync('err')}
@@ -461,7 +494,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-render();prev();
+initPlans();render();prev();
 </script>
 </body>
 </html>
