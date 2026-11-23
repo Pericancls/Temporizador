@@ -114,6 +114,12 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 .tedit{display:flex;align-items:center;gap:4px}.tedit input{background:#1c1c1e;border:1px solid #333;color:#fff;border-radius:8px;padding:6px;font-size:15px;width:110px}
 .tedit button{background:none;border:none;color:#888;font-size:16px}
 .calbtn{width:100%;background:#1a2f4d;color:#64a8ff;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:600;margin:4px 0 4px}
+.entry{cursor:pointer}
+.note .nh{display:flex;justify-content:space-between;align-items:center;color:#888;font-size:12px;margin-bottom:3px}
+.note .nh button{background:none;border:none;color:#666;font-size:14px;padding:0 2px}
+.note.post{background:#1a2f4d;color:#cfe3ff}
+.detail{text-align:left}.detail h1{text-align:left}.detail h3{font-size:16px;margin:16px 0 6px;color:#ddd}
+#mCard{max-height:88vh;overflow:auto}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -149,7 +155,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v30</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v31</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -163,7 +169,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v30)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v31)</button>
 </section>
 
 <section id="s1">
@@ -212,7 +218,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v30</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v31</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -639,9 +645,10 @@ function renderLog(){
 function entry(e){
   const diff=e.real-e.plan;
   const ext=e.ext&&e.ext.length?`<div class="meta">Extensiones: ${e.ext.map(x=>`+${x.min} min${x.pct!=null?` (faltaba ${x.pct}%)`:''}`).join(', ')}</div>`+e.ext.filter(x=>x.note).map(x=>`<div class="note">📝 ${esc(x.note).replace(/\n/g,'<br>')}</div>`).join(''):'';
-  return`<div class="entry"><div class="top"><b>${esc(e.n)}</b><span class="muted">${e.manual?'✍︎ ':''}${e.h}</span></div>
-  <div class="meta">Planeado ${fmtMin(e.plan)} · Real <span class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</span> (${diff>=0?'+':''}${Math.round(diff)} min)${e.ok?'':' · <span class="over">sin terminar</span>'}</div>${ext}
-  <div style="text-align:right"><button onclick="rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></div></div>`;
+  const pn=(e.post||[]).length;
+  return`<div class="entry" onclick="openEntry(${e.i})"><div class="top"><b>${esc(e.n)}</b><span class="muted">${e.manual?'✍︎ ':''}${e.h}</span></div>
+  <div class="meta">Planeado ${fmtMin(e.plan)} · Real <span class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</span> (${diff>=0?'+':''}${Math.round(diff)} min)${e.ok?'':' · <span class="over">sin terminar</span>'}</div>${ext}${pn?`<div class="note post">🗒️ ${pn} nota${pn>1?'s':''} después</div>`:''}
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span class="muted" style="font-size:12px">Toca para ver y agregar notas</span><button onclick="event.stopPropagation();rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></div></div>`;
 }
 function manualForm(){
   const now=new Date(),hh=selDay===dkey(now)?pad(now.getHours())+':'+pad(now.getMinutes()):'12:00';
@@ -662,7 +669,23 @@ function saveManual(){
   log.push({d:selDay,h,n,plan:pl>0?pl:r,real:r,ext:[],ok:$('mOk').checked,manual:true});
   store('log',log);closeModal();renderLog();
 }
-function rm(i){if(confirmDel(i)){log.splice(i,1);store('log',log);renderLog();renderAct()}}
+function openEntry(i){const e=log[i];if(!e)return;
+  const [y,m,d]=e.d.split('-').map(Number),fecha=new Date(y,m-1,d).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+  const dur=(e.ext||[]).filter(x=>x.note),post=e.post||[];
+  const f=ts=>{const x=new Date(ts);return x.toLocaleDateString('es-MX',{day:'numeric',month:'short'})+' '+pad(x.getHours())+':'+pad(x.getMinutes())};
+  modal(`<div class="detail"><h1 style="font-size:24px">${esc(e.n)}</h1><div class="muted" style="text-transform:capitalize">${fecha} · ${e.h}</div>
+  <div class="meta" style="margin-top:6px">Planeado ${fmtMin(e.plan)} · Real ${fmtMin(e.real)}${e.ext&&e.ext.length?` · ${e.ext.length} extensión${e.ext.length>1?'es':''}`:''}</div>
+  <h3>📝 Notas durante la actividad</h3>
+  ${dur.length?dur.map(x=>`<div class="note"><div class="nh">Al pedir +${x.min} min${x.pct!=null?` · faltaba ${x.pct}%`:''}</div>${esc(x.note).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="muted" style="font-size:14px">Sin notas</div>'}
+  <h3>🗒️ Notas después</h3>
+  ${post.length?post.map((x,k)=>`<div class="note post"><div class="nh">${f(x.ts)}<button onclick="delPost(${i},${k})">✕</button></div>${esc(x.txt).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="muted" style="font-size:14px">Aún no hay notas</div>'}
+  <textarea id="pNote" rows="3" placeholder="Agrega una nota o aprendizaje…" style="margin-top:10px"></textarea>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="addPost(${i})">＋ Agregar nota</button></div></div>`);
+}
+function addPost(i){const t=$('pNote').value.trim();if(!t){$('pNote').style.borderColor='#ff3b30';return}
+  const e=log[i];e.post=(e.post||[]).concat({ts:Date.now(),txt:t});store('log',log);renderLog();openEntry(i)}
+function delPost(i,k){const e=log[i];if(!e||!e.post)return;e.post.splice(k,1);if(!e.post.length)delete e.post;store('log',log);renderLog();openEntry(i)}
+function rm(i){const e=log[i];if(!e)return;modal(`<h1>¿Borrar registro?</h1><div class="muted">${esc(e.n)} · ${e.h}. También se borran sus notas.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();log.splice(${i},1);store('log',log);renderLog();renderAct()">Borrar</button></div>`)}
 function confirmDel(){return true}
 function stats(){const s={};log.filter(e=>e.ok).forEach(e=>{const k=e.n.toLowerCase();s[k]=s[k]||{n:e.n,c:0,sum:0,plan:0,min:1e9,max:0};const o=s[k];o.c++;o.sum+=e.real;o.plan+=e.plan;o.min=Math.min(o.min,e.real);o.max=Math.max(o.max,e.real)});
   Object.values(s).forEach(o=>{o.avg=o.sum/o.c;o.pavg=o.plan/o.c});return s}
@@ -737,7 +760,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=30;
+const APP_VER=31;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
