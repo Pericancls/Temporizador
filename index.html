@@ -102,6 +102,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 .note{background:#2c2c2e;border-radius:8px;padding:8px 10px;margin-top:6px;font-size:14px;color:#ddd;line-height:1.35}
 .sug{background:#0f2a17;border:1px solid #1f5c33;border-radius:10px;padding:10px 12px;margin-top:8px;text-align:left;color:#34c759;font-size:15px;line-height:1.35}
 .sug span{color:#aaa;font-size:13px}.sug button{background:#34c759;color:#000;border:none;border-radius:8px;padding:4px 10px;font-weight:700;margin-left:4px}
+.otv{color:#ff453a;font-weight:700;font-size:17px;margin-top:8px}.otv:empty{display:none}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -137,7 +138,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v27</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v28</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -151,7 +152,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v27)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v28)</button>
 </section>
 
 <section id="s1">
@@ -198,7 +199,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v27</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v28</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -307,7 +308,7 @@ function mv(i,d){const j=i+d;if(j<0)return;[acts[i],acts[j]]=[acts[j],acts[i]];s
 $('aName').addEventListener('keydown',e=>{if(e.key==='Enter')add()});
 
 /* ---- Corredor ---- */
-let inMini=false,miniSaved=null,inBreak=false,brk=(()=>{const v=load('brk',10);return v>=0?v:10})(),warned=false,queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
+let inOver=false,overStart=0,inMini=false,miniSaved=null,inBreak=false,brk=(()=>{const v=load('brk',10);return v>=0?v:10})(),warned=false,queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
 function setBrk(v){v=parseFloat(v);brk=v>=0?v:10;$('brkMin').value=brk;store('brk',brk)}
 function startList(){if(!acts.length)return;const pend=acts.filter(a=>!a.done);
   if(!pend.length){modal(`<h1>¡Todo hecho! 🎉</h1><div class="muted">Ya terminaste todas las actividades de este plan.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
@@ -318,7 +319,7 @@ function go(i){
   idx=i;const a=queue[i];
   const pr=a.prog;
   cur={n:a.n,plan:a.m,start:pr?pr.st:Date.now(),elapsed:pr?pr.el:0,ext:pr?(pr.ext||[]):[],mb:pr?(pr.mb||0):0,id:a.id};
-  if(pr){clearProg(a.id);delete a.prog;if(pr.rem<=0){begin(pr.tot,0);running=false;clearInterval(timer);remain=0;draw();saveRun();startAlarm();ask();return}begin(pr.tot,pr.rem);return}
+  if(pr){clearProg(a.id);delete a.prog;begin(pr.tot,pr.rem);return}
   begin(a.m*60);
 }
 function findItem(id){let r=null;Object.values(plans).forEach(l=>l.forEach(a=>{if(a.id===id)r=a}));return r}
@@ -333,10 +334,17 @@ function pauseExit(){
 function resumeItem(i){const a=acts[i];if(!a||a.done)return;unlockAudio();
   queue=[a].concat(acts.filter(x=>!x.done&&x!==a)).map(x=>({...x}));go(0)}
 function begin(secs,rem){
-  total=secs;remain=rem!=null?rem:secs;warned=false;stopAlarm();
+  inOver=false;total=secs;remain=rem!=null?rem:secs;warned=false;stopAlarm();
   $('run').classList.add('on');$('clock').textContent='';requestAnimationFrame(fit);$('label').textContent=cur.n;subText();
-  running=true;last=Date.now();setPP(true);draw();clearInterval(timer);timer=setInterval(tick,200);lock();saveRun();
+  running=true;last=Date.now();setPP(true);clearInterval(timer);timer=setInterval(tick,200);lock();
+  if(remain<=0){timeUp(-remain);return}
+  draw();saveRun();
 }
+function timeUp(ov){inOver=true;overStart=Date.now()-ov*1000;remain=0;running=true;drawOver();saveRun();startAlarm();ask()}
+function overSecs(){return Math.max(0,(Date.now()-overStart)/1000)}
+function drawOver(){const s=Math.floor(overSecs()),txt='+'+pad(Math.floor(s/60))+':'+pad(s%60);const c=$('clock');
+  if(c.textContent!==txt){const L=c.textContent.length;c.textContent=txt;if(L!==txt.length)fit()}c.style.color='rgb(255,59,48)';c.style.opacity=1;
+  const o=$('otv');if(o)o.textContent=`⏱ Llevas ${txt.slice(1)} de más`}
 function subText(){
   let s=queue.length>1?`${idx+1} de ${queue.length}`+(queue[idx+1]?` · Sigue: ${queue[idx+1].n}`:''):'';
   if(cur.ext.length)s=(s?s+' · ':'')+`Tiempo extra #${cur.ext.length}`;
@@ -344,12 +352,13 @@ function subText(){
 }
 let lastSave=0;
 function tick(){
+  if(inOver){drawOver();const n=Date.now();if(n-lastSave>2000){lastSave=n;saveRun()}return}
   if(!running)return;const now=Date.now(),dt=(now-last)/1000;last=now;if(now-lastSave>2000){lastSave=now;saveRun()}
   remain-=dt;if(inMini){if(remain<=0){remain=0;draw();endMini(true)}else draw();return}
   if(inBreak){if(remain<=0){remain=0;draw();endBreak(true)}else draw();return}
   cur.elapsed+=dt;
   if(!warned&&total>1800&&remain<=900&&remain>0){warned=true;say('Te faltan 15 minutos')}
-  if(remain<=0){remain=0;draw();running=false;clearInterval(timer);saveRun();startAlarm();ask();return}
+  if(remain<=0){cur.elapsed+=remain;timeUp(-remain);return}
   draw();
 }
 function draw(){const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
@@ -371,26 +380,27 @@ function restart(){remain=total;last=Date.now();draw()}
 
 /* Misión cumplida */
 function ask(){
-  modal(`<h1>¿Misión cumplida?</h1><div class="muted">${esc(cur.n)}</div>
+  modal(`<h1>¿Misión cumplida?</h1><div class="muted">${esc(cur.n)}</div><div id="otv" class="otv"></div>
   <div class="row"><button class="btn" style="background:#34c759" onclick="yes()">Sí ✅</button><button class="btn red" onclick="no()">No</button></div>`);
 }
 function no(){stopAlarm();
-  modal(`<h1>¿Qué faltó?</h1><div class="muted">${esc(cur.n)}</div>
+  modal(`<h1>¿Qué faltó?</h1><div class="muted">${esc(cur.n)}</div><div id="otv" class="otv"></div>
   <label>¿Cuánto te faltó? (%)</label><input id="pct" type="number" inputmode="numeric" placeholder="ej. 30">
   <label>¿Cuánto tiempo extra necesitas? (min)</label><input id="xmin" type="number" inputmode="numeric" placeholder="ej. 10">
   <label>Notas</label><textarea id="xnote" rows="3" placeholder="Qué faltó, qué aprendiste…"></textarea>
   <div class="row"><button class="btn gray" onclick="ask()">Atrás</button><button class="btn" onclick="extend()">Continuar ▶</button></div>`);
   let typed=false;$('xmin').addEventListener('input',()=>typed=true);
   $('pct').addEventListener('input',()=>{const v=sugExtra(parseFloat($('pct').value));if(v!=null&&!typed)$('xmin').value=v});
-  setTimeout(()=>$('pct').focus(),50);
+  setTimeout(()=>{const e=$('pct');if(e)e.focus()},50);
 }
-function sugExtra(p){if(!(p>0&&p<100)||!(cur.elapsed>0))return null;const m=cur.elapsed/60*p/(100-p);return Math.max(1,Math.round(m/5)*5||Math.ceil(m))}
+function sugExtra(p){const el=cur.elapsed;if(!(p>0&&p<100)||!(el>0))return null;const m=el/60*p/(100-p)-(inOver?overSecs()/60:0);if(m<=0)return 5;return Math.max(1,Math.round(m/5)*5||Math.ceil(m))}
 function extend(){
   const p=parseFloat($('pct').value),x=parseFloat($('xmin').value);
   if(!(x>0)){$('xmin').style.borderColor='#ff3b30';return}
-  const nt=$('xnote').value.trim();cur.ext.push({pct:isNaN(p)?null:p,min:x,...(nt?{note:nt}:{})});closeModal();begin(x*60);
+  const nt=$('xnote').value.trim();const ov=inOver?overSecs():0;if(inOver){cur.elapsed+=Math.min(ov,x*60);inOver=false}
+  cur.ext.push({pct:isNaN(p)?null:p,min:x,...(nt?{note:nt}:{})});closeModal();begin(x*60,x*60-ov);
 }
-function yes(){closeModal();save(true);advance()}
+function yes(){inOver=false;running=false;clearInterval(timer);closeModal();save(true);advance()}
 function finish(){if(inMini)return endMini(false);if(inBreak)return endBreak(false);running=false;clearInterval(timer);save(true);beep(true);advance()}
 function skip(){running=false;clearInterval(timer);if(cur.elapsed>=60)save(false);advance()}
 function advance(){if(idx+1<queue.length){if(brk>0)startBreak();else go(idx+1)}else{done()}}
@@ -429,7 +439,7 @@ function stop(){if(inMini)endMini(false,true);running=false;clearInterval(timer)
   else quit()}
 function quit(){$('run').classList.remove('on');release();clearRun()}
 /* ---- Guardar estado en curso (por si se cierra la app) ---- */
-function saveRun(){if(!$('run').classList.contains('on'))return;try{localStorage.setItem('run',JSON.stringify({queue,idx,inBreak,inMini,miniSaved,cur,total,remain,running,at:Date.now()}))}catch(e){}}
+function saveRun(){if(!$('run').classList.contains('on'))return;try{localStorage.setItem('run',JSON.stringify({queue,idx,inBreak,inMini,miniSaved,inOver,overStart,cur,total,remain,running,at:Date.now()}))}catch(e){}}
 function clearRun(){try{localStorage.removeItem('run')}catch(e){}}
 function checkRun(){if($('run').classList.contains('on'))return;
   const r=load('run',null);if(!r||!r.queue||Date.now()-r.at>24*3600e3){clearRun();return}
@@ -441,14 +451,15 @@ function restoreRun(){
   const r=load('run',null);if(!r)return;
   queue=r.queue;idx=r.idx;inBreak=!!r.inBreak;cur=r.cur;total=r.total;remain=r.remain;
   const gone=r.running?(Date.now()-r.at)/1000:0;
+  if(r.inOver&&r.overStart){$('run').classList.remove('brk');inBreak=false;begin(total,-(Date.now()-r.overStart)/1000);return}
   if(r.inMini&&r.miniSaved){miniSaved=r.miniSaved;const left=remain-gone;
     if(left>0){$('run').classList.remove('brk');begin(miniSaved.total,miniSaved.remain);running=false;clearInterval(timer);startMiniAt(left);return}
     const over=-left;total=miniSaved.total;remain=miniSaved.remain-over;cur.elapsed+=over;miniSaved=null;inMini=false;inBreak=false;
-    $('run').classList.remove('brk');if(remain<=0){begin(total,0);running=false;clearInterval(timer);remain=0;draw();saveRun();ask();return}begin(total,remain);return}
+    $('run').classList.remove('brk');if(remain<=0)cur.elapsed+=remain;begin(total,remain);return}
   remain-=gone;if(cur&&!inBreak)cur.elapsed+=gone;
   if(inBreak){if(remain<=0)return go(idx+1);startBreakAt(total,remain);return}
   $('run').classList.remove('brk');
-  if(remain<=0){begin(total,0);running=false;clearInterval(timer);remain=0;draw();saveRun();ask();return}
+  if(remain<=0){cur.elapsed+=remain;begin(total,remain);return}
   begin(total,remain);if(!r.running)pause();
 }
 /* ---- Mini descanso de 5 min ---- */
@@ -512,7 +523,7 @@ function recover(cont){
   queue=k>=0?acts.slice(k).filter(a=>!a.done).map(a=>({...a})):[{n:c.n,m:c.P}];idx=0;queue[0]={n:c.n,m:c.P,id:cur.id};
   inBreak=false;$('run').classList.remove('brk');
   const seg=(c.X>0?c.X:c.P)*60;
-  if(c.left<=0){begin(seg,0);running=false;clearInterval(timer);remain=0;draw();saveRun();ask()}else begin(seg,c.left);
+  if(c.left<=0)cur.elapsed+=c.left;begin(seg,c.left);
 }
 function modal(h){$('mCard').innerHTML=h;$('modal').classList.add('on')}
 function closeModal(){stopAlarm();$('modal').classList.remove('on')}
@@ -666,7 +677,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=27;
+const APP_VER=28;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
