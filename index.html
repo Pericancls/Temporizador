@@ -82,6 +82,10 @@ nav button.on{color:#0a84ff}
 #run.brk #sub{color:rgba(255,255,255,.85);font-size:min(4.5vw,4.5vh)}
 #run.brk .side svg{fill:#fff}#run.brk .side button{color:#fff}
 #run.brk #ver{color:rgba(255,255,255,.4)!important}
+.chg{background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:16px;padding:6px 14px;margin-left:8px;font-size:inherit;font-weight:600}
+.picklist{display:flex;flex-direction:column;gap:8px;margin-top:14px;max-height:50vh;overflow:auto}
+.picklist button{display:flex;justify-content:space-between;gap:10px;background:#2c2c2e;border:2px solid transparent;color:#fff;border-radius:12px;padding:14px;font-size:17px;text-align:left}
+.picklist button.on{border-color:#34c759}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -117,7 +121,7 @@ nav button.on{color:#0a84ff}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v17</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v18</span></h2>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
     <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
@@ -174,7 +178,7 @@ nav button.on{color:#0a84ff}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v17</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v18</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -348,9 +352,17 @@ function advance(){if(idx+1<queue.length){if(brk>0)startBreak();else go(idx+1)}e
 function startBreak(){
   inBreak=true;cur=null;stopAlarm();total=brk*60;remain=total;
   const r=$('run');r.classList.add('on','brk');$('clock').textContent='';
-  $('label').textContent='Descanso';$('sub').textContent=`Sigue: ${queue[idx+1].n} (${queue[idx+1].m} min)`;
+  $('label').textContent='Descanso';brkSub();
   running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();
 }
+function brkSub(){const nx=queue[idx+1];
+  $('sub').innerHTML=`Sigue: <b>${esc(nx.n)}</b> (${nx.m} min)`+(queue.length-idx-1>1?` <button class="chg" onclick="pickNext()">Cambiar ▾</button>`:'');}
+function pickNext(){
+  const rest=queue.slice(idx+1);
+  modal(`<h1>¿Qué sigue?</h1><div class="muted">Elige la siguiente actividad</div><div class="picklist">${rest.map((a,k)=>`<button class="${k?'':'on'}" onclick="setNext(${idx+1+k})"><span>${esc(a.n)}</span><span class="muted">${a.m} min</span></button>`).join('')}</div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`);
+}
+function setNext(j){const [a]=queue.splice(j,1);queue.splice(idx+1,0,a);closeModal();brkSub()}
 function endBreak(sound){running=false;clearInterval(timer);if(sound){beep();say('Se acabó el descanso')}go(idx+1)}
 function done(){
   $('run').classList.remove('on');release();
