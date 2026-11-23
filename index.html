@@ -92,6 +92,8 @@ li.done{opacity:.6}
 li.done .n{text-decoration:line-through;color:#999}
 li.done .t{background:none;color:#888}
 li.done .chk{background:#34c759!important;border-color:#34c759!important}
+.upd{display:flex;align-items:center;gap:10px;background:#0a84ff;color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:15px}
+.upd span{flex:1}.upd button{background:#fff;color:#0a84ff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;font-size:14px}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -127,7 +129,8 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v20</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v21</span></h2>
+  <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
     <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
@@ -140,6 +143,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v21)</button>
 </section>
 
 <section id="s1">
@@ -186,7 +190,7 @@ li.done .chk{background:#34c759!important;border-color:#34c759!important}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v20</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v21</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
@@ -606,7 +610,23 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-initPlans();render();prev();setTimeout(checkRun,300);
+const APP_VER=21;
+async function latestVer(){
+  const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
+  const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
+}
+function doUpdate(v){if($('run').classList.contains('on'))saveRun();location.replace(location.pathname+'?v='+v+'&t='+Date.now())}
+async function checkUpdate(manual){
+  const b=$('updBtn');if(manual)b.textContent='⟳ Buscando…';
+  try{const v=await latestVer();
+    if(v>APP_VER){$('updBox').innerHTML=`<div class="upd"><span>Hay una versión nueva: <b>v${v}</b></span><button onclick="doUpdate(${v})">Actualizar</button></div>`;
+      if(manual)doUpdate(v);else b.textContent=`⟳ Actualizar a la v${v}`;}
+    else{$('updBox').innerHTML='';if(manual){b.textContent='✓ Ya tienes la versión más nueva (v'+APP_VER+')';setTimeout(()=>b.textContent='⟳ Buscar actualización (tienes la v'+APP_VER+')',3000)}}
+  }catch(e){if(manual){b.textContent='Sin conexión, intenta de nuevo';setTimeout(()=>b.textContent='⟳ Buscar actualización (tienes la v'+APP_VER+')',3000)}}
+}
+if(/[?&](v|t)=/.test(location.search))history.replaceState(null,'',location.pathname);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate(false)});
+initPlans();render();prev();setTimeout(checkRun,300);setTimeout(()=>checkUpdate(false),1500);
 </script>
 </body>
 </html>
