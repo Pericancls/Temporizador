@@ -156,6 +156,8 @@ li .t.tprog{background:#3a2606!important;color:#ff9f0a!important;display:flex;fl
 body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 .side .minbtn{color:#fff;font-size:min(8vw,34px);font-weight:800;flex-direction:column;line-height:.9;border:2px solid #fff;border-radius:16px;padding:6px 10px}
 .side .minbtn small{font-size:min(3vw,12px);font-weight:600;margin-top:2px}
+.nowbtn{width:100%;margin-top:8px;background:#3a2606;color:#ff9f0a;border:1px solid #6b4508;border-radius:10px;padding:10px;font-size:15px;font-weight:600}
+.nowbtn.on{background:#ff9f0a;color:#000}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -191,7 +193,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v40</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v41</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -205,7 +207,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v40)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v41)</button>
 </section>
 
 <section id="s1">
@@ -256,7 +258,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v40</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v41</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -747,14 +749,35 @@ function manualForm(){
   <label>Hora de inicio</label><input id="mH" type="time" value="${hh}">
   <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Tiempo estimado (min)</label><input id="mP" type="number" inputmode="numeric" placeholder="ej. 30"></div>
   <div style="flex:1"><label>Tiempo real (min)</label><input id="mR" type="number" inputmode="numeric" placeholder="ej. 45"></div></div>
+  <button id="mNow" class="nowbtn" style="display:none" onclick="mSetNow()"></button>
   <label style="display:flex;align-items:center;gap:10px;color:#fff"><input id="mOk" type="checkbox" checked style="width:22px;height:22px"> La terminé</label>
+  <div id="mHint" class="muted" style="font-size:13px;display:none">Si no la terminaste, se agrega a tu plan de hoy para continuarla.</div>
   <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="saveManual()">Guardar</button></div>`);
+  mOngoing=false;['mH','mP'].forEach(id=>$(id).addEventListener('input',mNowUpd));$('mR').addEventListener('input',()=>{mOngoing=false;mNowUpd()});
+  $('mOk').addEventListener('change',()=>{$('mHint').style.display=$('mOk').checked?'none':'block';if($('mOk').checked){mOngoing=false;mNowUpd()}});
   $('mN').addEventListener('input',()=>{const st=stats()[$('mN').value.trim().toLowerCase()];if(st&&!$('mP').value)$('mP').value=Math.round(st.pavg)});
 }
+let mOngoing=false;
+function mStart(){const h=$('mH').value;if(!h)return null;const [yy,mm,dd]=selDay.split('-').map(Number),[hh,mi]=h.split(':').map(Number);return new Date(yy,mm-1,dd,hh,mi).getTime()}
+function mNowUpd(){const b=$('mNow');if(!b)return;const st=mStart(),pl=parseFloat($('mP').value),now=Date.now();
+  const show=st!=null&&pl>0&&st<=now&&st+pl*60000>now;
+  if(!show){b.style.display='none';mOngoing=false;return}
+  const el=Math.max(1,Math.round((now-st)/60000));b.style.display='block';b.classList.toggle('on',mOngoing);
+  b.innerHTML=mOngoing?`✓ Sigue en curso · llevas ${fmtMin(el)}`:`⏱ Sigue en curso (usar hora actual · ${fmtMin(el)})`}
+function mSetNow(){const st=mStart();if(st==null)return;$('mR').value=Math.max(1,Math.round((Date.now()-st)/60000));$('mR').style.borderColor='';
+  mOngoing=true;$('mOk').checked=false;$('mHint').style.display='block';mNowUpd()}
 function saveManual(){
   const n=$('mN').value.trim(),h=$('mH').value||'12:00',r=parseFloat($('mR').value),pl=parseFloat($('mP').value);
   let bad=false;if(!n){$('mN').style.borderColor='#ff3b30';bad=true}if(!(r>0)){$('mR').style.borderColor='#ff3b30';bad=true}if(bad)return;
   const [yy,mm,dd]=selDay.split('-').map(Number),[hh,mi]=h.split(':').map(Number),st=new Date(yy,mm-1,dd,hh,mi).getTime();
+  if(!$('mOk').checked){
+    const P=pl>0?pl:r,elS=mOngoing?(Date.now()-st)/1000:r*60,tk=dkey(new Date()),id=uid();
+    const it={n,m:P,id,prog:{el:elS,rem:Math.max(0,P*60-elS),tot:P*60,ext:[],mb:0,st,segs:[{s:st,e:st+elS*1000}]}};
+    plans[tk]=[it].concat(plans[tk]||[]);store('plans',plans);closeModal();setPlanDay(tk);render();renderLog();
+    modal(`<h1>Agregada a tu plan ✅</h1><div class="muted">${esc(n)} · llevas ${fmtMin(elS/60)}${it.prog.rem>0?` · quedan ${fmtMin(it.prog.rem/60)}`:''}</div>
+    <div class="row"><button class="btn gray" onclick="closeModal()">Después</button><button class="btn" style="background:#ff9f0a;color:#000" onclick="closeModal();tab(1);resumeItem(acts.findIndex(a=>a.id==='${id}'))">▶ Continuar ahora</button></div>`);
+    return;
+  }
   log.push({d:selDay,h,n,plan:pl>0?pl:r,real:r,ext:[],ok:$('mOk').checked,manual:true,segs:[{s:st,e:st+r*60000}]});
   store('log',log);closeModal();renderLog();
 }
@@ -849,7 +872,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=40;
+const APP_VER=41;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
