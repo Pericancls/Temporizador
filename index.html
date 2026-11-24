@@ -181,7 +181,7 @@ li{gap:8px!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v35</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v36</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -195,7 +195,7 @@ li{gap:8px!important}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v35)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v36)</button>
 </section>
 
 <section id="s1">
@@ -245,7 +245,7 @@ li{gap:8px!important}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v35</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v36</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -407,16 +407,18 @@ function startList(){if(!acts.length)return;const pend=acts.filter(a=>!a.done);
   unlockAudio();queue=pend.map(a=>({...a}));go(0)}
 function startSingle(){unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
 /* ---- Sesiones de trabajo (de qué hora a qué hora) ---- */
-function segOpen(){if(!cur)return;cur.segs=cur.segs||[];const l=cur.segs[cur.segs.length-1];if(!l||l[1]!=null)cur.segs.push([Date.now(),null])}
-function segClose(t){if(!cur||!cur.segs)return;const l=cur.segs[cur.segs.length-1];if(l&&l[1]==null)l[1]=Math.max(l[0],t||Date.now())}
-function segsOf(e){if(e.segs&&e.segs.length)return e.segs.filter(x=>x[1]!=null);const [y,m,d]=e.d.split('-').map(Number),[h,mi]=e.h.split(':').map(Number);const st=new Date(y,m-1,d,h,mi).getTime();return[[st,st+e.real*60000]]}
+function normSegs(a){return(a||[]).map(x=>Array.isArray(x)?{s:x[0],e:x[1]}:x)}
+function fixData(){log.forEach(e=>{if(e.segs)e.segs=normSegs(e.segs)});Object.values(plans).forEach(l=>(l||[]).forEach(a=>{if(a.prog&&a.prog.segs)a.prog.segs=normSegs(a.prog.segs)}))}
+function segOpen(){if(!cur)return;cur.segs=normSegs(cur.segs);const l=cur.segs[cur.segs.length-1];if(!l||l.e!=null)cur.segs.push({s:Date.now(),e:null})}
+function segClose(t){if(!cur||!cur.segs)return;cur.segs=normSegs(cur.segs);const l=cur.segs[cur.segs.length-1];if(l&&l.e==null)l.e=Math.max(l.s,t||Date.now())}
+function segsOf(e){if(e.segs&&e.segs.length)return normSegs(e.segs).filter(x=>x.e!=null);const [y,m,d]=e.d.split('-').map(Number),[h,mi]=e.h.split(':').map(Number);const st=new Date(y,m-1,d,h,mi).getTime();return[{s:st,e:st+e.real*60000}]}
 function hm(ts){const x=new Date(ts);return fmt12(pad(x.getHours())+':'+pad(x.getMinutes()))}
-function segTxt(e){return segsOf(e).map(x=>hm(x[0])+'–'+hm(x[1])).join(' · ')}
+function segTxt(e){return segsOf(e).map(x=>hm(x.s)+'–'+hm(x.e)).join(' · ')}
 function go(i){
   inBreak=false;$('run').classList.remove('brk');
   idx=i;const a=queue[i];
   const pr=a.prog;
-  cur={n:a.n,plan:a.m,start:pr?pr.st:Date.now(),elapsed:pr?pr.el:0,ext:pr?(pr.ext||[]):[],mb:pr?(pr.mb||0):0,id:a.id,segs:pr&&pr.segs?pr.segs.map(x=>x.slice()):[]};segOpen();
+  cur={n:a.n,plan:a.m,start:pr?pr.st:Date.now(),elapsed:pr?pr.el:0,ext:pr?(pr.ext||[]):[],mb:pr?(pr.mb||0):0,id:a.id,segs:pr&&pr.segs?normSegs(pr.segs).map(x=>({...x})):[]};segOpen();
   if(pr){clearProg(a.id);delete a.prog;begin(pr.tot,pr.rem);return}
   begin(a.m*60);
 }
@@ -528,7 +530,7 @@ function done(){
 }
 function save(ok){
   segClose();const st=new Date(cur.start);
-  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10,ext:cur.ext,ok,...(cur.segs&&cur.segs.length?{segs:cur.segs.filter(x=>x[1]!=null)}:{})});
+  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10,ext:cur.ext,ok,...(cur.segs&&cur.segs.length?{segs:normSegs(cur.segs).filter(x=>x.e!=null)}:{})});
   store('log',log);
   if(ok&&cur.id)markDone(cur.id);
 }
@@ -615,7 +617,7 @@ function recPrev(){const c=recCalc();if(!c){$('rPrev').textContent='';return}
    (c.left>0?`Tu tiempo termina a las <b style="color:#fff">${f(en)}</b> · te quedan <b style="color:#34c759">${fmtMin(c.left/60)}</b>`:`Tu tiempo se acabó a las <b style="color:#fff">${f(en)}</b>`)}
 function recover(cont){
   const c=recCalc();if(!c){if(!$('rN').value)$('rSel').style.borderColor='#ff3b30';['rN','rP'].forEach(id=>{if(!$(id).value)$(id).style.borderColor='#ff3b30'});if(!$('rS').value&&!$('rE').value){$('rS').style.borderColor='#ff3b30';$('rE').style.borderColor='#ff3b30'}return}
-  const ma=acts.find(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());cur={n:c.n,plan:c.P,start:c.S,elapsed:c.el,ext:c.X>0?[{pct:null,min:c.X}]:[],id:ma&&ma.id,segs:[[c.S,null]]};
+  const ma=acts.find(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());cur={n:c.n,plan:c.P,start:c.S,elapsed:c.el,ext:c.X>0?[{pct:null,min:c.X}]:[],id:ma&&ma.id,segs:[{s:c.S,e:null}]};
   closeModal();unlockAudio();
   if(!cont){save(true);renderLog();modal(`<h1>Guardado ✅</h1><div class="muted">${esc(c.n)} · ${fmtMin(c.el/60)} reales</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
   const k=acts.findIndex(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());
@@ -680,7 +682,7 @@ const TLC=['#34c759','#0a84ff','#ff9f0a','#bf5af2','#ff375f','#64d2ff','#ffd60a'
 function tlColor(n){let h=0;for(const c of n.toLowerCase())h=(h*31+c.charCodeAt(0))>>>0;return TLC[h%TLC.length]}
 function renderTl(){
   const [y,m,d]=selDay.split('-').map(Number),d0=new Date(y,m-1,d).getTime(),d1=new Date(y,m-1,d+1).getTime(),H=24*36;
-  const blocks=[];log.forEach((e,i)=>segsOf(e).forEach(sg=>{const a=Math.max(sg[0],d0),b=Math.min(sg[1],d1);if(b>a)blocks.push({i,n:e.n,a,b})}));
+  const blocks=[];log.forEach((e,i)=>segsOf(e).forEach(sg=>{const a=Math.max(sg.s,d0),b=Math.min(sg.e,d1);if(b>a)blocks.push({i,n:e.n,a,b})}));
   if(!blocks.length){$('dayTl').innerHTML='';return}
   blocks.sort((p,q)=>p.a-q.a);
   const cmap={};blocks.forEach(x=>{if(!(x.n in cmap))cmap[x.n]=TLC[Object.keys(cmap).length%TLC.length]});const col=n=>cmap[n];
@@ -723,7 +725,7 @@ function saveManual(){
   const n=$('mN').value.trim(),h=$('mH').value||'12:00',r=parseFloat($('mR').value),pl=parseFloat($('mP').value);
   let bad=false;if(!n){$('mN').style.borderColor='#ff3b30';bad=true}if(!(r>0)){$('mR').style.borderColor='#ff3b30';bad=true}if(bad)return;
   const [yy,mm,dd]=selDay.split('-').map(Number),[hh,mi]=h.split(':').map(Number),st=new Date(yy,mm-1,dd,hh,mi).getTime();
-  log.push({d:selDay,h,n,plan:pl>0?pl:r,real:r,ext:[],ok:$('mOk').checked,manual:true,segs:[[st,st+r*60000]]});
+  log.push({d:selDay,h,n,plan:pl>0?pl:r,real:r,ext:[],ok:$('mOk').checked,manual:true,segs:[{s:st,e:st+r*60000}]});
   store('log',log);closeModal();renderLog();
 }
 function openEntry(i){const e=log[i];if(!e)return;
@@ -772,7 +774,7 @@ function importData(inp){
 
 /* ---- Sincronización con Firebase ---- */
 const fbConfig={apiKey:"AIzaSyBjd6EOuM9VtEodZ7GtEeGY1KG66Umwzgo",authDomain:"temporizador-de-actividades.firebaseapp.com",projectId:"temporizador-de-actividades",storageBucket:"temporizador-de-actividades.firebasestorage.app",messagingSenderId:"150673495434",appId:"1:150673495434:web:468eb73e3bfde86f77a473"};
-let fbAuth=null,fbDb=null,user=null,unsub=null,syncT=null,syncState='off',applying=false;
+let lastErr='',fbAuth=null,fbDb=null,user=null,unsub=null,syncT=null,syncState='off',applying=false;
 const keyOf=e=>e.d+'|'+e.h+'|'+e.n;
 function mergeLogs(a,b){const m=new Map();a.concat(b).forEach(e=>m.set(keyOf(e),e));return [...m.values()]}
 function setSync(st){syncState=st;drawSync()}
@@ -780,15 +782,15 @@ function drawSync(){
   let h;
   if(!fbAuth)h='<div class="dot err"></div><span>Sin conexión a la nube</span>';
   else if(!user)h='<div class="dot"></div><span>Solo en este dispositivo</span><button onclick="login()">Iniciar sesión con Google</button>';
-  else{const t={ok:'Sincronizado',busy:'Guardando…',err:'Error al sincronizar'}[syncState]||'Conectando…';
+  else{const t={ok:'Sincronizado',busy:'Guardando…',err:'Error al sincronizar'+(lastErr?' ('+lastErr+')':'')}[syncState]||'Conectando…';
     h=`<div class="dot ${syncState}"></div><span>☁︎ ${t} · ${esc(user.email||'')}</span><button class="lnk" onclick="logout()">Salir</button>`}
   ['syncBar1','syncBar2'].forEach(id=>{const el=$(id);if(el)el.innerHTML=h});
 }
 function queueSync(){if(!user||applying)return;setSync('busy');clearTimeout(syncT);syncT=setTimeout(pushSync,800)}
-function pushSync(){if(!user)return;fbDb.collection('users').doc(user.uid).set({plans,log,brk,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>setSync('ok')).catch(e=>{console.error(e);setSync('err')})}
+function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
 function applyRemote(d){applying=true;
   if(d.plans&&typeof d.plans==='object')plans=d.plans;else if(Array.isArray(d.acts)){plans={...plans};if(d.acts.length)plans[dkey(new Date())]=d.acts}
-  log=d.log||[];if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
+  log=d.log||[];fixData();if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
   try{localStorage.setItem('plans',JSON.stringify(plans));localStorage.setItem('log',JSON.stringify(log))}catch(e){}applying=false;
   render();if($('s2').classList.contains('on')){renderLog();renderAct()}}
 async function onLogin(u){
@@ -805,11 +807,11 @@ async function onLogin(u){
       await ref.set({plans,log,acts:plans[dkey(new Date())]||[],updated:Date.now()});
     }else await ref.set({plans,log,acts:plans[dkey(new Date())]||[],updated:Date.now()});
     setSync('ok');
-    unsub=ref.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;applyRemote(s.data());setSync('ok')},e=>{console.error(e);setSync('err')});
-  }catch(e){console.error(e);setSync('err')}
+    unsub=ref.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;applyRemote(s.data());setSync('ok')},e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')});
+  }catch(e){console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')}
 }
 function login(){const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
-  fbAuth.signInWithPopup(p).catch(e=>{if(e&&(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'))fbAuth.signInWithRedirect(p);else if(e&&e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')modal(`<h1>No se pudo iniciar sesión</h1><div class="muted">${esc(e.message||e.code||'')}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)})}
+  fbAuth.signInWithPopup(p).catch(e=>{if(e&&e.code==='auth/popup-blocked')modal(`<h1>Safari bloqueó la ventana</h1><div class="muted">Ve a Ajustes → Apps → Safari y apaga <b>Bloquear ventanas</b>. Luego vuelve a tocar Iniciar sesión.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);else if(e&&e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')modal(`<h1>No se pudo iniciar sesión</h1><div class="muted">${esc(e.message||e.code||'')}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)})}
 function logout(){fbAuth.signOut()}
 try{
   firebase.initializeApp(fbConfig);fbAuth=firebase.auth();fbDb=firebase.firestore();
@@ -817,7 +819,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=35;
+const APP_VER=36;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
@@ -833,7 +835,7 @@ async function checkUpdate(manual){
 }
 if(/[?&](v|t)=/.test(location.search))history.replaceState(null,'',location.pathname);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate(false)});
-initPlans();render();prev();setTimeout(checkRun,300);setTimeout(()=>checkUpdate(false),1500);
+initPlans();fixData();render();prev();setTimeout(checkRun,300);setTimeout(()=>checkUpdate(false),1500);
 </script>
 </body>
 </html>
