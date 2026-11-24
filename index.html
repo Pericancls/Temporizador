@@ -181,7 +181,7 @@ li{gap:8px!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v34</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v35</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -195,7 +195,7 @@ li{gap:8px!important}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v34)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v35)</button>
 </section>
 
 <section id="s1">
@@ -245,7 +245,7 @@ li{gap:8px!important}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v34</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v35</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -534,11 +534,7 @@ function save(ok){
 }
 function stop(){if(inMini)endMini(false,true);if(!inBreak&&!inOver)segClose();running=false;clearInterval(timer);
   if(inBreak){inBreak=false;$('run').classList.remove('brk');return quit()}
-  if(cur&&cur.elapsed>=60){modal(`<h1>¿Qué hacemos?</h1><div class="muted">${esc(cur.n)} · llevas ${fmtMin(cur.elapsed/60)}</div>
-    <div class="row"><button class="btn" style="background:#ff9f0a" onclick="pauseExit()">⏸ Pausar y salir</button></div>
-    <div class="muted" style="font-size:13px;margin-top:6px">Guarda tu avance para continuar después donde te quedaste.</div>
-    <div class="row"><button class="btn" style="background:#34c759" onclick="save(true);closeModal();quit()">✓ Ya la terminé</button></div>
-    <div class="row"><button class="btn gray" onclick="closeModal();play()">Seguir</button><button class="btn gray" onclick="closeModal();quit()">Salir sin guardar</button></div>`)}
+  if(cur&&cur.elapsed>=5)return pauseExit();
   else quit()}
 function quit(){$('run').classList.remove('on');release();clearRun()}
 /* ---- Guardar estado en curso (por si se cierra la app) ---- */
@@ -821,7 +817,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=34;
+const APP_VER=35;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
