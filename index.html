@@ -159,6 +159,9 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 .nowbtn{width:100%;margin-top:8px;background:#3a2606;color:#ff9f0a;border:1px solid #6b4508;border-radius:10px;padding:10px;font-size:15px;font-weight:600}
 .nowbtn.on{background:#ff9f0a;color:#000}
 .edl{background:none;border:none;color:#0a84ff;font-size:13px;margin-right:10px}
+.restbtn{width:100%;margin-top:12px;background:#0f2a17;color:#34c759;border:2px solid #1f8f4e;border-radius:12px;padding:14px;font-size:17px;font-weight:700}
+.restbtn small{color:#7fd69a;font-weight:500;margin-left:6px}
+#run.brk #label.long{font-size:min(10vw,11vh)}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -194,7 +197,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v43</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v44</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -208,7 +211,8 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v43)</button>
+  <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v44)</button>
 </section>
 
 <section id="s1">
@@ -259,7 +263,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v43</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v44</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -425,6 +429,12 @@ function setBrk(v){v=parseFloat(v);brk=v>=0?v:10;$('brkMin').value=brk;store('br
 function startList(){if(!acts.length)return;const pend=acts.filter(a=>!a.done);
   if(!pend.length){modal(`<h1>¡Todo hecho! 🎉</h1><div class="muted">Ya terminaste todas las actividades de este plan.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
   unlockAudio();queue=pend.map(a=>({...a}));go(0)}
+function startRest(){unlockAudio();queue=[{n:'Me merezco un descanso',m:10}];idx=0;inBreak=false;inMini=false;
+  cur={n:'Me merezco un descanso',plan:10,start:Date.now(),elapsed:0,ext:[],mb:0,rest:true,segs:[]};segOpen();begin(600)}
+function restDone(sound){running=false;clearInterval(timer);inOver=false;remain=Math.max(0,remain);
+  if(sound){startAlarm();say('Se acabó tu descanso')}
+  const el=cur.elapsed;if(el>=30)save(true);quit();
+  modal(`<h1>☕ Descanso ${sound?'terminado':'registrado'}</h1><div class="muted">${el>=30?`Quedó en tu registro: ${fmtMin(el/60)}.`:'Fue muy corto, no se registró.'}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
 function startSingle(){unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
 /* ---- Sesiones de trabajo (de qué hora a qué hora) ---- */
 function normSegs(a){return(a||[]).map(x=>Array.isArray(x)?{s:x[0],e:x[1]}:x)}
@@ -456,12 +466,12 @@ function resumeItem(i){const a=acts[i];if(!a||a.done)return;unlockAudio();
 function begin(secs,rem){
   restoreRunView();
   inOver=false;total=secs;remain=rem!=null?rem:secs;warned=false;stopAlarm();
-  $('run').classList.add('on');$('clock').textContent='';requestAnimationFrame(fit);$('label').textContent=cur.n;subText();
+  $('run').classList.add('on');$('run').classList.toggle('brk',!!(cur&&cur.rest));$('clock').textContent='';requestAnimationFrame(fit);$('label').textContent=cur.n;subText();if(cur&&cur.rest)$('sub').textContent='☕ Disfrútalo, te lo ganaste';
   running=true;last=Date.now();setPP(true);clearInterval(timer);timer=setInterval(tick,200);lock();
   if(remain<=0){timeUp(-remain);return}
   draw();saveRun();
 }
-function timeUp(ov){inOver=true;overStart=Date.now()-ov*1000;remain=0;running=true;drawOver();saveRun();startAlarm();ask()}
+function timeUp(ov){if(cur&&cur.rest)return restDone(true);inOver=true;overStart=Date.now()-ov*1000;remain=0;running=true;drawOver();saveRun();startAlarm();ask()}
 function overSecs(){return Math.max(0,(Date.now()-overStart)/1000)}
 function drawOver(){const s=Math.floor(overSecs()),txt='+'+pad(Math.floor(s/60))+':'+pad(s%60);const c=$('clock');
   if(c.textContent!==txt){const L=c.textContent.length;c.textContent=txt;if(L!==txt.length)fit()}c.style.color='rgb(255,59,48)';c.style.opacity=1;
@@ -485,7 +495,7 @@ function tick(){
 }
 function draw(){p5Upd();brkUpd();const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
   const txt=pad(Math.floor(s/60))+':'+pad(x);if($('clock').textContent!==txt){const L=$('clock').textContent.length;$('clock').textContent=txt;if(L!==txt.length)fit()}
-  const mm=document.querySelector('.mid');if(mm.clientWidth&&$('clock').scrollWidth>mm.clientWidth+2)fit();$('clock').style.color=(inBreak||inMini)?'#fff':color(total?remain/total:0)}
+  const mm=document.querySelector('.mid');if(mm.clientWidth&&$('clock').scrollWidth>mm.clientWidth+2)fit();$('clock').style.color=(inBreak||inMini||(cur&&cur.rest))?'#fff':color(total?remain/total:0)}
 function color(r){
   if(r>0.3)return'rgb(52,199,89)';
   if(r<=0.1)return'rgb(255,59,48)';
@@ -500,18 +510,18 @@ window.addEventListener('resize',fit);window.addEventListener('orientationchange
 function plus5(){if(!cur||inBreak||inMini||inOver||cur.p5)return;cur.p5=true;remain+=300;total+=300;
   (cur.ext=cur.ext||[]).push({pct:null,min:5,quick:true});draw();saveRun();miniBtnUpd&&miniBtnUpd();
   try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}}
-function isRest(){return inBreak||inMini}
+function isRest(){return inBreak||inMini||!!(cur&&cur.rest&&$('run').classList.contains('on'))}
 function minimizeRun(){if(!isRest())return;$('run').classList.add('mini');document.body.classList.add('hasbar');brkUpd()}
 function restoreRunView(){$('run').classList.remove('mini');document.body.classList.remove('hasbar');$('brkBar').style.display='none';requestAnimationFrame(fit)}
-function brkUpd(){const mb=$('minBtn');if(mb)mb.style.display=isRest()?'flex':'none';
+function brkUpd(){const lb=$('label');if(lb)lb.classList.toggle('long',lb.textContent.length>14);const mb=$('minBtn');if(mb)mb.style.display=isRest()?'flex':'none';
   const r=$('run'),bar=$('brkBar');
   if(!isRest()||!r.classList.contains('on')){if(r.classList.contains('mini'))restoreRunView();return}
   if(!r.classList.contains('mini')){bar.style.display='none';return}
   const s=Math.max(0,Math.ceil(remain)),t=pad(Math.floor(s/60))+':'+pad(s%60);
-  const nx=inMini?(cur&&cur.n):(queue[idx+1]&&queue[idx+1].n);
+  const nx=(cur&&cur.rest&&!inBreak)?'':inMini?(cur&&cur.n):(queue[idx+1]&&queue[idx+1].n);
   bar.style.display='flex';bar.innerHTML=`<span class="bt">${inMini?'Mini descanso':'☕ Descanso'}</span><b>${t}</b><span class="bn">${nx?'Sigue: '+esc(nx):''}</span><span class="bo">Abrir ›</span>`;
 }
-function p5Upd(){const b=$('p5');if(!b)return;const hide=!cur||inBreak||inMini;b.style.visibility=hide?'hidden':'visible';b.classList.toggle('used',!!(cur&&cur.p5)||inOver)}
+function p5Upd(){const b=$('p5');if(!b)return;const hide=!cur||inBreak||inMini||!!cur.rest;b.style.visibility=hide?'hidden':'visible';b.classList.toggle('used',!!(cur&&cur.p5)||inOver)}
 function toggle(){running=!running;last=Date.now();setPP(running)}
 function restart(){remain=total;last=Date.now();draw()}
 
@@ -567,7 +577,7 @@ function save(ok){
   store('log',log);
   if(ok&&cur.id)markDone(cur.id);
 }
-function stop(){if(inMini)endMini(false,true);if(!inBreak&&!inOver)segClose();running=false;clearInterval(timer);
+function stop(){if(cur&&cur.rest&&!inBreak){segClose();running=false;clearInterval(timer);return restDone(false)}if(inMini)endMini(false,true);if(!inBreak&&!inOver)segClose();running=false;clearInterval(timer);
   if(inBreak){inBreak=false;$('run').classList.remove('brk');return quit()}
   if(cur&&cur.elapsed>=1)return pauseExit();
   else quit()}
@@ -903,7 +913,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=43;
+const APP_VER=44;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
