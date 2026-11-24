@@ -124,6 +124,21 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 .side .p5 small{font-size:min(3vw,13px);font-weight:600}
 .side .p5.used{opacity:.25;pointer-events:none}
 #run.brk .side .p5{border-color:#fff;color:#fff}
+#dayTl h3{margin-top:20px}
+.tlsum{color:#aaa;font-size:14px;margin-bottom:8px}.tlsum b{color:#fff}
+.tlstrip{position:relative;height:16px;background:#1c1c1e;border-radius:6px;overflow:hidden}
+.tlstrip i{position:absolute;top:0;bottom:0;border-radius:2px}
+.tlax{display:flex;justify-content:space-between;color:#666;font-size:11px;margin:3px 0 10px}
+.tlwrap{max-height:380px;overflow:auto;background:#111;border-radius:12px;padding:0 8px 0 0}
+.tl{position:relative}
+.tlh{position:absolute;left:0;right:0;border-top:1px solid #222}
+.tlh span{position:absolute;left:6px;top:2px;color:#666;font-size:11px}
+.tlb{position:absolute;left:54px;right:4px;border-radius:6px;padding:2px 8px;overflow:hidden;color:#fff;font-size:13px;line-height:1.25;cursor:pointer}
+.tlb b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tlb span{color:#ccc;font-size:11px}
+.tlnow{position:absolute;left:40px;right:0;border-top:2px solid #ff453a}
+.tlleg{margin-top:10px}
+.tll{display:flex;align-items:center;gap:8px;font-size:14px;color:#ddd;padding:3px 0}
+.tll i{width:12px;height:12px;border-radius:3px;flex-shrink:0}.tll span{flex:1}.tll b{color:#aaa;font-weight:600}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -159,7 +174,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v32</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v33</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -173,7 +188,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v32)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v33)</button>
 </section>
 
 <section id="s1">
@@ -206,6 +221,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
     <div class="grid" id="grid"></div>
     <h3 id="dayTitle"></h3>
     <div id="dayList"></div>
+    <div id="dayTl"></div>
     <button class="btn gray" style="width:100%;margin-top:6px" onclick="manualForm()">＋ Agregar registro manual</button>
     <button class="btn gray" style="width:100%;margin-top:8px" onclick="recoverForm()">↺ ¿Se borró tu actividad? Recuperarla</button>
   </div>
@@ -222,7 +238,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v32</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v33</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -383,11 +399,17 @@ function startList(){if(!acts.length)return;const pend=acts.filter(a=>!a.done);
   if(!pend.length){modal(`<h1>¡Todo hecho! 🎉</h1><div class="muted">Ya terminaste todas las actividades de este plan.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
   unlockAudio();queue=pend.map(a=>({...a}));go(0)}
 function startSingle(){unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
+/* ---- Sesiones de trabajo (de qué hora a qué hora) ---- */
+function segOpen(){if(!cur)return;cur.segs=cur.segs||[];const l=cur.segs[cur.segs.length-1];if(!l||l[1]!=null)cur.segs.push([Date.now(),null])}
+function segClose(t){if(!cur||!cur.segs)return;const l=cur.segs[cur.segs.length-1];if(l&&l[1]==null)l[1]=Math.max(l[0],t||Date.now())}
+function segsOf(e){if(e.segs&&e.segs.length)return e.segs.filter(x=>x[1]!=null);const [y,m,d]=e.d.split('-').map(Number),[h,mi]=e.h.split(':').map(Number);const st=new Date(y,m-1,d,h,mi).getTime();return[[st,st+e.real*60000]]}
+function hm(ts){const x=new Date(ts);return fmt12(pad(x.getHours())+':'+pad(x.getMinutes()))}
+function segTxt(e){return segsOf(e).map(x=>hm(x[0])+'–'+hm(x[1])).join(' · ')}
 function go(i){
   inBreak=false;$('run').classList.remove('brk');
   idx=i;const a=queue[i];
   const pr=a.prog;
-  cur={n:a.n,plan:a.m,start:pr?pr.st:Date.now(),elapsed:pr?pr.el:0,ext:pr?(pr.ext||[]):[],mb:pr?(pr.mb||0):0,id:a.id};
+  cur={n:a.n,plan:a.m,start:pr?pr.st:Date.now(),elapsed:pr?pr.el:0,ext:pr?(pr.ext||[]):[],mb:pr?(pr.mb||0):0,id:a.id,segs:pr&&pr.segs?pr.segs.map(x=>x.slice()):[]};segOpen();
   if(pr){clearProg(a.id);delete a.prog;begin(pr.tot,pr.rem);return}
   begin(a.m*60);
 }
@@ -396,7 +418,7 @@ function clearProg(id){const it=findItem(id);if(it&&it.prog){delete it.prog;stor
 function pauseExit(){
   let it=cur.id&&findItem(cur.id);
   if(!it){const tk=dkey(new Date());plans[tk]=plans[tk]||[];it={n:cur.n,m:cur.plan,id:uid()};plans[tk].push(it);if(planDay===tk)acts=plans[tk]}
-  it.prog={el:cur.elapsed,rem:Math.max(0,remain),tot:total,ext:cur.ext,mb:cur.mb||0,st:cur.start};it.done=false;
+  segClose();it.prog={el:cur.elapsed,rem:Math.max(0,remain),tot:total,ext:cur.ext,mb:cur.mb||0,st:cur.start,segs:cur.segs||[]};it.done=false;
   store('plans',plans);closeModal();quit();render();
   modal(`<h1>⏸ Pausada</h1><div class="muted">${esc(cur.n)} · llevas ${fmtMin(cur.elapsed/60)}. La encuentras en tu plan con "Continuar".</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);
 }
@@ -441,8 +463,8 @@ function color(r){
   return`rgb(${g.map((v,k)=>Math.round(v+(y[k]-v)*t)).join(',')})`}
 const PAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',PLAY='<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>';
 function setPP(r){$('clock').style.opacity=r?1:.45}
-function pause(){running=false;setPP(false);saveRun()}
-function play(){if(!running&&remain>0){running=true;last=Date.now();setPP(true);saveRun()}}
+function pause(){if(!inBreak&&!inMini&&!inOver)segClose();running=false;setPP(false);saveRun()}
+function play(){if(!running&&remain>0){if(!inBreak&&!inMini)segOpen();running=true;last=Date.now();setPP(true);saveRun()}}
 function fit(){const c=$('clock'),m=document.querySelector('.mid');if(!m.clientWidth)return;c.style.fontSize='100px';const w=c.scrollWidth,H=window.innerHeight;const fs=Math.min(100*m.clientWidth*0.96/w,H*((inBreak||inMini)?(window.innerHeight>window.innerWidth?0.3:0.42):(window.innerHeight>window.innerWidth?0.4:0.68)));c.style.fontSize=fs+'px'}
 window.addEventListener('resize',fit);window.addEventListener('orientationchange',()=>setTimeout(fit,300));
 function plus5(){if(!cur||inBreak||inMini||inOver||cur.p5)return;cur.p5=true;remain+=300;total+=300;
@@ -474,7 +496,7 @@ function extend(){
   const nt=$('xnote').value.trim();const ov=inOver?overSecs():0;if(inOver){cur.elapsed+=Math.min(ov,x*60);inOver=false}
   cur.ext.push({pct:isNaN(p)?null:p,min:x,...(nt?{note:nt}:{})});closeModal();begin(x*60,x*60-ov);
 }
-function yes(){inOver=false;running=false;clearInterval(timer);closeModal();save(true);advance()}
+function yes(){if(inOver)segClose(overStart);inOver=false;running=false;clearInterval(timer);closeModal();save(true);advance()}
 function finish(){if(inMini)return endMini(false);if(inBreak)return endBreak(false);running=false;clearInterval(timer);save(true);beep(true);advance()}
 function skip(){running=false;clearInterval(timer);if(cur.elapsed>=60)save(false);advance()}
 function advance(){if(idx+1<queue.length){if(brk>0)startBreak();else go(idx+1)}else{done()}}
@@ -498,12 +520,12 @@ function done(){
   modal(`<h1>¡Listo! 🎉</h1><div class="muted">Todo quedó guardado en el Registro.</div><div class="row"><button class="btn" onclick="closeModal();tab(2)">Ver registro</button><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`);
 }
 function save(ok){
-  const st=new Date(cur.start);
-  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10,ext:cur.ext,ok});
+  segClose();const st=new Date(cur.start);
+  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10,ext:cur.ext,ok,...(cur.segs&&cur.segs.length?{segs:cur.segs.filter(x=>x[1]!=null)}:{})});
   store('log',log);
   if(ok&&cur.id)markDone(cur.id);
 }
-function stop(){if(inMini)endMini(false,true);running=false;clearInterval(timer);
+function stop(){if(inMini)endMini(false,true);if(!inBreak&&!inOver)segClose();running=false;clearInterval(timer);
   if(inBreak){inBreak=false;$('run').classList.remove('brk');return quit()}
   if(cur&&cur.elapsed>=60){modal(`<h1>¿Qué hacemos?</h1><div class="muted">${esc(cur.n)} · llevas ${fmtMin(cur.elapsed/60)}</div>
     <div class="row"><button class="btn" style="background:#ff9f0a" onclick="pauseExit()">⏸ Pausar y salir</button></div>
@@ -540,7 +562,7 @@ function restoreRun(){
 function miniLeft(){if(!cur||inBreak||inMini)return 0;const allot=cur.plan+(cur.ext||[]).reduce((a,x)=>a+x.min,0);return Math.floor(allot/60)-(cur.mb||0)}
 function miniBtnUpd(){const b=$('miniBtn');if(!b)return;const n=miniLeft();
   if(n>0&&remain>0){b.style.display='inline-block';b.textContent=`☕ Mini descanso 5 min${n>1?` (${n} disponibles)`:''}`}else b.style.display='none'}
-function startMini(){if(miniLeft()<=0)return;cur.mb=(cur.mb||0)+1;miniSaved={total,remain,warned};startMiniAt(300)}
+function startMini(){if(miniLeft()<=0)return;segClose();cur.mb=(cur.mb||0)+1;miniSaved={total,remain,warned};startMiniAt(300)}
 function startMiniAt(rem){inMini=true;stopAlarm();total=300;remain=rem;
   const el=$('run');el.classList.add('on','brk');$('clock').textContent='';$('label').textContent='Mini descanso';
   $('sub').textContent=`Luego sigues con: ${cur.n} (te quedan ${fmtMin(miniSaved.remain/60)})`;$('miniBtn').style.display='none';
@@ -548,7 +570,7 @@ function startMiniAt(rem){inMini=true;stopAlarm();total=300;remain=rem;
 function endMini(sound,silent){if(!inMini)return;inMini=false;const m=miniSaved;miniSaved=null;$('run').classList.remove('brk');
   clearInterval(timer);if(sound){beep();say('Se acabó el mini descanso')}
   if(silent){total=m.total;remain=m.remain;warned=m.warned;return}
-  begin(m.total,m.remain);warned=m.warned;}
+  begin(m.total,m.remain);warned=m.warned;segOpen();}
 function startBreakAt(t,rem){inBreak=true;stopAlarm();total=t;remain=rem;const el=$('run');el.classList.add('on','brk');$('clock').textContent='';$('label').textContent='Descanso';brkSub();
   running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();saveRun()}
 
@@ -590,7 +612,7 @@ function recPrev(){const c=recCalc();if(!c){$('rPrev').textContent='';return}
    (c.left>0?`Tu tiempo termina a las <b style="color:#fff">${f(en)}</b> · te quedan <b style="color:#34c759">${fmtMin(c.left/60)}</b>`:`Tu tiempo se acabó a las <b style="color:#fff">${f(en)}</b>`)}
 function recover(cont){
   const c=recCalc();if(!c){if(!$('rN').value)$('rSel').style.borderColor='#ff3b30';['rN','rP'].forEach(id=>{if(!$(id).value)$(id).style.borderColor='#ff3b30'});if(!$('rS').value&&!$('rE').value){$('rS').style.borderColor='#ff3b30';$('rE').style.borderColor='#ff3b30'}return}
-  const ma=acts.find(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());cur={n:c.n,plan:c.P,start:c.S,elapsed:c.el,ext:c.X>0?[{pct:null,min:c.X}]:[],id:ma&&ma.id};
+  const ma=acts.find(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());cur={n:c.n,plan:c.P,start:c.S,elapsed:c.el,ext:c.X>0?[{pct:null,min:c.X}]:[],id:ma&&ma.id,segs:[[c.S,null]]};
   closeModal();unlockAudio();
   if(!cont){save(true);renderLog();modal(`<h1>Guardado ✅</h1><div class="muted">${esc(c.n)} · ${fmtMin(c.el/60)} reales</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
   const k=acts.findIndex(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());
@@ -648,14 +670,37 @@ function renderLog(){
   const [y,m,dd]=selDay.split('-').map(Number);
   $('dayTitle').textContent=new Date(y,m-1,dd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   const items=log.map((e,i)=>({...e,i})).filter(e=>e.d===selDay).sort((a,b)=>a.h.localeCompare(b.h));
+  renderTl();
   $('dayList').innerHTML=items.length?items.map(entry).join('')+`<div class="muted" style="margin-top:6px">Total del día: ${fmtMin(items.reduce((s,e)=>s+e.real,0))}</div>`:'<div class="empty">Sin actividades este día</div>';
+}
+const TLC=['#34c759','#0a84ff','#ff9f0a','#bf5af2','#ff375f','#64d2ff','#ffd60a','#30d158','#5e5ce6','#ac8e68'];
+function tlColor(n){let h=0;for(const c of n.toLowerCase())h=(h*31+c.charCodeAt(0))>>>0;return TLC[h%TLC.length]}
+function renderTl(){
+  const [y,m,d]=selDay.split('-').map(Number),d0=new Date(y,m-1,d).getTime(),d1=new Date(y,m-1,d+1).getTime(),H=24*36;
+  const blocks=[];log.forEach((e,i)=>segsOf(e).forEach(sg=>{const a=Math.max(sg[0],d0),b=Math.min(sg[1],d1);if(b>a)blocks.push({i,n:e.n,a,b})}));
+  if(!blocks.length){$('dayTl').innerHTML='';return}
+  blocks.sort((p,q)=>p.a-q.a);
+  const cmap={};blocks.forEach(x=>{if(!(x.n in cmap))cmap[x.n]=TLC[Object.keys(cmap).length%TLC.length]});const col=n=>cmap[n];
+  const tot={};blocks.forEach(x=>tot[x.n]=(tot[x.n]||0)+(x.b-x.a));const sum=Object.values(tot).reduce((p,q)=>p+q,0)/60000;
+  let hrs='';for(let h=0;h<24;h++)hrs+=`<div class="tlh" style="top:${h*36}px"><span>${fmt12(pad(h)+':00').replace(':00','')}</span></div>`;
+  const bl=blocks.map(x=>{const top=(x.a-d0)/864e5*H,ht=Math.max(4,(x.b-x.a)/864e5*H),c=col(x.n);
+    return`<div class="tlb" onclick="openEntry(${x.i})" style="top:${top}px;height:${ht}px;background:${c}33;border-left:4px solid ${c}">${ht>=11?`<b${ht<16?' style="font-size:10px;line-height:1"':''}>${esc(x.n)}</b>${ht>=30?`<span>${hm(x.a)}–${hm(x.b)}</span>`:''}`:''}</div>`}).join('');
+  const now=Date.now(),nl=now>d0&&now<d1?`<div class="tlnow" style="top:${(now-d0)/864e5*H}px"></div>`:'';
+  const leg=Object.entries(tot).sort((p,q)=>q[1]-p[1]).map(([n,v])=>`<div class="tll"><i style="background:${col(n)}"></i><span>${esc(n)}</span><b>${fmtMin(v/60000)}</b></div>`).join('');
+  $('dayTl').innerHTML=`<h3>🕒 Tu día en 24 horas</h3>
+  <div class="tlsum">En actividades: <b>${fmtMin(sum)}</b> · <span>${Math.round(sum/14.4)}% del día</span></div>
+  <div class="tlstrip">${blocks.map(x=>`<i style="left:${(x.a-d0)/864e5*100}%;width:${Math.max(.4,(x.b-x.a)/864e5*100)}%;background:${col(x.n)}"></i>`).join('')}</div>
+  <div class="tlax"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>12am</span></div>
+  <div class="tlwrap" id="tlWrap"><div class="tl" style="height:${H}px">${hrs}${bl}${nl}</div></div>
+  <div class="tlleg">${leg}</div>`;
+  const w=$('tlWrap');if(w)w.scrollTop=Math.max(0,(blocks[0].a-d0)/864e5*H-40);
 }
 function entry(e){
   const diff=e.real-e.plan;
   const ext=e.ext&&e.ext.length?`<div class="meta">Extensiones: ${e.ext.map(x=>`+${x.min} min${x.pct!=null?` (faltaba ${x.pct}%)`:''}`).join(', ')}</div>`+e.ext.filter(x=>x.note).map(x=>`<div class="note">📝 ${esc(x.note).replace(/\n/g,'<br>')}</div>`).join(''):'';
   const pn=(e.post||[]).length;
   return`<div class="entry" onclick="openEntry(${e.i})"><div class="top"><b>${esc(e.n)}</b><span class="muted">${e.manual?'✍︎ ':''}${e.h}</span></div>
-  <div class="meta">Planeado ${fmtMin(e.plan)} · Real <span class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</span> (${diff>=0?'+':''}${Math.round(diff)} min)${e.ok?'':' · <span class="over">sin terminar</span>'}</div>${ext}${pn?`<div class="note post">🗒️ ${pn} nota${pn>1?'s':''} después</div>`:''}
+  <div class="meta">Planeado ${fmtMin(e.plan)} · Real <span class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</span> (${diff>=0?'+':''}${Math.round(diff)} min)${e.ok?'':' · <span class="over">sin terminar</span>'}</div><div class="meta">🕒 ${segTxt(e)}</div>${ext}${pn?`<div class="note post">🗒️ ${pn} nota${pn>1?'s':''} después</div>`:''}
   <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span class="muted" style="font-size:12px">Toca para ver y agregar notas</span><button onclick="event.stopPropagation();rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></div></div>`;
 }
 function manualForm(){
@@ -674,7 +719,8 @@ function manualForm(){
 function saveManual(){
   const n=$('mN').value.trim(),h=$('mH').value||'12:00',r=parseFloat($('mR').value),pl=parseFloat($('mP').value);
   let bad=false;if(!n){$('mN').style.borderColor='#ff3b30';bad=true}if(!(r>0)){$('mR').style.borderColor='#ff3b30';bad=true}if(bad)return;
-  log.push({d:selDay,h,n,plan:pl>0?pl:r,real:r,ext:[],ok:$('mOk').checked,manual:true});
+  const [yy,mm,dd]=selDay.split('-').map(Number),[hh,mi]=h.split(':').map(Number),st=new Date(yy,mm-1,dd,hh,mi).getTime();
+  log.push({d:selDay,h,n,plan:pl>0?pl:r,real:r,ext:[],ok:$('mOk').checked,manual:true,segs:[[st,st+r*60000]]});
   store('log',log);closeModal();renderLog();
 }
 function openEntry(i){const e=log[i];if(!e)return;
@@ -682,7 +728,7 @@ function openEntry(i){const e=log[i];if(!e)return;
   const dur=(e.ext||[]).filter(x=>x.note),post=e.post||[];
   const f=ts=>{const x=new Date(ts);return x.toLocaleDateString('es-MX',{day:'numeric',month:'short'})+' '+pad(x.getHours())+':'+pad(x.getMinutes())};
   modal(`<div class="detail"><h1 style="font-size:24px">${esc(e.n)}</h1><div class="muted" style="text-transform:capitalize">${fecha} · ${e.h}</div>
-  <div class="meta" style="margin-top:6px">Planeado ${fmtMin(e.plan)} · Real ${fmtMin(e.real)}${e.ext&&e.ext.length?` · ${e.ext.length} extensión${e.ext.length>1?'es':''}`:''}</div>
+  <div class="meta" style="margin-top:6px">🕒 ${segsOf(e).length>1?'Sesiones: ':''}${segTxt(e)}</div><div class="meta" style="margin-top:4px">Planeado ${fmtMin(e.plan)} · Real ${fmtMin(e.real)}${e.ext&&e.ext.length?` · ${e.ext.length} extensión${e.ext.length>1?'es':''}`:''}</div>
   <h3>📝 Notas durante la actividad</h3>
   ${dur.length?dur.map(x=>`<div class="note"><div class="nh">Al pedir +${x.min} min${x.pct!=null?` · faltaba ${x.pct}%`:''}</div>${esc(x.note).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="muted" style="font-size:14px">Sin notas</div>'}
   <h3>🗒️ Notas después</h3>
@@ -768,7 +814,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=32;
+const APP_VER=33;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
