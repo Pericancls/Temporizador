@@ -194,7 +194,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v42</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v43</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -208,7 +208,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v42)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v43)</button>
 </section>
 
 <section id="s1">
@@ -259,7 +259,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v42</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v43</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -761,7 +761,7 @@ function manualForm(){
 let mOngoing=false;
 function mStart(){const h=$('mH').value;if(!h)return null;const [yy,mm,dd]=selDay.split('-').map(Number),[hh,mi]=h.split(':').map(Number);return new Date(yy,mm-1,dd,hh,mi).getTime()}
 function mNowUpd(){const b=$('mNow');if(!b)return;const st=mStart(),pl=parseFloat($('mP').value),now=Date.now();
-  const show=st!=null&&pl>0&&st<=now&&st+pl*60000>now;
+  const show=st!=null&&st<=now;
   if(!show){b.style.display='none';mOngoing=false;return}
   const el=Math.max(1,Math.round((now-st)/60000));b.style.display='block';b.classList.toggle('on',mOngoing);
   b.innerHTML=mOngoing?`✓ Sigue en curso · llevas ${fmtMin(el)}`:`⏱ Sigue en curso (usar hora actual · ${fmtMin(el)})`}
@@ -775,7 +775,7 @@ function saveManual(){
     const P=pl>0?pl:r,elS=mOngoing?(Date.now()-st)/1000:r*60,tk=dkey(new Date()),id=uid();
     const it={n,m:P,id,prog:{el:elS,rem:Math.max(0,P*60-elS),tot:P*60,ext:[],mb:0,st,segs:[{s:st,e:st+elS*1000}]}};
     plans[tk]=[it].concat(plans[tk]||[]);store('plans',plans);closeModal();setPlanDay(tk);render();renderLog();
-    modal(`<h1>Agregada a tu plan ✅</h1><div class="muted">${esc(n)} · llevas ${fmtMin(elS/60)}${it.prog.rem>0?` · quedan ${fmtMin(it.prog.rem/60)}`:''}</div>
+    modal(`<h1>Agregada a tu plan ✅</h1><div class="muted">${esc(n)} · llevas ${fmtMin(elS/60)}${it.prog.rem>0?` · quedan ${fmtMin(it.prog.rem/60)}`:' · ya pasó tu estimado'}</div>
     <div class="row"><button class="btn gray" onclick="closeModal()">Después</button><button class="btn" style="background:#ff9f0a;color:#000" onclick="closeModal();tab(1);resumeItem(acts.findIndex(a=>a.id==='${id}'))">▶ Continuar ahora</button></div>`);
     return;
   }
@@ -803,8 +803,20 @@ function editEntry(i){const e=log[i];if(!e)return;
   <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Tiempo estimado (min)</label><input id="eeP" type="number" inputmode="decimal" value="${e.plan}"></div>
   <div style="flex:1"><label>Tiempo real (min)</label><input id="eeR" type="number" inputmode="decimal" value="${e.real}"></div></div>
   <label style="display:flex;align-items:center;gap:10px;color:#fff"><input id="eeOk" type="checkbox" ${e.ok?'checked':''} style="width:22px;height:22px"> La terminé</label>
+  <button class="nowbtn" onclick="entryOngoing(${i})">⏱ Sigue en curso (pasarla a mi plan con la hora actual)</button>
   ${segsOf(e).length>1?'<div class="muted" style="font-size:13px;margin-top:6px">Si cambias la hora o el tiempo real, sus pausas se juntan en un solo horario.</div>':''}
   <div class="row"><button class="btn gray" onclick="openEntry(${i})">Cancelar</button><button class="btn" onclick="saveEntry(${i})">✓ Guardar</button></div>`);
+}
+function entryOngoing(i){const e=log[i];if(!e)return;
+  const n=$('eeN').value.trim()||e.n,h=$('eeH').value||e.h,pl=parseFloat($('eeP').value)||e.plan;
+  let sg=segsOf(e).map(x=>({...x}));
+  if(h!==e.h){const [y,m,d]=e.d.split('-').map(Number),[hh,mi]=h.split(':').map(Number),st=new Date(y,m-1,d,hh,mi).getTime();sg=[{s:st,e:st}]}
+  const now=Date.now();sg[sg.length-1].e=Math.max(sg[sg.length-1].e,now);
+  const elS=sg.reduce((a,x)=>a+(x.e-x.s),0)/1000,tk=dkey(new Date()),id=uid();
+  const it={n,m:pl,id,prog:{el:elS,rem:Math.max(0,pl*60-elS),tot:pl*60,ext:e.ext||[],mb:0,st:sg[0].s,segs:sg}};
+  log.splice(i,1);plans[tk]=[it].concat(plans[tk]||[]);store('log',log);store('plans',plans);setPlanDay(tk);render();renderLog();
+  modal(`<h1>Agregada a tu plan ✅</h1><div class="muted">${esc(n)} · llevas ${fmtMin(elS/60)}${it.prog.rem>0?` · quedan ${fmtMin(it.prog.rem/60)}`:' · ya pasó tu estimado'}</div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Después</button><button class="btn" style="background:#ff9f0a;color:#000" onclick="closeModal();tab(1);resumeItem(acts.findIndex(a=>a.id==='${id}'))">▶ Continuar ahora</button></div>`);
 }
 function saveEntry(i){const e=log[i];if(!e)return closeModal();
   const n=$('eeN').value.trim(),h=$('eeH').value,pl=parseFloat($('eeP').value),r=parseFloat($('eeR').value);
@@ -891,7 +903,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=42;
+const APP_VER=43;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
