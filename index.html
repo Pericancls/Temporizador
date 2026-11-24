@@ -120,6 +120,10 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 .note.post{background:#1a2f4d;color:#cfe3ff}
 .detail{text-align:left}.detail h1{text-align:left}.detail h3{font-size:16px;margin:16px 0 6px;color:#ddd}
 #mCard{max-height:88vh;overflow:auto}
+.side .p5{color:#0a84ff;font-size:min(7vw,34px);font-weight:800;flex-direction:column;line-height:1;border:2px solid #0a84ff;border-radius:16px;padding:8px 10px}
+.side .p5 small{font-size:min(3vw,13px);font-weight:600}
+.side .p5.used{opacity:.25;pointer-events:none}
+#run.brk .side .p5{border-color:#fff;color:#fff}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -155,7 +159,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v31</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v32</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -169,7 +173,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v31)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v32)</button>
 </section>
 
 <section id="s1">
@@ -218,10 +222,10 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v31</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v32</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
-    <button onclick="restart()"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+    <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
   </div>
   <div class="mid">
     <div id="clock">00:00</div>
@@ -427,7 +431,7 @@ function tick(){
   if(remain<=0){cur.elapsed+=remain;timeUp(-remain);return}
   draw();
 }
-function draw(){const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
+function draw(){p5Upd();const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
   const txt=pad(Math.floor(s/60))+':'+pad(x);if($('clock').textContent!==txt){const L=$('clock').textContent.length;$('clock').textContent=txt;if(L!==txt.length)fit()}
   const mm=document.querySelector('.mid');if(mm.clientWidth&&$('clock').scrollWidth>mm.clientWidth+2)fit();$('clock').style.color=(inBreak||inMini)?'#fff':color(total?remain/total:0)}
 function color(r){
@@ -441,6 +445,10 @@ function pause(){running=false;setPP(false);saveRun()}
 function play(){if(!running&&remain>0){running=true;last=Date.now();setPP(true);saveRun()}}
 function fit(){const c=$('clock'),m=document.querySelector('.mid');if(!m.clientWidth)return;c.style.fontSize='100px';const w=c.scrollWidth,H=window.innerHeight;const fs=Math.min(100*m.clientWidth*0.96/w,H*((inBreak||inMini)?(window.innerHeight>window.innerWidth?0.3:0.42):(window.innerHeight>window.innerWidth?0.4:0.68)));c.style.fontSize=fs+'px'}
 window.addEventListener('resize',fit);window.addEventListener('orientationchange',()=>setTimeout(fit,300));
+function plus5(){if(!cur||inBreak||inMini||inOver||cur.p5)return;cur.p5=true;remain+=300;total+=300;
+  (cur.ext=cur.ext||[]).push({pct:null,min:5,quick:true});draw();saveRun();miniBtnUpd&&miniBtnUpd();
+  try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}}
+function p5Upd(){const b=$('p5');if(!b)return;const hide=!cur||inBreak||inMini;b.style.visibility=hide?'hidden':'visible';b.classList.toggle('used',!!(cur&&cur.p5)||inOver)}
 function toggle(){running=!running;last=Date.now();setPP(running)}
 function restart(){remain=total;last=Date.now();draw()}
 
@@ -760,7 +768,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=31;
+const APP_VER=32;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
