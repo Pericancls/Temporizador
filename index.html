@@ -162,6 +162,14 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 .restbtn{width:100%;margin-top:12px;background:#0f2a17;color:#34c759;border:2px solid #1f8f4e;border-radius:12px;padding:14px;font-size:17px;font-weight:700}
 .restbtn small{color:#7fd69a;font-weight:500;margin-left:6px}
 #run.brk #label.long{font-size:min(10vw,11vh)}
+#list{position:relative}
+#list li{z-index:1}
+li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
+.swh{position:absolute;left:0;right:0;border-radius:12px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:700;font-size:15px;color:#fff;z-index:0;background:#2c2c2e}
+.swh span{opacity:0;transition:opacity .15s}.swh.r{background:#1f5c33}.swh.r .swr{opacity:.7}.swh.l{background:#1a3a66}.swh.l .swl{opacity:.7}
+.swh.go.r{background:#34c759}.swh.go.l{background:#0a84ff}.swh.go span{opacity:1!important}
+#toast{position:fixed;left:16px;right:16px;bottom:calc(90px + env(safe-area-inset-bottom));z-index:30;background:#2c2c2e;color:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:15px;box-shadow:0 6px 24px rgba(0,0,0,.6);transform:translateY(150%);opacity:0;transition:.25s}
+#toast.on{transform:none;opacity:1}#toast span{flex:1}#toast button{background:none;border:none;color:#ff9f0a;font-weight:700;font-size:15px}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -197,7 +205,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v44</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v45</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -212,7 +220,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v44)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v45)</button>
 </section>
 
 <section id="s1">
@@ -263,7 +271,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v44</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v45</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -347,6 +355,22 @@ function markDone(id){let hit=false;Object.values(plans).forEach(l=>l.forEach(a=
 function copyPlan(n){const k=shiftDay(planDay,n),src=acts.filter(a=>!a.done),cp=src.map(a=>({n:a.n,m:a.m,id:uid(),...(a.prog?{prog:a.prog}:{})}));plans[k]=(plans[k]||[]).concat(cp);store('plans',plans);
   modal(`<h1>Copiado ✅</h1><div class="muted">Se agregaron ${cp.length} actividades al plan de ${dayName(k)}.</div><div class="row"><button class="btn gray" onclick="closeModal()">Quedarme aquí</button><button class="btn" onclick="closeModal();setPlanDay('${k}');render()">Ir a ${dayName(k)}</button></div>`)}
 function clearPlan(){modal(`<h1>¿Vaciar el plan?</h1><div class="muted">Se borran las actividades del plan de ${dayName(planDay)}. Tu registro no se toca.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();acts=[];store('acts',acts);render()">Vaciar</button></div>`)}
+/* ---- Mover una actividad a otro día (deslizando) ---- */
+let lastMove=null,toastT=null;
+function sendTo(i,k){const a=acts[i];if(!a||k===planDay)return;const from=planDay;
+  acts.splice(i,1);store('acts',acts);plans[k]=(plans[k]||[]).concat(a);store('plans',plans);render();
+  lastMove={a,i,from,k};toast(`Movida a ${dayName(k)}: ${esc(a.n)}`,'Deshacer','undoMove()')}
+function undoMove(){const m=lastMove;if(!m)return;lastMove=null;plans[m.k]=(plans[m.k]||[]).filter(x=>x!==m.a&&x.id!==m.a.id);
+  plans[m.from]=plans[m.from]||[];plans[m.from].splice(Math.min(m.i,plans[m.from].length),0,m.a);store('plans',plans);setPlanDay(planDay);render();hideToast()}
+function pickDayFor(i){const a=acts[i];if(!a)return;const t=dkey(new Date());
+  const opts=[t,shiftDay(t,1),shiftDay(t,2)].filter(k=>k!==planDay);
+  modal(`<h1>¿A qué día?</h1><div class="muted">${esc(a.n)}</div>
+  <div class="picklist">${opts.map(k=>`<button onclick="closeModal();sendTo(${i},'${k}')"><span style="text-transform:capitalize">${dayName(k)}</span><span class="muted">${(()=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})})()}</span></button>`).join('')}</div>
+  <label>Otra fecha</label><input type="date" id="pkD" value="${shiftDay(planDay,1)}">
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="const v=$('pkD').value;if(v){closeModal();sendTo(${i},v)}">Mover</button></div>`)}
+function toast(msg,btn,fn){let t=$('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}
+  t.innerHTML=`<span>${msg}</span>${btn?`<button onclick="${fn}">${btn}</button>`:''}`;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(hideToast,5000)}
+function hideToast(){const t=$('toast');if(t)t.classList.remove('on')}
 function del(i){acts.splice(i,1);store('acts',acts);render()}
 function fmt12(t){let [h,m]=t.split(':').map(Number);const ap=h>=12?'pm':'am';h=h%12||12;return h+':'+pad(m)+' '+ap}
 function editTime(i){editAct(i,'t')}
@@ -400,13 +424,23 @@ function checkSched(){
 function editT(i){editAct(i,'m')}
 /* Arrastrar para reordenar: mantén presionada la actividad y muévela */
 (function(){
-  const L=$('list');let holdT=null,drag=null,sx=0,sy=0,lastY=0;
-  const startHold=(li,x,y)=>{sx=x;sy=y;lastY=y;clearTimeout(holdT);
+  const L=$('list');let holdT=null,drag=null,sx=0,sy=0,lastY=0,lastX=0,active=null,sw=null;
+  const swClear=()=>{L.querySelectorAll('.swh').forEach(h=>h.remove());if(sw){sw.li.style.transform='';sw.li.classList.remove('swiping')}sw=null};
+  const startHold=(li,x,y)=>{sx=x;sy=y;lastY=y;lastX=x;active=li;clearTimeout(holdT);
     holdT=setTimeout(()=>{drag={li,from:+li.dataset.i,y0:y};li.classList.add('drag');try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}},350)};
-  const move=(x,y,ev)=>{lastY=y;if(!drag){if(Math.abs(y-sy)>8||Math.abs(x-sx)>8)clearTimeout(holdT);return}
+  const move=(x,y,ev)=>{if(!active)return;lastY=y;lastX=x;
+    if(!drag){const dx=x-sx,dy=y-sy;
+      if(!sw&&Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.5&&!active.classList.contains('done')){clearTimeout(holdT);
+        sw={li:active,i:+active.dataset.i};const h=document.createElement('div');h.className='swh';h.style.top=active.offsetTop+'px';h.style.height=active.offsetHeight+'px';
+        h.innerHTML=`<span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span class="swl">‹ Otro día</span>`;L.appendChild(h);active.classList.add('swiping')}
+      if(sw){if(ev&&ev.cancelable)ev.preventDefault();sw.li.style.transform=`translateX(${dx}px)`;const h=L.querySelector('.swh');
+        if(h){h.classList.toggle('r',dx>0);h.classList.toggle('l',dx<0);h.classList.toggle('go',Math.abs(dx)>90)}return}
+      if(Math.abs(dy)>8||Math.abs(dx)>8)clearTimeout(holdT);return}
     if(ev&&ev.cancelable)ev.preventDefault();drag.li.style.transform=`translateY(${y-drag.y0}px)`;
     [...L.querySelectorAll('li')].forEach(o=>{if(o===drag.li)return;const r=o.getBoundingClientRect();o.classList.toggle('over',y>r.top&&y<r.bottom)})};
-  const end=cancel=>{clearTimeout(holdT);if(!drag)return;const d=drag;drag=null;
+  const end=cancel=>{clearTimeout(holdT);active=null;
+    if(sw){const dx=lastX-sx,i=sw.i;swClear();if(!cancel){if(dx>90)sendTo(i,shiftDay(planDay,1));else if(dx<-90)pickDayFor(i)}return}
+    if(!drag)return;const d=drag;drag=null;
     L.querySelectorAll('li.over').forEach(o=>o.classList.remove('over'));
     if(cancel||Math.abs(lastY-d.y0)<10){d.li.classList.remove('drag');d.li.style.transform='';return}
     const items=[...L.querySelectorAll('li')].filter(o=>o!==d.li);let to=items.length;
@@ -913,7 +947,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=44;
+const APP_VER=45;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
