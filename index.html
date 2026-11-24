@@ -181,7 +181,7 @@ li{gap:8px!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v36</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v37</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -195,7 +195,7 @@ li{gap:8px!important}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v36)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v37)</button>
 </section>
 
 <section id="s1">
@@ -245,7 +245,7 @@ li{gap:8px!important}
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v36</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v37</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -278,8 +278,13 @@ const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 function initPlans(){
   plans=load('plans',null);
   if(!plans||typeof plans!=='object'){plans={};const old=load('acts',[]);if(old.length)plans[dkey(new Date())]=old}
+  fixData();if(carryPaused())try{localStorage.setItem('plans',JSON.stringify(plans))}catch(e){}
   setPlanDay(dkey(new Date()));
 }
+/* Las actividades pausadas de días anteriores pasan solas al plan de hoy */
+function carryPaused(){const t=dkey(new Date());let moved=[];
+  Object.keys(plans).forEach(k=>{if(k>=t)return;const keep=[];(plans[k]||[]).forEach(a=>{if(a.prog&&!a.done)moved.push(a);else keep.push(a)});plans[k]=keep;if(!keep.length)delete plans[k]});
+  if(!moved.length)return false;plans[t]=moved.concat((plans[t]||[]).filter(a=>!moved.some(m=>m.id===a.id)));return true}
 function cleanPlans(){Object.keys(plans).forEach(k=>{if(!plans[k]||!plans[k].length)delete plans[k]})}
 function setPlanDay(k){planDay=k;acts=plans[k]?plans[k]:[]}
 function shiftDay(k,n){const [y,m,d]=k.split('-').map(Number);return dkey(new Date(y,m-1,d+n))}
@@ -536,7 +541,7 @@ function save(ok){
 }
 function stop(){if(inMini)endMini(false,true);if(!inBreak&&!inOver)segClose();running=false;clearInterval(timer);
   if(inBreak){inBreak=false;$('run').classList.remove('brk');return quit()}
-  if(cur&&cur.elapsed>=5)return pauseExit();
+  if(cur&&cur.elapsed>=1)return pauseExit();
   else quit()}
 function quit(){$('run').classList.remove('on');release();clearRun()}
 /* ---- Guardar estado en curso (por si se cierra la app) ---- */
@@ -790,7 +795,7 @@ function queueSync(){if(!user||applying)return;setSync('busy');clearTimeout(sync
 function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
 function applyRemote(d){applying=true;
   if(d.plans&&typeof d.plans==='object')plans=d.plans;else if(Array.isArray(d.acts)){plans={...plans};if(d.acts.length)plans[dkey(new Date())]=d.acts}
-  log=d.log||[];fixData();if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
+  log=d.log||[];fixData();const mv=carryPaused();if(mv)setTimeout(queueSync,50);if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
   try{localStorage.setItem('plans',JSON.stringify(plans));localStorage.setItem('log',JSON.stringify(log))}catch(e){}applying=false;
   render();if($('s2').classList.contains('on')){renderLog();renderAct()}}
 async function onLogin(u){
@@ -819,7 +824,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=36;
+const APP_VER=37;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
