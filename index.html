@@ -139,6 +139,13 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 .tlleg{margin-top:10px}
 .tll{display:flex;align-items:center;gap:8px;font-size:14px;color:#ddd;padding:3px 0}
 .tll i{width:12px;height:12px;border-radius:3px;flex-shrink:0}.tll span{flex:1}.tll b{color:#aaa;font-weight:600}
+.playb{width:38px;height:38px;border-radius:50%;background:#34c759!important;border:none;display:flex!important;align-items:center;justify-content:center;padding:0!important;flex-shrink:0}
+.playb svg{width:18px;height:18px;fill:#000;margin-left:2px}
+li .delb{padding:0 2px!important;font-size:17px!important}
+li .t{white-space:nowrap;font-size:15px;padding:5px 7px}
+li .n{font-size:16px;min-width:0;flex:1 1 auto;overflow-wrap:break-word}
+.tchip{font-size:13px!important;padding:4px 6px!important}
+li{gap:8px!important}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -174,7 +181,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v33</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v34</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -188,7 +195,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v33)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v34)</button>
 </section>
 
 <section id="s1">
@@ -238,7 +245,7 @@ textarea{width:100%;background:#1c1c1e;border:1px solid #333;color:#fff;border-r
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
 </nav>
 
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v33</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v34</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -291,7 +298,7 @@ function prev(){const m=parseFloat($('tMin').value)||0;$('tPrev').textContent=pa
 /* ---- Plan ---- */
 function render(){
   acts.forEach(a=>{if(!a.id)a.id=uid()});
-  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${esc(a.n)}${a.prog&&!a.done?`<small class="prog">⏸ llevas ${fmtMin(a.prog.el/60)} · quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</small><button class="contb" onclick="resumeItem(${i})">▶ Continuar</button>`:''}</span><span class="t" onclick="${a.done?'':`editT(${i})`}">${a.m} min${a.done?'':' ✎'}</span><button onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
+  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${esc(a.n)}${a.prog&&!a.done?`<small class="prog">⏸ llevas ${fmtMin(a.prog.el/60)} · quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</small>`:''}</span><span class="t" onclick="${a.done?'':`editT(${i})`}">${a.m} min</span>${a.done?'':`<button class="playb" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
@@ -814,7 +821,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=33;
+const APP_VER=34;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
