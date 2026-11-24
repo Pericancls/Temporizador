@@ -158,6 +158,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 .side .minbtn small{font-size:min(3vw,12px);font-weight:600;margin-top:2px}
 .nowbtn{width:100%;margin-top:8px;background:#3a2606;color:#ff9f0a;border:1px solid #6b4508;border-radius:10px;padding:10px;font-size:15px;font-weight:600}
 .nowbtn.on{background:#ff9f0a;color:#000}
+.edl{background:none;border:none;color:#0a84ff;font-size:13px;margin-right:10px}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -193,7 +194,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v41</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v42</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -207,7 +208,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v41)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v42)</button>
 </section>
 
 <section id="s1">
@@ -258,7 +259,7 @@ body.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 54px)}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v41</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v42</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -738,7 +739,7 @@ function entry(e){
   const pn=(e.post||[]).length;
   return`<div class="entry" onclick="openEntry(${e.i})"><div class="top"><b>${esc(e.n)}</b><span class="muted">${e.manual?'✍︎ ':''}${e.h}</span></div>
   <div class="meta">Planeado ${fmtMin(e.plan)} · Real <span class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</span> (${diff>=0?'+':''}${Math.round(diff)} min)${e.ok?'':' · <span class="over">sin terminar</span>'}</div><div class="meta">🕒 ${segTxt(e)}</div>${ext}${pn?`<div class="note post">🗒️ ${pn} nota${pn>1?'s':''} después</div>`:''}
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span class="muted" style="font-size:12px">Toca para ver y agregar notas</span><button onclick="event.stopPropagation();rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></div></div>`;
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span class="muted" style="font-size:12px">Toca para ver y agregar notas</span><span><button class="edl" onclick="event.stopPropagation();editEntry(${e.i})">editar</button><button onclick="event.stopPropagation();rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></span></div></div>`;
 }
 function manualForm(){
   const now=new Date(),hh=selDay===dkey(now)?pad(now.getHours())+':'+pad(now.getMinutes()):'12:00';
@@ -792,8 +793,26 @@ function openEntry(i){const e=log[i];if(!e)return;
   <h3>🗒️ Notas después</h3>
   ${post.length?post.map((x,k)=>`<div class="note post"><div class="nh">${f(x.ts)}<button onclick="delPost(${i},${k})">✕</button></div>${esc(x.txt).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="muted" style="font-size:14px">Aún no hay notas</div>'}
   <textarea id="pNote" rows="3" placeholder="Agrega una nota o aprendizaje…" style="margin-top:10px"></textarea>
-  <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="addPost(${i})">＋ Agregar nota</button></div></div>`);
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="addPost(${i})">＋ Agregar nota</button></div>
+  <button class="linkbtn" style="padding:12px 0 0" onclick="editEntry(${i})">✎ Editar este registro</button></div>`);
 }
+function editEntry(i){const e=log[i];if(!e)return;
+  modal(`<h1>Editar registro</h1>
+  <label>Actividad</label><input id="eeN" value="${esc(e.n)}">
+  <label>Hora de inicio</label><input id="eeH" type="time" value="${e.h}">
+  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Tiempo estimado (min)</label><input id="eeP" type="number" inputmode="decimal" value="${e.plan}"></div>
+  <div style="flex:1"><label>Tiempo real (min)</label><input id="eeR" type="number" inputmode="decimal" value="${e.real}"></div></div>
+  <label style="display:flex;align-items:center;gap:10px;color:#fff"><input id="eeOk" type="checkbox" ${e.ok?'checked':''} style="width:22px;height:22px"> La terminé</label>
+  ${segsOf(e).length>1?'<div class="muted" style="font-size:13px;margin-top:6px">Si cambias la hora o el tiempo real, sus pausas se juntan en un solo horario.</div>':''}
+  <div class="row"><button class="btn gray" onclick="openEntry(${i})">Cancelar</button><button class="btn" onclick="saveEntry(${i})">✓ Guardar</button></div>`);
+}
+function saveEntry(i){const e=log[i];if(!e)return closeModal();
+  const n=$('eeN').value.trim(),h=$('eeH').value,pl=parseFloat($('eeP').value),r=parseFloat($('eeR').value);
+  let bad=false;if(!n){$('eeN').style.borderColor='#ff3b30';bad=true}if(!h){$('eeH').style.borderColor='#ff3b30';bad=true}if(!(r>0)){$('eeR').style.borderColor='#ff3b30';bad=true}if(bad)return;
+  const timeChanged=h!==e.h||r!==e.real;
+  e.n=n;e.plan=pl>0?pl:r;e.ok=$('eeOk').checked;
+  if(timeChanged){e.h=h;e.real=r;const [y,m,d]=e.d.split('-').map(Number),[hh,mi]=h.split(':').map(Number),st=new Date(y,m-1,d,hh,mi).getTime();e.segs=[{s:st,e:st+r*60000}]}
+  store('log',log);renderLog();if($('vAct').classList.contains('on'))renderAct();openEntry(i)}
 function addPost(i){const t=$('pNote').value.trim();if(!t){$('pNote').style.borderColor='#ff3b30';return}
   const e=log[i];e.post=(e.post||[]).concat({ts:Date.now(),txt:t});store('log',log);renderLog();openEntry(i)}
 function delPost(i,k){const e=log[i];if(!e||!e.post)return;e.post.splice(k,1);if(!e.post.length)delete e.post;store('log',log);renderLog();openEntry(i)}
@@ -872,7 +891,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=41;
+const APP_VER=42;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
