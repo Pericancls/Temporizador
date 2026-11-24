@@ -170,6 +170,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 .swh.go.r{background:#34c759}.swh.go.l{background:#0a84ff}.swh.go span{opacity:1!important}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(90px + env(safe-area-inset-bottom));z-index:30;background:#2c2c2e;color:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:15px;box-shadow:0 6px 24px rgba(0,0,0,.6);transform:translateY(150%);opacity:0;transition:.25s}
 #toast.on{transform:none;opacity:1}#toast span{flex:1}#toast button{background:none;border:none;color:#ff9f0a;font-weight:700;font-size:15px}
+.entry.openw{border:1px dashed #6b4508;background:#1f1608}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -205,7 +206,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v45</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v46</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -220,7 +221,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v45)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v46)</button>
 </section>
 
 <section id="s1">
@@ -271,7 +272,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v45</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v46</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -753,20 +754,33 @@ function renderLog(){
   $('dayTitle').textContent=new Date(y,m-1,dd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   const items=log.map((e,i)=>({...e,i})).filter(e=>e.d===selDay).sort((a,b)=>a.h.localeCompare(b.h));
   renderTl();
-  $('dayList').innerHTML=items.length?items.map(entry).join('')+`<div class="muted" style="margin-top:6px">Total del día: ${fmtMin(items.reduce((s,e)=>s+e.real,0))}</div>`:'<div class="empty">Sin actividades este día</div>';
+  const d0=new Date(y,m-1,dd).getTime(),d1=new Date(y,m-1,dd+1).getTime();
+  const ow=openWork().map(w=>({...w,day:w.segs.filter(x=>x.e>d0&&x.s<d1).map(x=>({s:Math.max(x.s,d0),e:Math.min(x.e,d1)}))})).filter(w=>w.day.length);
+  const owHtml=ow.length?`<h3 style="font-size:16px">⏸ Sin terminar</h3>`+ow.map(w=>{const mins=w.day.reduce((a,x)=>a+(x.e-x.s),0)/60000;
+    return`<div class="entry openw" onclick="tab(1)"><div class="top"><b>${w.kind==='curso'?'▶ ':'⏸ '}${esc(w.n)}</b><span class="over">${w.kind==='curso'?'en curso':'pausada'}</span></div>
+    <div class="meta">Trabajado este día: ${fmtMin(mins)}${Math.abs(mins*60-w.el)>60?` · total llevas ${fmtMin(w.el/60)}`:''}</div><div class="meta">🕒 ${w.day.map(x=>hm(x.s)+'–'+hm(x.e)).join(' · ')}</div></div>`}).join(''):'';
+  $('dayList').innerHTML=(items.length?items.map(entry).join('')+`<div class="muted" style="margin-top:6px">Total del día: ${fmtMin(items.reduce((s,e)=>s+e.real,0))}</div>`:(ow.length?'':'<div class="empty">Sin actividades este día</div>'))+owHtml;
 }
 const TLC=['#34c759','#0a84ff','#ff9f0a','#bf5af2','#ff375f','#64d2ff','#ffd60a','#30d158','#5e5ce6','#ac8e68'];
 function tlColor(n){let h=0;for(const c of n.toLowerCase())h=(h*31+c.charCodeAt(0))>>>0;return TLC[h%TLC.length]}
+/* Trabajo de actividades que aún no terminan (pausadas o corriendo): cada pausa cierra un bloque */
+function openWork(){const out=[];
+  Object.values(plans).forEach(l=>(l||[]).forEach(a=>{if(!a.prog||a.done)return;let sg=normSegs(a.prog.segs).filter(x=>x.e!=null);
+    if(!sg.length&&a.prog.st&&a.prog.el>0)sg=[{s:a.prog.st,e:a.prog.st+a.prog.el*1000}];if(sg.length)out.push({n:a.n,segs:sg,kind:'pausa',el:a.prog.el})}));
+  if($('run').classList.contains('on')&&cur&&!inBreak){const now=Date.now();const sg=normSegs(cur.segs).map(x=>({s:x.s,e:x.e==null?now:x.e})).filter(x=>x.e>x.s);
+    if(sg.length)out.push({n:cur.n,segs:sg,kind:'curso',el:cur.elapsed})}
+  return out}
 function renderTl(){
   const [y,m,d]=selDay.split('-').map(Number),d0=new Date(y,m-1,d).getTime(),d1=new Date(y,m-1,d+1).getTime(),H=24*36;
   const blocks=[];log.forEach((e,i)=>segsOf(e).forEach(sg=>{const a=Math.max(sg.s,d0),b=Math.min(sg.e,d1);if(b>a)blocks.push({i,n:e.n,a,b})}));
+  openWork().forEach(w=>w.segs.forEach(sg=>{const a=Math.max(sg.s,d0),b=Math.min(sg.e,d1);if(b>a)blocks.push({i:-1,n:w.n,a,b,open:w.kind})}));
   if(!blocks.length){$('dayTl').innerHTML='';return}
   blocks.sort((p,q)=>p.a-q.a);
   const cmap={};blocks.forEach(x=>{if(!(x.n in cmap))cmap[x.n]=TLC[Object.keys(cmap).length%TLC.length]});const col=n=>cmap[n];
   const tot={};blocks.forEach(x=>tot[x.n]=(tot[x.n]||0)+(x.b-x.a));const sum=Object.values(tot).reduce((p,q)=>p+q,0)/60000;
   let hrs='';for(let h=0;h<24;h++)hrs+=`<div class="tlh" style="top:${h*36}px"><span>${fmt12(pad(h)+':00').replace(':00','')}</span></div>`;
   const bl=blocks.map(x=>{const top=(x.a-d0)/864e5*H,ht=Math.max(4,(x.b-x.a)/864e5*H),c=col(x.n);
-    return`<div class="tlb" onclick="openEntry(${x.i})" style="top:${top}px;height:${ht}px;background:${c}33;border-left:4px solid ${c}">${ht>=11?`<b${ht<16?' style="font-size:10px;line-height:1"':''}>${esc(x.n)}</b>${ht>=30?`<span>${hm(x.a)}–${hm(x.b)}</span>`:''}`:''}</div>`}).join('');
+    return`<div class="tlb${x.open?' open':''}" onclick="${x.open?'tab(1)':`openEntry(${x.i})`}" style="top:${top}px;height:${ht}px;background:${c}${x.open?'1f':'33'};border-left:4px solid ${c};${x.open?`outline:1.5px dashed ${c};outline-offset:-1.5px;`:''}">${ht>=11?`<b${ht<16?' style="font-size:10px;line-height:1"':''}>${x.open==='pausa'?'⏸ ':x.open==='curso'?'▶ ':''}${esc(x.n)}</b>${ht>=30?`<span>${hm(x.a)}–${hm(x.b)}</span>`:''}`:''}</div>`}).join('');
   const now=Date.now(),nl=now>d0&&now<d1?`<div class="tlnow" style="top:${(now-d0)/864e5*H}px"></div>`:'';
   const leg=Object.entries(tot).sort((p,q)=>q[1]-p[1]).map(([n,v])=>`<div class="tll"><i style="background:${col(n)}"></i><span>${esc(n)}</span><b>${fmtMin(v/60000)}</b></div>`).join('');
   $('dayTl').innerHTML=`<h3>🕒 Tu día en 24 horas</h3>
@@ -947,7 +961,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=45;
+const APP_VER=46;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
