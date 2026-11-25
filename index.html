@@ -197,6 +197,15 @@ svg.cc .hit{cursor:pointer}
 #s3 h3 small{color:#777;font-weight:400;font-size:13px}
 @media (hover:hover){#list li:not(.done){cursor:grab}#list li.drag{cursor:grabbing}}
 li .t.quick{background:#2a2208!important;color:#ffd60a!important}
+.recbtn{width:100%;margin-top:12px;background:#1a2f4d;color:#64a8ff;border:2px solid #24477a;border-radius:12px;padding:14px;font-size:17px;font-weight:700}
+.recrow{display:flex;align-items:center;gap:10px;background:#2c2c2e;border-radius:12px;padding:12px;margin-top:10px}
+.recrow>div{flex:1;min-width:0}.recrow button{background:none;border:1px solid #444;color:#0a84ff;border-radius:8px;padding:6px 10px;font-size:14px}
+.wdays{display:flex;gap:6px;margin-top:10px}
+.wdays button{flex:1;aspect-ratio:1;max-width:44px;border-radius:50%;border:1px solid #444;background:#1c1c1e;color:#aaa;font-weight:700;font-size:15px}
+.wdays button.on{background:#0a84ff;border-color:#0a84ff;color:#fff}
+.inl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;color:#ddd}
+.inl input{width:70px;text-align:center}.inl .selx{width:auto;padding:10px 32px 10px 10px}
+.rico{font-size:12px;margin-right:4px}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -232,7 +241,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v53</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v54</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -246,8 +255,9 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
     <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
+  <button class="recbtn" onclick="recList()">🔁 Actividades recurrentes</button>
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v53)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v54)</button>
 </section>
 
 <section id="s1">
@@ -305,7 +315,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v53</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v54</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -331,8 +341,8 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 <script>
 const $=id=>document.getElementById(id);
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
-const store=(k,v)=>{if(k==='brk'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
-let log=load('log',[]),plans={},acts=[],planDay='';
+const store=(k,v)=>{if(k==='brk'||k==='recs'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
+let recs=load('recs',[]),log=load('log',[]),plans={},acts=[],planDay='';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
 const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
@@ -363,8 +373,9 @@ function prev(){const m=parseFloat($('tMin').value)||0;$('tPrev').textContent=pa
 
 /* ---- Plan ---- */
 function render(){
+  materialize(planDay);
   acts.forEach(a=>{if(!a.id)a.id=uid()});
-  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${esc(a.n)}</span>${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
+  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span>${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
@@ -418,7 +429,7 @@ function copyPlan(n){const k=shiftDay(planDay,n),src=acts.filter(a=>!a.done),cp=
 function clearPlan(){modal(`<h1>¿Vaciar el plan?</h1><div class="muted">Se borran las actividades del plan de ${dayName(planDay)}. Tu registro no se toca.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();acts=[];store('acts',acts);render()">Vaciar</button></div>`)}
 /* ---- Mover una actividad a otro día (deslizando) ---- */
 let lastMove=null,toastT=null;
-function sendTo(i,k){const a=acts[i];if(!a||k===planDay)return;const from=planDay;
+function sendTo(i,k){const a=acts[i];if(!a||k===planDay)return;const from=planDay;if(a.rid&&(a.rk||from)===from)recSkip(a.rid,from);
   acts.splice(i,1);store('acts',acts);plans[k]=(plans[k]||[]).concat(a);store('plans',plans);render();
   lastMove={a,i,from,k};toast(`Movida a ${dayName(k)}: ${esc(a.n)}`,'Deshacer','undoMove()')}
 function undoMove(){const m=lastMove;if(!m)return;lastMove=null;plans[m.k]=(plans[m.k]||[]).filter(x=>x!==m.a&&x.id!==m.a.id);
@@ -432,7 +443,7 @@ function pickDayFor(i){const a=acts[i];if(!a)return;const t=dkey(new Date());
 function toast(msg,btn,fn){let t=$('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}
   t.innerHTML=`<span>${msg}</span>${btn?`<button onclick="${fn}">${btn}</button>`:''}`;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(hideToast,5000)}
 function hideToast(){const t=$('toast');if(t)t.classList.remove('on')}
-function del(i){acts.splice(i,1);store('acts',acts);render()}
+function del(i){const a=acts[i];if(a&&a.rid)recSkip(a.rid,a.rk||planDay);acts.splice(i,1);store('acts',acts);render()}
 function fmt12(t){let [h,m]=t.split(':').map(Number);const ap=h>=12?'pm':'am';h=h%12||12;return h+':'+pad(m)+' '+ap}
 function editTime(i){editAct(i,'t')}
 function editAct(i,focus){const a=acts[i];
@@ -801,6 +812,61 @@ function stopAlarm(){if(alarmT){clearInterval(alarmT);alarmT=null}}
 try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}catch(e){}
 
 
+
+/* ===================== ACTIVIDADES RECURRENTES ===================== */
+const WD=['L','M','M','J','V','S','D'],WDN=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'],NTH={1:'Primer',2:'Segundo',3:'Tercer',4:'Cuarto','-1':'Último'};
+function kDate(k){const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)}
+function occurs(r,k){if(k<r.from||k>r.until)return false;const d=kDate(k),dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),wd=(d.getDay()+6)%7;
+  if(r.type==='week')return(r.days||[]).includes(wd);
+  if(r.type==='monthday')return d.getDate()===Math.min(r.md,dim);
+  if(r.type==='nth')return wd===r.wd&&(r.nth>0?Math.ceil(d.getDate()/7)===r.nth:d.getDate()+7>dim);
+  return false}
+function recDur(r){if(r.start&&r.end){const [a,b]=r.start.split(':').map(Number),[c,e]=r.end.split(':').map(Number);let m=c*60+e-(a*60+b);if(m<=0)m+=1440;return m}return r.dur||30}
+function materialize(k){if(!k||!recs.length||k<dkey(new Date()))return;let add=false;const l=plans[k]=plans[k]||[];
+  recs.forEach(r=>{if(!occurs(r,k)||(r.skip||[]).includes(k)||l.some(a=>a.rid===r.id&&(a.rk||k)===k))return;
+    l.push({n:r.n,m:recDur(r),id:uid(),rid:r.id,rk:k,...(r.start?{t:r.start}:{})});add=true});
+  if(add){if(k===planDay)acts=l;try{localStorage.setItem('plans',JSON.stringify(plans))}catch(e){}queueSync()}else if(!l.length)delete plans[k]}
+function recSkip(id,k){const r=recs.find(x=>x.id===id);if(!r)return;r.skip=(r.skip||[]).concat(k);store('recs',recs)}
+function recTxt(r){let t=r.type==='week'?((r.days||[]).length===7?'Todos los días':(r.days||[]).length===5&&!r.days.includes(5)&&!r.days.includes(6)?'Lunes a viernes':'Cada '+(r.days||[]).map(i=>WDN[i]).join(', ')):r.type==='monthday'?`Día ${r.md} de cada mes`:`${NTH[r.nth]} ${WDN[r.wd]} de cada mes`;
+  return t+(r.start?` · ${fmt12(r.start)}${r.end?'–'+fmt12(r.end):''}`:'')+` · ${fmtMin(recDur(r))}`}
+function recList(){
+  modal(`<div class="detail"><h1 style="font-size:24px">🔁 Actividades recurrentes</h1>
+  ${recs.length?recs.map(r=>`<div class="recrow"><div><b>${esc(r.n)}</b><div class="meta">${recTxt(r)}</div><div class="meta">Hasta ${kDate(r.until).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}</div></div><button onclick="recForm('${r.id}')">Editar</button></div>`).join(''):'<div class="muted" style="margin:14px 0">Aún no tienes actividades recurrentes. Por ejemplo: una junta cada lunes a las 9:00.</div>'}
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="recForm()">＋ Nueva</button></div></div>`)}
+let rf=null;
+function recForm(id){const r=id?recs.find(x=>x.id===id):null,t=dkey(new Date());
+  rf=r?JSON.parse(JSON.stringify(r)):{id:uid(),n:'',type:'week',days:[(new Date().getDay()+6)%7],md:new Date().getDate(),nth:1,wd:(new Date().getDay()+6)%7,start:'',end:'',dur:'',from:t,until:new Date().getFullYear()+'-12-31'};
+  modal(`<div class="detail"><h1 style="font-size:24px">${r?'Editar':'Nueva'} actividad recurrente</h1>
+  <label>Actividad</label><input id="rfN" value="${esc(rf.n)}" placeholder="ej. Junta de equipo">
+  <label>Se repite</label><div class="seg sm" id="rfT"></div><div id="rfOpt"></div>
+  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora de inicio</label><input id="rfS" type="time" value="${rf.start||''}"></div><div style="flex:1"><label>Hora de fin</label><input id="rfE" type="time" value="${rf.end||''}"></div></div>
+  <label>…o duración (min)</label><input id="rfD" type="number" inputmode="numeric" value="${rf.start&&rf.end?recDur(rf):(rf.dur||'')}" placeholder="ej. 60" style="width:100%">
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px"><div><label>Desde</label><input id="rfF" type="date" style="width:100%;min-width:0;box-sizing:border-box" value="${rf.from}"></div><div><label>Hasta</label><input id="rfU" type="date" style="width:100%;min-width:0;box-sizing:border-box" value="${rf.until}"></div></div>
+  <div class="muted" style="font-size:13px;margin-top:6px">Si no cambias "Hasta", se repite hasta el 31 de diciembre.</div>
+  <div id="rfPrev" class="ccnote"></div>
+  <div class="row"><button class="btn gray" onclick="recList()">Cancelar</button><button class="btn" onclick="recSave(${r?'true':'false'})">✓ Guardar</button></div>
+  ${r?`<button class="linkbtn" style="color:#ff453a;padding:10px 0 0" onclick="recDel('${r.id}')">Eliminar esta actividad recurrente</button>`:''}</div>`);
+  ['rfS','rfE'].forEach(x=>$(x).addEventListener('input',()=>{const s_=$('rfS').value,e_=$('rfE').value;if(s_&&e_)$('rfD').value=recDur({start:s_,end:e_});rfPrev()}));
+  $('rfD').addEventListener('input',()=>{const s_=$('rfS').value,d=parseFloat($('rfD').value);if(s_&&d>0){const [a,b]=s_.split(':').map(Number),m=(a*60+b+d)%1440;$('rfE').value=pad(Math.floor(m/60))+':'+pad(m%60)}rfPrev()});
+  rfDraw()}
+function rfDraw(){$('rfT').innerHTML=[['week','Días de la semana'],['monthday','Día del mes'],['nth','1er/2º/último…']].map(([k,l])=>`<button class="${rf.type===k?'on':''}" onclick="rf.type='${k}';rfDraw()">${l}</button>`).join('');
+  let o='';
+  if(rf.type==='week')o=`<div class="wdays">${WD.map((d,i)=>`<button class="${rf.days.includes(i)?'on':''}" onclick="rf.days=rf.days.includes(${i})?rf.days.filter(x=>x!==${i}):rf.days.concat(${i}).sort();rfDraw()">${d}</button>`).join('')}</div>`;
+  if(rf.type==='monthday')o=`<div class="inl">El día <input id="rfMD" type="number" min="1" max="31" value="${rf.md}" oninput="rf.md=+this.value;rfPrev()"> de cada mes</div>`;
+  if(rf.type==='nth')o=`<div class="inl">El <select class="selx" onchange="rf.nth=+this.value;rfPrev()">${[1,2,3,4,-1].map(n=>`<option value="${n}" ${rf.nth===n?'selected':''}>${NTH[n].toLowerCase()}</option>`).join('')}</select><select class="selx" onchange="rf.wd=+this.value;rfPrev()">${WDN.map((n,i)=>`<option value="${i}" ${rf.wd===i?'selected':''}>${n}</option>`).join('')}</select> de cada mes</div>`;
+  $('rfOpt').innerHTML=o;rfPrev()}
+function rfRead(){rf.n=$('rfN').value.trim();rf.start=$('rfS').value;rf.end=$('rfE').value;rf.dur=parseFloat($('rfD').value)||0;rf.from=$('rfF').value||dkey(new Date());rf.until=$('rfU').value||(new Date().getFullYear()+'-12-31')}
+function rfPrev(){if(!$('rfPrev'))return;rfRead();const nx=[];let k=rf.from>dkey(new Date())?rf.from:dkey(new Date());for(let i=0;i<400&&nx.length<4;i++){if(occurs(rf,k))nx.push(k);k=shiftDay(k,1)}
+  $('rfPrev').innerHTML=nx.length?'Próximas: '+nx.map(k=>`<b>${kDate(k).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})}</b>`).join(', '):'⚠️ Con estas opciones no cae ningún día.'}
+function recSave(isEdit){rfRead();if(!rf.n){$('rfN').style.borderColor='#ff3b30';return}
+  if(rf.type==='week'&&!rf.days.length)return rfPrev();
+  if(!(rf.start&&rf.end)&&!(rf.dur>0)){$('rfD').style.borderColor='#ff3b30';return}
+  if(rf.start&&rf.end)rf.dur=recDur(rf);
+  if(isEdit){recClean(rf.id);recs=recs.map(x=>x.id===rf.id?rf:x)}else recs.push(rf);
+  store('recs',recs);setPlanDay(planDay);render();recList();toast(`🔁 ${esc(rf.n)} guardada`)}
+function recClean(id){const t=dkey(new Date());Object.keys(plans).forEach(k=>{if(k<t)return;plans[k]=plans[k].filter(a=>!(a.rid===id&&!a.done&&!a.prog))});cleanPlans();store('plans',plans);setPlanDay(planDay)}
+function recDel(id){modal(`<h1>¿Eliminar?</h1><div class="muted">Se quitan sus próximas apariciones de tus planes. Lo que ya registraste se queda.</div><div class="row"><button class="btn gray" onclick="recForm('${id}')">Cancelar</button><button class="btn red" onclick="recClean('${id}');recs=recs.filter(x=>x.id!=='${id}');store('recs',recs);render();recList()">Eliminar</button></div>`)}
+
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1096,10 +1162,10 @@ function drawSync(){
   ['syncBar1','syncBar2'].forEach(id=>{const el=$(id);if(el)el.innerHTML=h});
 }
 function queueSync(){if(!user||applying)return;setSync('busy');clearTimeout(syncT);syncT=setTimeout(pushSync,800)}
-function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
+function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,recs,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
 function applyRemote(d){applying=true;
   if(d.plans&&typeof d.plans==='object')plans=d.plans;else if(Array.isArray(d.acts)){plans={...plans};if(d.acts.length)plans[dkey(new Date())]=d.acts}
-  log=d.log||[];fixData();const mv=carryPaused();if(mv)setTimeout(queueSync,50);if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
+  log=d.log||[];if(Array.isArray(d.recs)){recs=d.recs;try{localStorage.setItem('recs',JSON.stringify(recs))}catch(e){}}fixData();const mv=carryPaused();if(mv)setTimeout(queueSync,50);if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
   try{localStorage.setItem('plans',JSON.stringify(plans));localStorage.setItem('log',JSON.stringify(log))}catch(e){}applying=false;
   render();if($('s2').classList.contains('on')){renderLog();renderAct()}}
 async function onLogin(u){
@@ -1113,8 +1179,8 @@ async function onLogin(u){
       if(!d.plans&&d.acts&&d.acts.length)rp[dkey(new Date())]=d.acts;
       Object.keys(plans).forEach(k=>{if(!(rp[k]&&rp[k].length))rp[k]=plans[k]});
       applyRemote({plans:rp,log:mergeLogs(d.log||[],log)});
-      await ref.set({plans,log,acts:plans[dkey(new Date())]||[],updated:Date.now()});
-    }else await ref.set({plans,log,acts:plans[dkey(new Date())]||[],updated:Date.now()});
+      await ref.set({plans,log,recs,acts:plans[dkey(new Date())]||[],updated:Date.now()});
+    }else await ref.set({plans,log,recs,acts:plans[dkey(new Date())]||[],updated:Date.now()});
     setSync('ok');
     unsub=ref.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;applyRemote(s.data());setSync('ok')},e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')});
   }catch(e){console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')}
@@ -1128,7 +1194,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=53;
+const APP_VER=54;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
