@@ -274,9 +274,11 @@ li.dsrc{opacity:.3}
 .dpb{position:absolute;left:4px;right:0;border-radius:8px;background:#0d2a4d;border-left:4px solid #0a84ff;padding:3px 8px;overflow:hidden;font-size:13px;line-height:1.25;color:#fff;z-index:2;box-sizing:border-box}
 .dpb .tm{color:#8fb8e8;font-size:11px}.dpb b{font-weight:600}
 .dpb.cur{background:#0f3a1d;border-left-color:#34c759}.dpb.cur .tm{color:#8fd6a3}
+.dpb.fix{background:#2a1740;border-left-color:#bf5af2}.dpb.fix .tm{color:#d7a6f5}
+.dpb.narrow{padding:3px 5px;font-size:12px}.dpb.narrow.tiny{flex-direction:column;align-items:flex-start;gap:0;white-space:normal}.dpb.narrow b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dpb.pau{background:#3a2606;border-left-color:#ff9f0a}.dpb.pau .tm{color:#ffc56b}
 .dpb.brk{background:rgba(52,199,89,.10);border-left:2px solid rgba(52,199,89,.5);color:#7fd69a;font-size:11px;padding:0 8px;display:flex;align-items:center}
-.dpb.tiny{display:flex;align-items:center;gap:6px;white-space:nowrap}.dpb.tiny .tm{order:2}
+.dpb.tiny{display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:12px;padding-top:0;padding-bottom:0;line-height:1.1}.dpb.tiny .tm{order:2}
 .dpb .late{color:#ff6961;font-weight:600}.dpb .early{color:#ffb340;font-weight:600}
 .dpfoot{border-top:1px solid #26262a;margin-top:10px;padding-top:10px;font-size:14px;color:#ddd}
 .dpfoot .muted{font-size:12px}
@@ -285,7 +287,7 @@ li.dsrc{opacity:.3}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v59</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v60</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -360,7 +362,7 @@ li.dsrc{opacity:.3}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v59</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v60</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -930,7 +932,12 @@ function renderPrev(){const box=$('dayPrev');if(!box||!isDesk())return;
     else if(cur){skip=cur.id;push(cur.n,inOver?0:remain/60,'cur',acts.find(x=>x.id===cur.id))}
   }
   const pend=acts.filter(a=>!a.done&&a.id!==skip&&!(a.quick&&!a.prog));
-  pend.forEach(a=>{if(blocks.length&&blocks[blocks.length-1].cls!=='brk')push('Descanso',brk,'brk');push(a.n,a.prog?Math.max(0,a.prog.rem)/60:a.m,a.prog?'pau':'',a)});
+  const fixAt=a=>{if(!a.t||a.prog)return null;const [hh,mm]=a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const st=d.getTime();return st+a.m*60000>t0?st:null};
+  const fixed=[];
+  pend.forEach(a=>{const fs=fixAt(a);if(fs!=null){fixed.push({n:a.n,st:fs,en:fs+a.m*60000,cls:'fix',a});return}
+    if(blocks.length&&blocks[blocks.length-1].cls!=='brk')push('Descanso',brk,'brk');push(a.n,a.prog?Math.max(0,a.prog.rem)/60:a.m,a.prog?'pau':'',a)});
+  const flowEnd=t;fixed.forEach(f=>{blocks.push(f);if(f.en>t)t=f.en});
+  const clash=[];fixed.forEach(f=>blocks.forEach(b=>{if(b!==f&&b.cls!=='brk'&&b.st<f.en&&b.en>f.st)clash.push([f.n,b.n])}));
   const mid=kDate(planDay);mid.setDate(mid.getDate()+1);mid.setHours(0,0,0,0);const midT=mid.getTime();
   const tEnd=Math.max(t,midT),span=(tEnd-t0)/60000;
   const avail=Math.max(300,innerHeight-300),ppm=Math.max(0.6,Math.min(3,avail/Math.max(span,60)));
@@ -939,19 +946,28 @@ function renderPrev(){const box=$('dayPrev');if(!box||!isDesk())return;
   for(let k=new Date(t0);;){k.setMinutes(0,0,0);k.setHours(k.getHours()+1);if(k.getTime()>tEnd)break;const kt=k.getTime(),isMid=kt===midT;
     h+=`<div class="dph${isMid?' mid':''}" style="top:${y(kt)}px"><span>${isMid?'12 am':fmt12(pad(k.getHours())+':00').replace(':00','')}</span></div>`}
   if(t>midT)h+=`<div class="dpnight" style="top:${y(midT)}px;height:${y(t)-y(midT)}px"></div>`;
-  blocks.forEach(b=>{const top=y(b.st),ht=Math.max(b.cls==='brk'?3:18,y(b.en)-top-(b.cls==='brk'?0:2));
+  // acomodo en columnas cuando se enciman (como en un calendario)
+  const vis=blocks.filter(b=>b.cls!=='brk').map(b=>{const top=Math.max(0,y(b.st));b.top=top;b.ht=Math.max(18,y(b.en)-top-2);return b}).sort((a,b)=>a.top-b.top||b.ht-a.ht);
+  vis.sort((a,b)=>a.st-b.st||b.en-a.en);
+  let grp=[],gEnd=-1;const flush=()=>{const cols=[];grp.forEach(b=>{let c=cols.findIndex(e=>e<=b.st);if(c<0){c=cols.length;cols.push(0)}cols[c]=b.en;b.col=c});grp.forEach(b=>b.ncol=cols.length);grp=[]};
+  vis.forEach(b=>{if(grp.length&&b.st>=gEnd){flush();gEnd=-1}grp.push(b);gEnd=Math.max(gEnd,b.en)});flush();
+  // que los bloques cortos no tapen al siguiente de su misma columna
+  vis.forEach(b=>{const nx=vis.filter(o=>o!==b&&o.top>b.top&&o.st>=b.en&&(o.ncol>1||b.ncol>1?o.col===b.col:true)).reduce((m,o)=>Math.min(m,o.top),1e9);if(b.top+b.ht+2>nx)b.ht=Math.max(8,nx-b.top-2)});
+  blocks.forEach(b=>{const top=b.cls==='brk'?y(b.st):b.top,ht=b.cls==='brk'?Math.max(3,y(b.en)-top):b.ht;
+    const pos=b.cls==='brk'||!(b.ncol>1)?'':`left:calc(4px + (100% - 4px) * ${b.col} / ${b.ncol});right:auto;width:calc((100% - 4px) / ${b.ncol} - 3px);`;
     const hhmm=ts=>{const d=new Date(ts);return fmt12(pad(d.getHours())+':'+pad(d.getMinutes()))};
     if(b.cls==='brk'){h+=`<div class="dpb brk" style="top:${top}px;height:${ht}px" title="${b.n} ${hhmm(b.st)}–${hhmm(b.en)}">${ht>=14?'☕ '+fmtMin((b.en-b.st)/60000):''}</div>`;return}
-    let late='';if(b.a&&b.a.t){const [hh,mm]=b.a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const diff=Math.round((b.st-d.getTime())/60000);
+    let late='';if(b.cls==='fix')late=` <span class="tm">⏰ hora fija</span>`;else if(b.a&&b.a.t){const [hh,mm]=b.a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const diff=Math.round((b.st-d.getTime())/60000);
       late=diff>5?` <span class="late">⏰ ${fmt12(b.a.t)} · llegarías ${fmtMin(diff)} tarde</span>`:diff<-5?` <span class="early">⏰ es a las ${fmt12(b.a.t)} · aquí irías ${fmtMin(-diff)} antes</span>`:` <span class="tm">⏰ ${fmt12(b.a.t)}</span>`}
     const tiny=ht<34,min=(b.en-b.st)/60000;
-    h+=`<div class="dpb ${b.cls}${tiny?' tiny':''}" style="top:${top}px;height:${ht}px" title="${esc(b.n)} · ${hhmm(b.st)}–${hhmm(b.en)}">${tiny?`<b>${esc(b.n)}</b><span class="tm">${hhmm(b.st)}</span>${late}`:`<div class="tm">${hhmm(b.st)}–${hhmm(b.en)} · ${b.cls==='cur'?(inOver?'en tiempo extra':'en curso'):fmtMin(min)}</div><b>${b.a&&b.a.rid?'🔁 ':''}${esc(b.n)}</b>${late?'<div>'+late+'</div>':''}`}</div>`});
+    h+=`<div class="dpb ${b.cls}${tiny?' tiny':''}${b.ncol>1?' narrow':''}" style="top:${top}px;height:${ht}px;${pos}" title="${esc(b.n)} · ${hhmm(b.st)}–${hhmm(b.en)}">${tiny?`<b>${esc(b.n)}</b><span class="tm">${hhmm(b.st)}</span>${late}`:`<div class="tm">${hhmm(b.st)}–${hhmm(b.en)} · ${b.cls==='cur'?(inOver?'en tiempo extra':'en curso'):fmtMin(min)}</div><b>${b.a&&b.a.rid?'🔁 ':''}${esc(b.n)}</b>${late?'<div>'+late+'</div>':''}`}</div>`});
   const endD=new Date(t),endTxt=fmt12(pad(endD.getHours())+':'+pad(endD.getMinutes()));
-  const foot=!blocks.length?'<div class="muted">No hay actividades pendientes.</div>':
+  const clTxt=clash.length?`<div class="late" style="color:#ff6961;font-size:13px;margin-top:4px">⚠️ Se te cruza${clash.length>1?'n':''}: ${clash.slice(0,3).map(c=>esc(c[1])+' con '+esc(c[0])).join('; ')}${clash.length>3?'…':''}</div>`:'';
+  const foot=(!blocks.length?'<div class="muted">No hay actividades pendientes.</div>':
     t>midT?`Terminarías <b>${endD.getHours()<5?'en la madrugada':'el día siguiente'}</b> a las <b>${endTxt}</b><div class="muted">Te pasas ${fmtMin((t-midT)/60000)} de la medianoche.</div>`:
-    `Terminarías a las <b>${endTxt}</b><div class="muted">Te quedan ${fmtMin((midT-t)/60000)} libres antes de la medianoche.</div>`;
+    `Terminarías a las <b>${endTxt}</b><div class="muted">Te quedan ${fmtMin((midT-t)/60000)} libres antes de la medianoche.</div>`)+clTxt;
   const sc=box.querySelector('.dpscroll'),st=sc?sc.scrollTop:0;
-  box.innerHTML=`<h3>🕒 Así se vería tu día</h3><div class="dpsub">${isToday?'Desde ahora, en el orden de tu lista, con descansos de '+brk+' min':'Previsualización empezando a las 5:00 am'}</div>
+  box.innerHTML=`<h3>🕒 Así se vería tu día</h3><div class="dpsub">${isToday?'Desde ahora, en el orden de tu lista, con descansos de '+brk+' min. Las de hora fija ⏰ van a su hora.':'Previsualización empezando a las 5:00 am'}</div>
     <div class="dpscroll"><div class="dptl" style="height:${y(tEnd)+12}px">${isToday?'<div class="dpnow"><span>Ahora</span></div>':''}${h}</div></div><div class="dpfoot">${foot}</div>`;
   const sc2=box.querySelector('.dpscroll');if(sc2)sc2.scrollTop=st}
 setInterval(()=>{if($('s1').classList.contains('on'))renderPrev()},20000);
@@ -1365,7 +1381,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=59;
+const APP_VER=60;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
