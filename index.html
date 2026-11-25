@@ -385,12 +385,17 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .hidebtn{justify-self:start;background:#1c1c1e;border:1px solid #333;color:#c7c7cc;border-radius:10px;padding:8px 12px;font-size:14px;cursor:pointer;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .hidebtn .sm{display:none}@media (max-width:600px){.hidebtn .sm{display:inline}}
 .hidebtn.on{color:#64d2ff;border-color:#1f4d6b}
+.dnote{background:#1c1c1e;border-radius:14px;padding:12px 14px;margin:14px 0 10px}
+.dnh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:16px}.dnh span{font-size:12px;color:#8e8e93}
+#dnTxt{width:100%;min-height:120px;box-sizing:border-box;background:#2c2c2e;border:none;border-radius:10px;color:#fff;font:inherit;font-size:16px;line-height:1.45;padding:10px 12px;resize:vertical;outline:none}
+.day.nt{position:relative}.day.nt::after{content:'';position:absolute;top:4px;right:5px;width:6px;height:6px;border-radius:50%;background:#64d2ff}
+.exbtn{width:100%;margin-top:12px;background:#2a1508;color:#ff9f0a;border:2px solid #a85a0c;border-radius:12px;padding:14px;font-size:17px;font-weight:700;cursor:pointer}.exbtn small{color:#ffc56b;font-weight:500;margin-left:6px}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v76</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v77</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -406,6 +411,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
   <button class="recbtn" onclick="recList()">🔁 Actividades recurrentes</button>
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
+  <button class="exbtn" onclick="startExercise()">🏋️ Ejercicio <small>25 min</small></button>
   <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización</button>
 </section>
 
@@ -456,6 +462,8 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
     <h3 id="dayTitle"></h3>
     <div id="dayList"></div>
     <div id="dayTl"></div>
+    <div class="dnote"><div class="dnh"><b>📝 Notas del día</b><span id="dnSt"></span></div>
+      <textarea id="dnTxt" placeholder="¿Cómo te fue hoy? Lo que sentiste, lo que aprendiste, lo que te frenó…" oninput="dnInput()" onblur="dnFlush()"></textarea></div>
     <button class="btn gray" style="width:100%;margin-top:6px" onclick="manualForm()">＋ Agregar registro manual</button>
     <button class="btn gray" style="width:100%;margin-top:8px" onclick="recoverForm()">↺ ¿Se borró tu actividad? Recuperarla</button>
   </div>
@@ -475,7 +483,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v76</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v77</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -501,8 +509,8 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <script>
 const $=id=>document.getElementById(id);
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
-const store=(k,v)=>{if(k==='brk'||k==='recs'||k==='bl'||k==='notes'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
-let notes=load('notes',[]),bl=load('bl',[]),recs=load('recs',[]),log=load('log',[]),plans={},acts=[],planDay='';
+const store=(k,v)=>{if(k==='brk'||k==='recs'||k==='bl'||k==='notes'||k==='dnotes'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
+let dnotes=(()=>{const v=load('dnotes',{});return v&&typeof v==='object'&&!Array.isArray(v)?v:{}})(),notes=load('notes',[]),bl=load('bl',[]),recs=load('recs',[]),log=load('log',[]),plans={},acts=[],planDay='';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
 const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
@@ -712,6 +720,7 @@ function restDone(sound){running=false;clearInterval(timer);inOver=false;remain=
   if(sound){startAlarm();say('Se acabó tu descanso')}
   const el=cur.elapsed;if(el>=30)save(true);quit();
   modal(`<h1>☕ Descanso ${sound?'terminado':'registrado'}</h1><div class="muted">${el>=30?`Quedó en tu registro: ${fmtMin(el/60)}.`:'Fue muy corto, no se registró.'}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
+function startExercise(){unlockAudio();queue=[{n:'Ejercicio',m:25}];go(0)}
 function startSingle(){unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
 /* ---- Sesiones de trabajo (de qué hora a qué hora) ---- */
 function normSegs(a){return(a||[]).map(x=>Array.isArray(x)?{s:x[0],e:x[1]}:x)}
@@ -1332,6 +1341,17 @@ function evSave(){const n=$('evN').value.trim();if(!n){$('evN').focus();return}c
     recs.push(rec);store('recs',recs);msg=`🔁 ${n} se repetirá desde ${dayName(k)}`}
   if(note){notes.unshift({id:uid(),ts:Date.now(),txt:note,act:n});store('notes',notes)}
   closeModal();setPlanDay(planDay);render();if($('s4')&&$('s4').classList.contains('on'))renderWeek();toast(esc(msg))}
+
+/* ===== Notas del día (Registro) ===== */
+function mergeDn(r,l){const o={...(l||{})};Object.entries(r||{}).forEach(([k,v])=>{if(!v)return;if(!o[k]||(v.u||0)>(o[k].u||0))o[k]=v});return o}
+let dnT=null,dnDay=null,dnFn=null;
+function dnFlush(){if(dnFn){clearTimeout(dnT);const f=dnFn;dnFn=null;f()}}
+window.addEventListener('pagehide',dnFlush);document.addEventListener('visibilitychange',()=>{if(document.hidden)dnFlush()});
+function dnDraw(){const t=$('dnTxt');if(!t)return;if(document.activeElement===t&&dnDay===selDay)return;dnDay=selDay;const v=dnotes[selDay];t.value=v&&v.t||'';
+  $('dnSt').textContent=v&&v.u?'Guardado · '+hm(v.u):''}
+function dnInput(){const k=dnDay||selDay,v=$('dnTxt').value;$('dnSt').textContent='Guardando…';clearTimeout(dnT);
+  dnFn=()=>{dnFn=null;if(v.trim())dnotes[k]={t:v,u:Date.now()};else dnotes[k]={t:'',u:Date.now()};store('dnotes',dnotes);$('dnSt').textContent='Guardado ✓';
+    const cell=[...document.querySelectorAll('#grid .day')].find(c=>c.getAttribute('onclick')===`pick('${k}')`);if(cell)cell.classList.toggle('nt',!!v.trim())};dnT=setTimeout(()=>dnFn&&dnFn(),600)}
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1440,12 +1460,12 @@ function renderLog(){
   let h=['L','M','M','J','V','S','D'].map(x=>`<div class="dw">${x}</div>`).join('');
   for(let i=0;i<first;i++)h+='<div class="day blank"></div>';
   for(let d=1;d<=days;d++){const k=cm.getFullYear()+'-'+pad(cm.getMonth()+1)+'-'+pad(d);
-    h+=`<div class="day${counts[k]?' has':''}${k===today?' today':''}${k===selDay?' sel':''}" onclick="pick('${k}')">${d}${counts[k]?`<small>${counts[k]}</small>`:''}</div>`}
+    h+=`<div class="day${dnotes[k]&&dnotes[k].t?' nt':''}${counts[k]?' has':''}${k===today?' today':''}${k===selDay?' sel':''}" onclick="pick('${k}')">${d}${counts[k]?`<small>${counts[k]}</small>`:''}</div>`}
   $('grid').innerHTML=h;
   const [y,m,dd]=selDay.split('-').map(Number);
   $('dayTitle').textContent=new Date(y,m-1,dd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   const items=log.map((e,i)=>({...e,i})).filter(e=>e.d===selDay).sort((a,b)=>a.h.localeCompare(b.h));
-  renderTl();
+  renderTl();dnDraw();
   const d0=new Date(y,m-1,dd).getTime(),d1=new Date(y,m-1,dd+1).getTime();
   const ow=openWork().map(w=>({...w,day:w.segs.filter(x=>x.e>d0&&x.s<d1).map(x=>({s:Math.max(x.s,d0),e:Math.min(x.e,d1)}))})).filter(w=>w.day.length);
   const owHtml=ow.length?`<h3 style="font-size:16px">⏸ Sin terminar</h3>`+ow.map(w=>{const mins=w.day.reduce((a,x)=>a+(x.e-x.s),0)/60000;
@@ -1596,7 +1616,7 @@ function renderAct(){
 }
 
 function exportData(){
-  const data=JSON.stringify({app:'temporizador',v:2,plans,log});
+  const data=JSON.stringify({app:'temporizador',v:3,plans,log,recs,bl,notes,dnotes});
   const blob=new Blob([data],{type:'application/json'}),name='temporizador-'+dkey(new Date())+'.json';
   try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f]}).catch(()=>{});return}}catch(e){}
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
@@ -1627,10 +1647,10 @@ function drawSync(){
   ['syncBar1','syncBar2'].forEach(id=>{const el=$(id);if(el)el.innerHTML=h});
 }
 function queueSync(){if(!user||applying)return;setSync('busy');clearTimeout(syncT);syncT=setTimeout(pushSync,800)}
-function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,recs,bl,notes,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
+function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,recs,bl,notes,dnotes,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
 function applyRemote(d){applying=true;
   if(d.plans&&typeof d.plans==='object')plans=d.plans;else if(Array.isArray(d.acts)){plans={...plans};if(d.acts.length)plans[dkey(new Date())]=d.acts}
-  log=d.log||[];if(Array.isArray(d.recs)){recs=d.recs;try{localStorage.setItem('recs',JSON.stringify(recs))}catch(e){}}if(Array.isArray(d.bl)){bl=d.bl;try{localStorage.setItem('bl',JSON.stringify(bl))}catch(e){}}if(Array.isArray(d.notes)){notes=d.notes;try{localStorage.setItem('notes',JSON.stringify(notes))}catch(e){}}fixData();const mv=carryPaused();if(mv)setTimeout(queueSync,50);if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
+  log=d.log||[];if(Array.isArray(d.recs)){recs=d.recs;try{localStorage.setItem('recs',JSON.stringify(recs))}catch(e){}}if(Array.isArray(d.bl)){bl=d.bl;try{localStorage.setItem('bl',JSON.stringify(bl))}catch(e){}}if(Array.isArray(d.notes)){notes=d.notes;try{localStorage.setItem('notes',JSON.stringify(notes))}catch(e){}}if(d.dnotes&&typeof d.dnotes==='object'){dnotes=mergeDn(d.dnotes,dnotes);try{localStorage.setItem('dnotes',JSON.stringify(dnotes))}catch(e){}}fixData();const mv=carryPaused();if(mv)setTimeout(queueSync,50);if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
   try{localStorage.setItem('plans',JSON.stringify(plans));localStorage.setItem('log',JSON.stringify(log))}catch(e){}applying=false;
   render();if($('s2').classList.contains('on')){renderLog();renderAct()}}
 async function onLogin(u){
@@ -1643,8 +1663,8 @@ async function onLogin(u){
       const rp=(d.plans&&typeof d.plans==='object')?{...d.plans}:{};
       if(!d.plans&&d.acts&&d.acts.length)rp[dkey(new Date())]=d.acts;
       Object.keys(plans).forEach(k=>{if(!(rp[k]&&rp[k].length))rp[k]=plans[k]});
-      applyRemote({plans:rp,log:mergeLogs(d.log||[],log),...(Array.isArray(d.recs)?{recs:d.recs}:{}),...(Array.isArray(d.bl)?{bl:d.bl}:{}),notes:mergeNotes(d.notes,notes)});
-      await ref.set({plans,log,recs,bl,notes,acts:plans[dkey(new Date())]||[],updated:Date.now()});
+      applyRemote({plans:rp,log:mergeLogs(d.log||[],log),...(Array.isArray(d.recs)?{recs:d.recs}:{}),...(Array.isArray(d.bl)?{bl:d.bl}:{}),notes:mergeNotes(d.notes,notes),dnotes:mergeDn(d.dnotes,dnotes)});
+      await ref.set({plans,log,recs,bl,notes,dnotes,acts:plans[dkey(new Date())]||[],updated:Date.now()});
     }else await ref.set({plans,log,recs,bl,acts:plans[dkey(new Date())]||[],updated:Date.now()});
     setSync('ok');
     unsub=ref.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;applyRemote(s.data());setSync('ok')},e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')});
@@ -1659,7 +1679,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=76;
+const APP_VER=77;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
