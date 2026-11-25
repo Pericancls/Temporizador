@@ -260,6 +260,8 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 .dghost{position:fixed;z-index:50;pointer-events:none;opacity:.92;box-shadow:0 10px 30px rgba(0,0,0,.7);transform:rotate(-1.5deg);margin:0!important;list-style:none}
 @media (min-width:1100px) and (pointer:fine){#list li{cursor:grab}body.dragging,body.dragging *{cursor:grabbing!important;user-select:none}}
 li.dsrc{opacity:.3}
+#dayPrev.dropnext{border-color:#34c759}
+#dayPrev.dropnext::after{content:attr(data-next);position:absolute;inset:0;border-radius:16px;background:rgba(15,58,29,.92);border:2px dashed #34c759;color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;z-index:10}
 .dropline{position:absolute;left:0;right:0;height:3px;background:#0a84ff;border-radius:2px;z-index:5;pointer-events:none;box-shadow:0 0 8px #0a84ff}
 .dpscroll{overflow:auto;flex:1;min-height:0;margin-right:-8px;padding-right:8px}
 .dptl{position:relative;margin:14px 0 0 52px}
@@ -283,7 +285,7 @@ li.dsrc{opacity:.3}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v58</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v59</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -358,7 +360,7 @@ li.dsrc{opacity:.3}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v58</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v59</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -982,6 +984,8 @@ function blToDay(id,ix){const b=bl.find(x=>x.id===id);if(!b)return;const {c,...i
   if(ix==null||ix>acts.length)ix=acts.length;acts.splice(ix,0,it);const bi=bl.findIndex(x=>x.id===id);bl=bl.filter(x=>x.id!==id);store('bl',bl);store('acts',acts);render();
   lastBl={b,bi,id:it.id,k:planDay};toast(`Agregada a ${dayName(planDay)}: ${esc(b.n)}`,'Deshacer','undoBl()')}
 let lastBl=null;
+function blToDate(k0,k){const b=bl.find(x=>x.id===k0);if(!b)return;const {c,...it}=b;it.id=uid();const bi=bl.findIndex(x=>x.id===k0);bl=bl.filter(x=>x.id!==k0);store('bl',bl);
+  plans[k]=(plans[k]||[]).concat(it);store('plans',plans);render();lastBl={b,bi,id:it.id,k};toast(`Mandada a ${dayName(k)}: ${esc(b.n)}`,'Deshacer','undoBl()')}
 function undoBl(){const m=lastBl;if(!m)return;lastBl=null;plans[m.k]=(plans[m.k]||[]).filter(x=>x.id!==m.id);store('plans',plans);bl.splice(Math.min(m.bi,bl.length),0,m.b);store('bl',bl);setPlanDay(planDay);render();hideToast()}
 function toBacklog(i,bi){const a=acts[i];if(!a||a.done)return;if(a.rid&&(a.rk||planDay)===planDay)recSkip(a.rid,planDay);
   acts.splice(i,1);store('acts',acts);const {done,rid,rk,warned30,t,cid,...rest}=a;const nb={...rest,id:uid(),c:Date.now()};if(bi==null)bl.unshift(nb);else bl.splice(Math.min(bi,bl.length),0,nb);store('bl',bl);render();
@@ -1002,8 +1006,8 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
   const idxAt=(its,y)=>{for(let k=0;k<its.length;k++){const r=its[k].getBoundingClientRect();if(y<r.top+r.height/2)return k}return its.length};
   const line=(box,its,ix)=>{box.querySelectorAll('.dropline').forEach(d=>d.remove());const d=document.createElement('div');d.className='dropline';
     d.style.top=(its.length?(ix<its.length?its[ix].offsetTop-5:its[its.length-1].offsetTop+its[its.length-1].offsetHeight+1):0)+'px';box.appendChild(d)};
-  const clear=()=>{document.querySelectorAll('.dropline').forEach(d=>d.remove());blHi(false);const m=document.querySelector('.s1main');if(m)m.classList.remove('dropzone')};
-  const target=(x,y)=>{const B=$('blBox');if(B){const r=B.getBoundingClientRect();if(x<r.right+14)return 'bl'}const M=document.querySelector('.s1main');if(M){const r=M.getBoundingClientRect();if(x>=r.left-14&&x<=r.right+14)return 'plan'}return null};
+  const clear=()=>{document.querySelectorAll('.dropline').forEach(d=>d.remove());blHi(false);const P=$('dayPrev');if(P)P.classList.remove('dropnext');const m=document.querySelector('.s1main');if(m)m.classList.remove('dropzone')};
+  const target=(x,y)=>{const B=$('blBox');if(B){const r=B.getBoundingClientRect();if(x<r.right+14)return 'bl'}const M=document.querySelector('.s1main');if(M){const r=M.getBoundingClientRect();if(x>=r.left-14&&x<=r.right+14)return 'plan';if(x>r.right+14)return 'next'}return null};
   document.addEventListener('mousedown',e=>{if(e.button!==0||!isDesk()||!$('s1').classList.contains('on'))return;
     const li=e.target.closest('#list > li, #blList > li');if(!li||skip(e.target))return;
     if(li.classList.contains('done')&&li.closest('#list'))return;
@@ -1011,7 +1015,7 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
     st={li,src,i:src==='plan'?+li.dataset.i:null,id:src==='bl'?li.dataset.id:null,x0:e.clientX,y0:e.clientY,mode:null,ghost:null,tgt:null,ix:0}});
   window.addEventListener('mousemove',e=>{if(!st)return;const dx=e.clientX-st.x0,dy=e.clientY-st.y0;
     if(!st.mode){if(Math.hypot(dx,dy)<6)return;
-      if(st.src==='plan'&&dx>10&&Math.abs(dx)>Math.abs(dy)*1.5){st.mode='swipe';const h=document.createElement('div');h.className='swh r';h.style.top=st.li.offsetTop+'px';h.style.height=st.li.offsetHeight+'px';
+      if(false){st.mode='swipe';const h=document.createElement('div');h.className='swh r';h.style.top=st.li.offsetTop+'px';h.style.height=st.li.offsetHeight+'px';
         h.innerHTML=`<span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span></span>`;$('list').appendChild(h);st.h=h;st.li.classList.add('swiping')}
       else{st.mode='drag';const r=st.li.getBoundingClientRect();const g=st.li.cloneNode(true);g.classList.add('dghost');g.style.width=r.width+'px';g.style.left=r.left+'px';g.style.top=r.top+'px';
         document.body.appendChild(g);st.ghost=g;st.ox=st.x0-r.left;st.oy=st.y0-r.top;st.li.classList.add('dsrc');document.body.classList.add('dragging')}}
@@ -1019,6 +1023,7 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
     st.ghost.style.left=(e.clientX-st.ox)+'px';st.ghost.style.top=(e.clientY-st.oy)+'px';
     const t=target(e.clientX,e.clientY);st.tgt=t;clear();
     if(t==='bl'){blHi(true);const box=$('blList'),its=itemsOf(box,st.src==='bl'?st.li:null);st.ix=idxAt(its,e.clientY);line(box,its,st.ix)}
+    else if(t==='next'){const P=$('dayPrev');P.dataset.next=planDay===dkey(new Date())?'📅 Suelta aquí para mandarla a mañana':'📅 Suelta aquí para mandarla al día siguiente';P.classList.add('dropnext')}
     else if(t==='plan'){document.querySelector('.s1main').classList.add('dropzone');const box=$('list'),its=itemsOf(box,st.src==='plan'?st.li:null);st.ix=idxAt(its,e.clientY);line(box,its,st.ix)}});
   window.addEventListener('mouseup',e=>{if(!st)return;const s0=st;st=null;
     if(s0.mode==='swipe'){const dx=e.clientX-s0.x0;s0.h.remove();s0.li.style.transform='';s0.li.classList.remove('swiping');if(dx>90)sendTo(s0.i,shiftDay(planDay,1));return}
@@ -1029,6 +1034,8 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
     if(s0.src==='plan'&&t==='plan'){const [a]=acts.splice(s0.i,1);acts.splice(ix,0,a);store('acts',acts);render()}
     else if(s0.src==='plan'&&t==='bl'){toBacklog(s0.i,ix)}
     else if(s0.src==='bl'&&t==='plan'){blToDay(s0.id,ix)}
+    else if(s0.src==='plan'&&t==='next'){sendTo(s0.i,shiftDay(planDay,1))}
+    else if(s0.src==='bl'&&t==='next'){blToDate(s0.id,shiftDay(planDay,1))}
     else if(s0.src==='bl'&&t==='bl'){const from=bl.findIndex(x=>x.id===s0.id);if(from<0)return;const [b]=bl.splice(from,1);bl.splice(ix,0,b);store('bl',bl);renderBl()}});
 })();
 /* ===================== REPORTES ===================== */
@@ -1358,7 +1365,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=58;
+const APP_VER=59;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
