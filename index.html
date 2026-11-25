@@ -259,6 +259,11 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 .wkz b{font-size:15px}.wkz .wks{font-size:12px;margin-top:3px;color:#ffe27a}
 .wkz.over{background:#4a3d06;border-style:dashed;transform:scale(1.03);box-shadow:0 0 0 4px rgba(255,214,10,.25)}
 #blList li .wk{font-size:11px;color:#1c1c1e;background:#ffd60a;border-radius:6px;padding:1px 6px;white-space:nowrap;font-weight:600}
+#wkList{position:relative;list-style:none;margin:8px 0 0;padding:0;max-height:30vh;overflow:auto}
+#wkList li{background:rgba(0,0,0,.35);border:1px solid rgba(255,214,10,.25);padding:7px 6px 7px 10px;margin-bottom:6px;gap:8px;cursor:grab;font-size:14px;border-radius:10px}
+#wkList li:hover{border-color:rgba(255,214,10,.6)}#wkList li .n{font-size:14px;line-height:1.25;color:#fff}#wkList li .t{font-size:12px;padding:4px 6px;cursor:pointer}
+#wkList li .wkd{font-size:11px;color:#ffd60a;font-weight:600}
+#wkList li button{background:none;border:none;color:#c9b45a;font-size:15px;padding:2px 4px;cursor:pointer}#wkList li button.go{color:#0a84ff;font-weight:700}
 .blfoot{border-top:1px solid #26262a;margin-top:8px;padding-top:8px;font-size:12px;color:#8e8e93}
 .blempty{color:#6e6e73;font-size:13px;padding:14px 4px;text-align:center;border:1px dashed #333;border-radius:10px}
 .s1main.dropzone #list{outline:2px dashed #0a84ff;outline-offset:6px;border-radius:12px;min-height:56px}
@@ -287,7 +292,8 @@ li.dsrc{opacity:.3}
 .dpb .late{color:#ff6961;font-weight:600}.dpb .early{color:#ffb340;font-weight:600}
 .dpfoot{border-top:1px solid #26262a;margin-top:10px;padding-top:10px;font-size:14px;color:#ddd}
 .dpfoot .muted{font-size:12px}
-.ptrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.ptrow h2{margin:0}
+.ptrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.ptrow h2{margin:0;flex:none}
+.ptrow .sync{margin:0;flex:0 1 auto;min-width:0;padding:6px 10px;font-size:13px;gap:8px}.ptrow .sync button{padding:6px 10px;font-size:13px}.ptrow .sync button.lnk{padding:2px 4px}
 .ntb{background:none;border:1px solid #3a3a3c;border-radius:8px;width:30px;height:30px;flex:none;font-size:14px;padding:0;cursor:pointer;position:relative;opacity:.55;display:flex;align-items:center;justify-content:center}
 .ntb.has{opacity:1;border-color:#64d2ff}.ntb i{position:absolute;top:-6px;right:-6px;background:#64d2ff;color:#000;font-style:normal;font-size:10px;font-weight:700;border-radius:8px;min-width:15px;height:15px;line-height:15px;text-align:center;padding:0 3px}
 li.done .ntb{opacity:.35}li.done .ntb.has{opacity:.8}
@@ -303,7 +309,7 @@ li.done .ntb{opacity:.35}li.done .ntb.has{opacity:.8}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v67</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v68</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -323,8 +329,7 @@ li.done .ntb{opacity:.35}li.done .ntb.has{opacity:.8}
 </section>
 
 <section id="s1"><aside id="blBox" class="deskonly"></aside><div class="s1main">
-  <h2 id="planTitle">Plan de hoy</h2>
-  <div class="sync" id="syncBar1"></div>
+  <div class="ptrow"><h2 id="planTitle">Plan de hoy</h2><div class="sync" id="syncBar1"></div></div>
   <div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
   <div class="row">
     <input class="name" id="aName" placeholder="Actividad" list="known">
@@ -378,7 +383,7 @@ li.done .ntb{opacity:.35}li.done .ntb.has{opacity:.8}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v67</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v68</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1002,13 +1007,15 @@ function renderBl(){const box=$('blBox');if(!box||!isDesk())return;
     <ul id="blList"></ul><div class="blfoot" id="blFoot"></div><div class="wkz" id="wkZone"></div>`;
     ['blN','blM'].forEach(x=>$(x).addEventListener('keydown',e=>{if(e.key==='Enter')blAdd()}));
   }
-  const now=Date.now();
-  $('blList').innerHTML=bl.length?bl.map(b=>{const age=Math.floor((now-(b.c||now))/86400000);
-    return `<li data-id="${b.id}"><span class="n">${esc(b.n)}${b.wk?`<br><span class="wk">🏖️ ${wkLbl(b.wk.k)}</span>`:age>=7?`<br><span class="age">hace ${age} días</span>`:''}</span><span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')" title="Editar">${b.quick?'⚡ <5 min':b.m+' min'}</span><button class="go" onclick="blToDay('${b.id}')" title="Agregar al final del plan">→</button><button onclick="blDel('${b.id}')" title="Borrar">✕</button></li>`}).join('')
+  const now=Date.now(),main=bl.filter(b=>!b.wk),wkl=bl.filter(b=>b.wk).sort((a,b)=>a.wk.k<b.wk.k?-1:a.wk.k>b.wk.k?1:0);
+  const row=(b,inWk)=>{const age=Math.floor((now-(b.c||now))/86400000);
+    return `<li data-id="${b.id}"><span class="n">${esc(b.n)}${inWk?`<br><span class="wkd">${cap(wkLbl(b.wk.k))}</span>`:age>=7?`<br><span class="age">hace ${age} días</span>`:''}</span><span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')" title="Editar">${b.quick?'⚡ <5 min':b.m+' min'}</span><button class="go" onclick="blToDay('${b.id}')" title="Agregar al final del plan">→</button><button onclick="${inWk?'wkDel':'blDel'}('${b.id}')" title="${inWk?'Quitar del fin de semana':'Borrar'}">✕</button></li>`};
+  $('blList').innerHTML=main.length?main.map(b=>row(b,false)).join('')
     :'<div class="blempty">Vacío. Escribe arriba las tareas que quieras tener a la mano esta semana.</div>';
-  const tot=bl.reduce((s,b)=>s+(b.quick?5:(+b.m||0)),0);
-  $('blFoot').textContent=bl.length?`${bl.length} tarea${bl.length>1?'s':''} · ${fmtMin(tot)}`:'';
-  const [sa,su]=wkDays();$('wkZone').innerHTML=`<b>🏖️ Fin de semana</b><div class="wks">Arrastra aquí para mandarla al ${wkLbl(sa)} o ${wkLbl(su)} · ${WK_MAX} por día</div><div class="wks">${cap(wkLbl(sa))}: ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))}: ${wkCount(su)}/${WK_MAX}</div>`}
+  const tot=main.reduce((s,b)=>s+(b.quick?5:(+b.m||0)),0);
+  $('blFoot').textContent=main.length?`${main.length} tarea${main.length>1?'s':''} · ${fmtMin(tot)}`:'';
+  const [sa,su]=wkDays();$('wkZone').innerHTML=`<b>🏖️ Fin de semana</b><div class="wks">${cap(wkLbl(sa))}: ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))}: ${wkCount(su)}/${WK_MAX}</div>`+
+    (wkl.length?`<ul id="wkList">${wkl.map(b=>row(b,true)).join('')}</ul>`:`<div class="wks" style="margin-top:6px">Arrastra aquí para mandarla al ${wkLbl(sa)} o ${wkLbl(su)} · ${WK_MAX} por día</div><ul id="wkList"></ul>`)}
 function dropIdx(y){const lis=[...$('list').querySelectorAll('li')];for(let k=0;k<lis.length;k++){const r=lis[k].getBoundingClientRect();if(y<r.top+r.height/2)return k}return lis.length}
 function dropMark(y){const L=$('list'),ix=dropIdx(y),lis=[...L.querySelectorAll('li')];let d=L.querySelector('.dropline');if(!d){d=document.createElement('div');d.className='dropline';L.appendChild(d)}
   d.style.top=(lis.length?(ix<lis.length?lis[ix].offsetTop-5:lis[lis.length-1].offsetTop+lis[lis.length-1].offsetHeight+2):0)+'px'}
@@ -1027,6 +1034,7 @@ function toBacklog(i,bi){const a=acts[i];if(!a||a.done)return;if(a.rid&&(a.rk||p
   toast(`📥 Al backlog: ${esc(a.n)}`)}
 function blDel(id){const b=bl.find(x=>x.id===id);if(!b)return;bl=bl.filter(x=>x.id!==id);store('bl',bl);renderBl();lastBlDel=b;toast(`Borrada: ${esc(b.n)}`,'Deshacer','bl.push(lastBlDel);store(\'bl\',bl);renderBl();hideToast()')}
 let lastBlDel=null;
+function wkDel(id){const b=bl.find(x=>x.id===id);if(!b)return;const sn=snap();wkUnlink(b);bl=bl.filter(x=>x.id!==id);store('bl',bl);render();lastSnap=sn;toast(`Quitada del fin de semana: ${esc(b.n)}`,'Deshacer','undoSnap()')}
 function blEdit(id){const b=bl.find(x=>x.id===id);if(!b)return;
   modal(`<h1>Editar tarea</h1><label>Tarea</label><input id="beN" value="${esc(b.n)}" style="width:100%"><label>Minutos <small class="muted">(vacío = tarea rápida ⚡)</small></label><input id="beM" type="number" value="${b.quick?'':b.m}" placeholder="--" style="width:100%">
   <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="blSaveEd('${id}')">Aceptar</button></div>`);setTimeout(()=>$('beN').focus(),50)}
@@ -1044,7 +1052,7 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
   const clear=()=>{document.querySelectorAll('.dropline').forEach(d=>d.remove());blHi(false);const W=$('wkZone');if(W)W.classList.remove('over');const P=$('dayPrev');if(P)P.classList.remove('dropnext');const m=document.querySelector('.s1main');if(m)m.classList.remove('dropzone')};
   const target=(x,y)=>{const W=$('wkZone');if(W){const r=W.getBoundingClientRect();if(r.width&&x>=r.left-6&&x<=r.right+6&&y>=r.top-6&&y<=r.bottom+6)return 'wk'}const B=$('blBox');if(B){const r=B.getBoundingClientRect();if(x<r.right+14)return 'bl'}const M=document.querySelector('.s1main');if(M){const r=M.getBoundingClientRect();if(x>=r.left-14&&x<=r.right+14)return 'plan';if(x>r.right+14)return 'next'}return null};
   document.addEventListener('mousedown',e=>{if(e.button!==0||!isDesk()||!$('s1').classList.contains('on'))return;
-    const li=e.target.closest('#list > li, #blList > li');if(!li||skip(e.target))return;
+    const li=e.target.closest('#list > li, #blList > li, #wkList > li');if(!li||skip(e.target))return;
     if(li.classList.contains('done')&&li.closest('#list'))return;
     e.preventDefault();const src=li.closest('#list')?'plan':'bl';
     st={li,src,i:src==='plan'?+li.dataset.i:null,id:src==='bl'?li.dataset.id:null,x0:e.clientX,y0:e.clientY,mode:null,ghost:null,tgt:null,ix:0}});
@@ -1057,7 +1065,7 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
     if(st.mode==='swipe'){const d=Math.max(0,dx);st.li.style.transform=`translateX(${d}px)`;st.h.classList.toggle('go',d>90);return}
     st.ghost.style.left=(e.clientX-st.ox)+'px';st.ghost.style.top=(e.clientY-st.oy)+'px';
     const t=target(e.clientX,e.clientY);st.tgt=t;clear();
-    if(t==='bl'){blHi(true);const box=$('blList'),its=itemsOf(box,st.src==='bl'?st.li:null);st.ix=idxAt(its,e.clientY);line(box,its,st.ix)}
+    if(t==='bl'){blHi(true);const box=$('blList'),its=itemsOf(box,st.src==='bl'?st.li:null);st.ix=idxAt(its,e.clientY);st.bef=its[st.ix]?its[st.ix].dataset.id:null;line(box,its,st.ix)}
     else if(t==='wk'){$('wkZone').classList.add('over')}
     else if(t==='next'){const P=$('dayPrev');P.dataset.next=planDay===dkey(new Date())?'📅 Suelta aquí para mandarla a mañana':'📅 Suelta aquí para mandarla al día siguiente';P.classList.add('dropnext')}
     else if(t==='plan'){document.querySelector('.s1main').classList.add('dropzone');const box=$('list'),its=itemsOf(box,st.src==='plan'?st.li:null);st.ix=idxAt(its,e.clientY);line(box,its,st.ix)}});
@@ -1068,12 +1076,12 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
     const sup=ev=>{ev.stopPropagation();ev.preventDefault()};window.addEventListener('click',sup,{capture:true,once:true});setTimeout(()=>window.removeEventListener('click',sup,{capture:true}),50);
     const t=s0.tgt,ix=s0.ix;if(!t)return;
     if(s0.src==='plan'&&t==='plan'){const [a]=acts.splice(s0.i,1);acts.splice(ix,0,a);store('acts',acts);render()}
-    else if(s0.src==='plan'&&t==='bl'){toBacklog(s0.i,ix)}
+    else if(s0.src==='plan'&&t==='bl'){const j=s0.bef?bl.findIndex(x=>x.id===s0.bef):-1;toBacklog(s0.i,j>=0?j:bl.length)}
     else if(s0.src==='bl'&&t==='plan'){blToDay(s0.id,ix)}
-    else if(t==='wk'){if(s0.src==='plan')toWeekendPlan(s0.i);else toWeekendBl(s0.id)}
+    else if(t==='wk'){if(s0.src==='plan')toWeekendPlan(s0.i);else{const b=bl.find(x=>x.id===s0.id);if(b&&!b.wk)toWeekendBl(s0.id)}}
     else if(s0.src==='plan'&&t==='next'){sendTo(s0.i,shiftDay(planDay,1))}
     else if(s0.src==='bl'&&t==='next'){blToDate(s0.id,shiftDay(planDay,1))}
-    else if(s0.src==='bl'&&t==='bl'){const from=bl.findIndex(x=>x.id===s0.id);if(from<0)return;const [b]=bl.splice(from,1);bl.splice(ix,0,b);store('bl',bl);renderBl()}});
+    else if(s0.src==='bl'&&t==='bl'){const from=bl.findIndex(x=>x.id===s0.id);if(from<0)return;const sn=snap(),[b]=bl.splice(from,1),was=!!b.wk;if(was){wkUnlink(b);delete b.wk}const j=s0.bef?bl.findIndex(x=>x.id===s0.bef):-1;bl.splice(j>=0?j:bl.length,0,b);store('bl',bl);render();if(was){lastSnap=sn;toast(`${esc(b.n)} regresó al backlog`,'Deshacer','undoSnap()')}}});
 })();
 
 /* ===== Fin de semana (cuadro amarillo del backlog) ===== */
@@ -1402,7 +1410,7 @@ function setSync(st){syncState=st;drawSync()}
 function drawSync(){
   let h;
   if(!fbAuth)h='<div class="dot err"></div><span>Sin conexión a la nube</span>';
-  else if(!user)h='<div class="dot"></div><span>Solo en este dispositivo</span><button onclick="login()">Iniciar sesión con Google</button>';
+  else if(!user)h='<div class="dot"></div><span>Solo en este dispositivo</span><button onclick="login()">Iniciar sesión</button>';
   else{const t={ok:'Sincronizado',busy:'Guardando…',err:'Error al sincronizar'+(lastErr?' ('+lastErr+')':'')}[syncState]||'Conectando…';
     h=`<div class="dot ${syncState}"></div><span>☁︎ ${t} · ${esc(user.email||'')}</span><button class="lnk" onclick="logout()">Salir</button>`}
   ['syncBar1','syncBar2'].forEach(id=>{const el=$(id);if(el)el.innerHTML=h});
@@ -1440,7 +1448,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=67;
+const APP_VER=68;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
