@@ -409,7 +409,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .hidebtn{display:inline-flex;align-items:center;gap:6px}.hidebtn .eyec{flex:none;vertical-align:middle}
 .blhead{display:flex;align-items:center;gap:12px;margin-bottom:12px}.blhead h3,.blhead h2{margin:0}
 .blhead.m{margin-bottom:16px}
-.picum{display:block;background:#fff;border-radius:8px;padding:4px 7px;line-height:0;flex:none;transition:transform .12s,box-shadow .12s}
+.picum{margin-left:auto;display:block;background:#fff;border-radius:8px;padding:4px 7px;line-height:0;flex:none;transition:transform .12s,box-shadow .12s}
 .picum img{height:30px;width:auto;display:block}.blhead.m .picum img{height:30px}
 .picum:hover{transform:scale(1.05);box-shadow:0 0 0 2px #0a84ff}
 </style>
@@ -417,7 +417,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v82</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v83</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -462,7 +462,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </section>
 
 <section id="s5">
-  <div class="blhead m"><a class="picum" href="https://airtable.com/appOfREf0mVgyWXXO/tblZVWZynzvKPNAHg/viwFGlnNqaotDFN3z?blocks=hide" target="_blank" rel="noopener" title="Pendientes de PICUM en Airtable"><img src="picum.png" alt="PICUM"></a><h2>📥 Backlog</h2></div>
+  <div class="blhead m"><h2>📥 Backlog</h2><a class="picum" href="https://airtable.com/appOfREf0mVgyWXXO/tblZVWZynzvKPNAHg/viwFGlnNqaotDFN3z?blocks=hide" target="_blank" rel="noopener" title="Pendientes de PICUM en Airtable"><img src="picum.png" alt="PICUM"></a></div>
   <div class="row"><input class="name" id="bmN" placeholder="Nueva tarea"><input class="min" id="bmM" type="number" inputmode="numeric" placeholder="-- min"><button class="btn" onclick="bmAdd()">+</button></div>
   <ul id="bmList"></ul><div class="blfoot" id="bmFoot"></div>
   <div class="wkz" id="bmWk" style="max-height:none"></div>
@@ -511,7 +511,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v82</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v83</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1135,7 +1135,7 @@ function overBl(x,y){const b=$('blBox');if(!b||!isDesk())return false;const r=b.
 function blHi(on){const b=$('blBox');if(b)b.classList.toggle('dropok',!!on)}
 function renderBl(){renderBlM();const box=$('blBox');if(!box||!isDesk())return;
   if(!box.dataset.init){box.dataset.init=1;
-    box.innerHTML=`<div class="blhead"><a class="picum" href="https://airtable.com/appOfREf0mVgyWXXO/tblZVWZynzvKPNAHg/viwFGlnNqaotDFN3z?blocks=hide" target="_blank" rel="noopener" title="Pendientes de PICUM en Airtable"><img src="picum.png" alt="PICUM"></a><h3>📥 Backlog</h3></div>
+    box.innerHTML=`<div class="blhead"><h3>📥 Backlog</h3><a class="picum" href="https://airtable.com/appOfREf0mVgyWXXO/tblZVWZynzvKPNAHg/viwFGlnNqaotDFN3z?blocks=hide" target="_blank" rel="noopener" title="Pendientes de PICUM en Airtable"><img src="picum.png" alt="PICUM"></a></div>
     <div class="blin"><input class="n" id="blN" placeholder="Nueva tarea"><input class="m" id="blM" type="number" placeholder="--"><button class="btn" onclick="blAdd()">+</button></div>
     <ul id="blList"></ul><div class="blfoot" id="blFoot"></div><div class="wkz" id="wkZone"></div>`;
     ['blN','blM'].forEach(x=>$(x).addEventListener('keydown',e=>{if(e.key==='Enter')blAdd()}));
@@ -1729,7 +1729,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=82;
+const APP_VER=83;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
