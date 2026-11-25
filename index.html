@@ -176,6 +176,25 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 .blrow button{background:none;border:none;color:#888;font-size:18px;padding:0 4px}
 .addbl{width:100%;background:none;border:1px dashed #444;color:#0a84ff;border-radius:10px;padding:10px;font-size:15px}
 .eetot{margin-top:10px;color:#aaa;font-size:15px}.eetot b{color:#fff}
+nav button{font-size:11px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.tiles.three{grid-template-columns:1fr 1fr 1fr}
+.tile{background:#1c1c1e;border-radius:12px;padding:12px}
+.tile span{display:block;color:#aaa;font-size:13px;line-height:1.25}.tile b{display:block;font-size:24px;margin-top:4px;font-variant-numeric:tabular-nums}.tile small{color:#888;font-size:12px}
+.tile .dot,.ccleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:0}
+.hbars{display:flex;flex-direction:column;gap:6px}
+.hb{display:grid;grid-template-columns:minmax(0,38%) 1fr auto;align-items:center;gap:8px;font-size:14px}
+.hn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#ddd}.hv{color:#aaa;font-variant-numeric:tabular-nums}
+.ht{height:12px;background:#1c1c1e;border-radius:6px;overflow:hidden}.ht i{display:block;height:100%;background:#2fb350;border-radius:0 4px 4px 0}
+.seg.sm button{font-size:13px;padding:7px}
+svg.cc{width:100%;height:auto;display:block;background:#111;border-radius:12px;margin-top:6px}
+svg.cc .ax{fill:#8e8e93;font-size:12px;font-family:-apple-system,system-ui,sans-serif}
+svg.cc .hit{cursor:pointer}
+.ccleg{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#aaa;margin-top:8px}
+.ccleg .ln{width:16px;height:0;border-top:2px solid #d1d1d6;border-radius:0}.ccleg .ln.dash{border-top:2px dashed #8e8e93}
+.ccnote{color:#aaa;font-size:14px;line-height:1.4;margin-top:8px}.ccnote b{color:#fff}
+.ccinfo{font-size:14px;color:#ddd;margin-top:8px;min-height:18px;line-height:1.4}
+#s3 h3 small{color:#777;font-weight:400;font-size:13px}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -211,7 +230,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v50</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v51</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -226,7 +245,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v50)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v51)</button>
 </section>
 
 <section id="s1">
@@ -250,6 +269,12 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
   <button class="linkbtn" onclick="recoverForm()">↺ ¿Se cerró la app? Recuperar actividad en curso</button>
 </section>
 
+<section id="s3">
+  <h2>Reportes</h2>
+  <div class="seg"><button id="rpW" class="on" onclick="rpSet('sem')">Semanal</button><button id="rpM" onclick="rpSet('mes')">Mensual</button></div>
+  <div class="calhead"><button onclick="rpMove(-1)">‹</button><b id="rpLabel"></b><button onclick="rpMove(1)">›</button></div>
+  <div id="rpBody"></div>
+</section>
 <section id="s2">
   <h2>Registro</h2>
   <div class="sync" id="syncBar2"></div>
@@ -274,10 +299,11 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
   <button id="n0" class="on" onclick="tab(0)"><span>⏱</span>Temporizador</button>
   <button id="n1" onclick="tab(1)"><span>📋</span>Actividades</button>
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
+  <button id="n3" onclick="tab(3)"><span>📊</span>Reportes</button>
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v50</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v51</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -327,7 +353,7 @@ function moveDay(n){setPlanDay(shiftDay(planDay,n));render()}
 function pickDay(v){if(v){setPlanDay(v);render()}}
 const fmtMin=m=>{m=Math.round(m);return m>=60?Math.floor(m/60)+'h '+(m%60)+'min':m+' min'};
 
-function tab(i){[0,1,2].forEach(k=>{$('s'+k).classList.toggle('on',k===i);$('n'+k).classList.toggle('on',k===i)});if(i===2)renderLog();if(i===1)render()}
+function tab(i){[0,1,2,3].forEach(k=>{$('s'+k).classList.toggle('on',k===i);$('n'+k).classList.toggle('on',k===i)});if(i===2)renderLog();if(i===1)render();if(i===3)renderRep()}
 
 /* ---- Temporizador simple ---- */
 function setT(m){$('tMin').value=m;prev()}
@@ -768,6 +794,103 @@ function startAlarm(){stopAlarm();alarmEnd=Date.now()+60000;alarmBurst();alarmT=
 function stopAlarm(){if(alarmT){clearInterval(alarmT);alarmT=null}}
 try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}catch(e){}
 
+
+/* ===================== REPORTES ===================== */
+const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
+let rpMode='sem',rpOff=0,ccUnit='pct';
+function rpSet(m){rpMode=m;rpOff=0;$('rpW').classList.toggle('on',m==='sem');$('rpM').classList.toggle('on',m==='mes');renderRep()}
+function rpMove(n){rpOff+=n;renderRep()}
+function rpRange(){const t=new Date();t.setHours(0,0,0,0);
+  if(rpMode==='sem'){const dow=(t.getDay()+6)%7;const a=new Date(t.getFullYear(),t.getMonth(),t.getDate()-dow+7*rpOff);const b=new Date(a.getFullYear(),a.getMonth(),a.getDate()+7);return{a:a.getTime(),b:b.getTime(),days:7}}
+  const a=new Date(t.getFullYear(),t.getMonth()+rpOff,1),b=new Date(a.getFullYear(),a.getMonth()+1,1);return{a:a.getTime(),b:b.getTime(),days:Math.round((b-a)/864e5)}}
+const isRestN=n=>/^me merezco un descanso$/i.test(n);
+function union(iv){iv=iv.filter(x=>x.e>x.s).sort((p,q)=>p.s-q.s);const out=[];iv.forEach(x=>{const l=out[out.length-1];if(l&&x.s<=l.e)l.e=Math.max(l.e,x.e);else out.push({...x})});return out}
+function clip(iv,a,b){return iv.map(x=>({s:Math.max(x.s,a),e:Math.min(x.e,b)})).filter(x=>x.e>x.s)}
+function sumMin(iv){return iv.reduce((p,x)=>p+(x.e-x.s),0)/60000}
+function minus(A,B){const out=[];A.forEach(a=>{let segs=[{...a}];B.forEach(b=>{segs=segs.flatMap(x=>{if(b.e<=x.s||b.s>=x.e)return[x];const r=[];if(b.s>x.s)r.push({s:x.s,e:b.s});if(b.e<x.e)r.push({s:b.e,e:x.e});return r})});out.push(...segs)});return out}
+function renderRep(){
+  const R=rpRange(),a0=new Date(R.a),b1=new Date(R.b-1);
+  $('rpLabel').textContent=rpMode==='sem'?`${a0.getDate()} ${a0.toLocaleDateString('es-MX',{month:'short'})} – ${b1.getDate()} ${b1.toLocaleDateString('es-MX',{month:'short'})}`:a0.toLocaleDateString('es-MX',{month:'long',year:'numeric'});
+  const ent=log.map((e,i)=>({...e,i,sg:segsOf(e)})).filter(e=>e.sg.length&&e.sg[0].s>=R.a&&e.sg[0].s<R.b);
+  const actIv=[],restIv=[];
+  log.forEach(e=>segsOf(e).forEach(x=>(isRestN(e.n)?restIv:actIv).push(x)));
+  openWork().forEach(w=>w.segs.forEach(x=>(isRestN(w.n)?restIv:actIv).push(x)));
+  const act=ent.filter(e=>!isRestN(e.n));
+  // ---- resumen
+  const actU=union(clip(actIv,R.a,R.b)),totAct=sumMin(actU);
+  const done=act.filter(e=>e.ok),wp=done.filter(e=>e.plan>0);
+  const devs=wp.map(e=>(e.real-e.plan)/e.plan*100),within=devs.filter(d=>Math.abs(d)<=10).length;
+  const avgDev=devs.length?devs.reduce((p,q)=>p+q,0)/devs.length:null;
+  const byN={};act.forEach(e=>{const k=e.n.trim();byN[k]=(byN[k]||0)+e.real});
+  const top=Object.entries(byN).sort((p,q)=>q[1]-p[1]).slice(0,6),topMax=top.length?top[0][1]:1;
+  let h=`<div class="tiles">
+    <div class="tile"><span>Tiempo en actividades</span><b>${fmtMin(totAct)}</b></div>
+    <div class="tile"><span>Terminadas</span><b>${done.length}</b></div>
+    <div class="tile"><span>Dentro de ±10% de lo estimado</span><b>${devs.length?Math.round(within/devs.length*100)+'%':'—'}</b></div>
+    <div class="tile"><span>Desviación promedio</span><b class="${avgDev>10?'over':avgDev<-10?'under':''}">${avgDev==null?'—':(avgDev>0?'+':'')+Math.round(avgDev)+'%'}</b></div></div>`;
+  if(top.length)h+=`<h3>Dónde se fue tu tiempo</h3><div class="hbars">${top.map(([n,v])=>`<div class="hb"><span class="hn">${esc(n)}</span><div class="ht"><i style="width:${Math.max(2,v/topMax*100)}%"></i></div><span class="hv">${fmtMin(v)}</span></div>`).join('')}</div>`;
+  // ---- gráfica de control
+  h+=`<h3>📈 Gráfica de control: estimado vs. real</h3>
+  <div class="seg sm"><button class="${ccUnit==='pct'?'on':''}" onclick="ccUnit='pct';renderRep()">% de desviación</button><button class="${ccUnit==='min'?'on':''}" onclick="ccUnit='min';renderRep()">Minutos</button></div>
+  <div id="ccBox">${ccChart(wp.sort((p,q)=>p.sg[0].s-q.sg[0].s))}</div><div id="ccInfo" class="ccinfo"></div>`;
+  // ---- uso del día
+  h+=`<h3>⏳ Uso de tu día hábil <small>(5:00 am – 11:59 pm)</small></h3>`+dayUse(R,actIv,restIv);
+  $('rpBody').innerHTML=h;
+}
+let ccPts=[];
+function ccChart(pts){
+  if(pts.length<3)return`<div class="empty">Necesito al menos 3 actividades terminadas con tiempo estimado en este periodo para dibujar la gráfica.</div>`;
+  const xs=pts.map(e=>ccUnit==='pct'?(e.real-e.plan)/e.plan*100:e.real-e.plan);
+  const mean=xs.reduce((p,q)=>p+q,0)/xs.length;let mr=0;for(let k=1;k<xs.length;k++)mr+=Math.abs(xs[k]-xs[k-1]);mr/=(xs.length-1);
+  const ucl=mean+2.66*mr,lcl=mean-2.66*mr,u=ccUnit==='pct'?'%':' min';
+  const W=640,H=280,L=52,Rr=14,T=16,B=34;let lo=Math.min(lcl,...xs,0),hi=Math.max(ucl,...xs,0);const pad_=(hi-lo)*.08||5;lo-=pad_;hi+=pad_;
+  const X=k=>L+(xs.length===1?0:(W-L-Rr)*k/(xs.length-1)),Y=v=>T+(H-T-B)*(1-(v-lo)/(hi-lo));
+  ccPts=pts.map((e,k)=>({e,v:xs[k],out:xs[k]>ucl||xs[k]<lcl}));
+  const fmt=v=>(v>0?'+':'')+Math.round(v)+u;
+  const hl=(v,c,dash,lab)=>`<line x1="${L}" x2="${W-Rr}" y1="${Y(v)}" y2="${Y(v)}" stroke="${c}" stroke-width="${dash?1.5:2}" ${dash?'stroke-dasharray="5 4"':''}/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" class="ax">${lab}</text>`;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" class="cc" role="img" aria-label="Gráfica de control de la diferencia entre tiempo real y estimado">`;
+  svg+=`<rect x="${L}" y="${T}" width="${W-L-Rr}" height="${H-T-B}" fill="none"/>`;
+  if(lo<0&&hi>0)svg+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(0)}" y2="${Y(0)}" stroke="#3a3a3c" stroke-width="1"/>`;
+  svg+=hl(ucl,'#8e8e93',1,'LSC')+hl(lcl,'#8e8e93',1,'LIC')+hl(mean,'#d1d1d6',0,'Media');
+  svg+=`<polyline fill="none" stroke="${C_REST}" stroke-width="2" points="${xs.map((v,k)=>X(k)+','+Y(v)).join(' ')}"/>`;
+  const step=Math.max(1,Math.ceil(xs.length/8));
+  pts.forEach((e,k)=>{if(k%step===0||k===xs.length-1){const d=new Date(e.sg[0].s);svg+=`<text x="${X(k)}" y="${H-12}" text-anchor="middle" class="ax">${d.getDate()}/${d.getMonth()+1}</text>`}});
+  ccPts.forEach((p,k)=>{svg+=`<circle cx="${X(k)}" cy="${Y(p.v)}" r="${p.out?6:5}" fill="${p.out?C_BAD:C_REST}" stroke="#000" stroke-width="2"/><circle cx="${X(k)}" cy="${Y(p.v)}" r="14" fill="transparent" class="hit" onmouseenter="ccShow(${k})" onclick="ccShow(${k})"/>`});
+  svg+='</svg>';
+  const outN=ccPts.filter(p=>p.out).length;
+  return svg+`<div class="ccleg"><span><i style="background:${C_REST}"></i>Actividad</span><span><i style="background:${C_BAD}"></i>Fuera de control</span><span><i class="ln"></i>Media ${fmt(mean)}</span><span><i class="ln dash"></i>Límites ${fmt(lcl)} a ${fmt(ucl)}</span></div>
+  <div class="ccnote">${mean>5?`En promedio te tardas <b>${fmt(mean)}</b> de lo que estimas.`:mean<-5?`En promedio terminas <b>${fmt(-mean).replace('+','')}</b> antes de lo estimado.`:'En promedio estimas bien tus tiempos.'} ${outN?`⚠️ <b>${outN}</b> actividad${outN>1?'es':''} fuera de los límites: tócala${outN>1?'s':''} para ver cuál${outN>1?'es':''}.`:'✓ Todas dentro de los límites: tu proceso de estimación es estable.'}</div>`;
+}
+function ccShow(k){const p=ccPts[k];if(!p)return;const e=p.e,d=new Date(e.sg[0].s);
+  $('ccInfo').innerHTML=`<b>${esc(e.n)}</b> · ${d.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})}<br>Estimado ${fmtMin(e.plan)} · Real ${fmtMin(e.real)} · <span class="${p.v>0?'over':'under'}">${(p.v>0?'+':'')+Math.round(p.v)}${ccUnit==='pct'?'%':' min'}</span>${p.out?' · <span style="color:#ff453a">⚠️ fuera de control</span>':''}`}
+function dayUse(R,actIv,restIv){
+  const WIN=1139,now=Date.now();let tA=0,tR=0,tW=0,cols=[];
+  for(let k=0;k<R.days;k++){const d=new Date(R.a);d.setDate(d.getDate()+k);const ws=new Date(d.getFullYear(),d.getMonth(),d.getDate(),5,0).getTime(),we=new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59).getTime();
+    if(ws>now){cols.push({d,fut:true});continue}
+    const end=Math.min(we,now),win=(end-ws)/60000;
+    const A=union(clip(actIv,ws,end)),Rs=minus(union(clip(restIv,ws,end)),A);
+    const a=sumMin(A),r=sumMin(Rs);if(a+r<1){cols.push({d,empty:true});continue}const g=Math.max(0,win-a-r);tA+=a;tR+=r;tW+=win;cols.push({d,a,r,g,win,today:end<we})}
+  if(!tW)return'<div class="empty">No hay registros en este periodo.</div>';
+  const nD=cols.filter(c=>c.a!=null).length;
+  const pc=v=>{const x=v/tW*100;return x>0&&x<1?x.toFixed(1):Math.round(x)};
+  const W=640,H=200,L=8,T=8,B=26,cw=(W-L*2)/R.days,bw=Math.max(4,cw-2);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" class="cc" role="img" aria-label="Uso del día hábil por día">`;
+  cols.forEach((c,k)=>{const x=L+k*cw+(cw-bw)/2,ph=H-T-B;
+    if(c.fut||c.empty){svg+=`<rect x="${x}" y="${T}" width="${bw}" height="${ph}" rx="3" fill="#1c1c1e"/>`}else{
+      const fr=v=>v/WIN*ph;let y=T+ph;
+      [[c.a,C_ACT],[c.r,C_REST],[c.g,C_GRAY]].forEach(([v,col])=>{if(v<=0)return;const hh=fr(v);y-=hh;svg+=`<rect x="${x}" y="${y+1}" width="${bw}" height="${Math.max(0,hh-2)}" rx="3" fill="${col}"/>`});
+      svg+=`<rect x="${x-1}" y="${T}" width="${bw+2}" height="${ph}" fill="transparent" class="hit" onmouseenter="duShow(${k})" onclick="duShow(${k})"/>`}
+    if(R.days<=7||k%5===0||k===R.days-1)svg+=`<text x="${x+bw/2}" y="${H-8}" text-anchor="middle" class="ax">${R.days<=7?c.d.toLocaleDateString('es-MX',{weekday:'short'}).slice(0,3):c.d.getDate()}</text>`});
+  svg+='</svg>';window._du=cols;
+  return`<div class="tiles three"><div class="tile"><span><i class="dot" style="background:${C_ACT}"></i>En actividades</span><b>${pc(tA)}%</b><small>${fmtMin(tA)}</small></div>
+  <div class="tile"><span><i class="dot" style="background:${C_REST}"></i>Descanso</span><b>${pc(tR)}%</b><small>${fmtMin(tR)}</small></div>
+  <div class="tile"><span><i class="dot" style="background:${C_GRAY}"></i>Sin rastrear</span><b>${pc(tW-tA-tR)}%</b><small>${fmtMin(tW-tA-tR)}</small></div></div>
+  ${svg}<div id="duInfo" class="ccinfo"></div>
+  <div class="ccnote">Calculado sobre ${nD} día${nD>1?'s':''} con registros (los días vacíos no cuentan). "Sin rastrear" es el tiempo de tu día hábil que no quedó en ninguna actividad: traslados, comidas, pendientes chicos o tiempo perdido. Mientras más chico, más claro tienes en qué se te va el día.</div>`;
+}
+function duShow(k){const c=(window._du||[])[k];if(!c||c.fut||c.empty)return;
+  $('duInfo').innerHTML=`<b style="text-transform:capitalize">${c.d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'short'})}</b>${c.today?' (hasta ahora)':''}<br><span style="color:${C_ACT}">■</span> Actividades ${fmtMin(c.a)} · <span style="color:${C_REST}">■</span> Descanso ${fmtMin(c.r)} · <span style="color:#aaa">■</span> Sin rastrear ${fmtMin(c.g)}`}
+
 /* ---- Registro ---- */
 let cm=new Date();cm.setDate(1);let selDay=dkey(new Date());
 function view(v){$('vCal').classList.toggle('on',v==='cal');$('vAct').classList.toggle('on',v==='act');$('calView').style.display=v==='cal'?'':'none';$('actView').style.display=v==='act'?'':'none';if(v==='act')renderAct()}
@@ -999,7 +1122,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=50;
+const APP_VER=51;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
