@@ -195,6 +195,7 @@ svg.cc .hit{cursor:pointer}
 .ccnote{color:#aaa;font-size:14px;line-height:1.4;margin-top:8px}.ccnote b{color:#fff}
 .ccinfo{font-size:14px;color:#ddd;margin-top:8px;min-height:18px;line-height:1.4}
 #s3 h3 small{color:#777;font-weight:400;font-size:13px}
+@media (hover:hover){#list li:not(.done){cursor:grab}#list li.drag{cursor:grabbing}}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -230,7 +231,7 @@ svg.cc .hit{cursor:pointer}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v51</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v52</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -245,7 +246,7 @@ svg.cc .hit{cursor:pointer}
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v51)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v52)</button>
 </section>
 
 <section id="s1">
@@ -303,7 +304,7 @@ svg.cc .hit{cursor:pointer}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v51</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v52</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -480,7 +481,7 @@ function checkSched(){
 function editT(i){editAct(i,'m')}
 /* Arrastrar para reordenar: mantén presionada la actividad y muévela */
 (function(){
-  const L=$('list');let holdT=null,drag=null,sx=0,sy=0,lastY=0,lastX=0,active=null,sw=null;
+  const L=$('list');let holdT=null,drag=null,sx=0,sy=0,lastY=0,lastX=0,active=null,sw=null,isMouse=false;
   const swClear=()=>{L.querySelectorAll('.swh').forEach(h=>h.remove());if(sw){sw.li.style.transform='';sw.li.classList.remove('swiping')}sw=null};
   const startHold=(li,x,y)=>{sx=x;sy=y;lastY=y;lastX=x;active=li;clearTimeout(holdT);
     holdT=setTimeout(()=>{drag={li,from:+li.dataset.i,y0:y};li.classList.add('drag');try{navigator.vibrate&&navigator.vibrate(30)}catch(_){}},350)};
@@ -491,7 +492,8 @@ function editT(i){editAct(i,'m')}
         h.innerHTML=`<span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span class="swl">‹ Otro día</span>`;L.appendChild(h);active.classList.add('swiping')}
       if(sw){if(ev&&ev.cancelable)ev.preventDefault();sw.li.style.transform=`translateX(${dx}px)`;const h=L.querySelector('.swh');
         if(h){h.classList.toggle('r',dx>0);h.classList.toggle('l',dx<0);h.classList.toggle('go',Math.abs(dx)>90)}return}
-      if(Math.abs(dy)>8||Math.abs(dx)>8)clearTimeout(holdT);return}
+      if(isMouse&&Math.abs(dy)>6&&Math.abs(dy)>Math.abs(dx)){clearTimeout(holdT);drag={li:active,from:+active.dataset.i,y0:sy};active.classList.add('drag')}
+      else{if(Math.abs(dy)>8||Math.abs(dx)>8)clearTimeout(holdT);return}}
     {const dx=x-sx,dy=y-drag.y0;if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy)*1.5&&!drag.li.classList.contains('done')){const li=drag.li;drag=null;li.classList.remove('drag');li.style.transform='';
       L.querySelectorAll('li.over').forEach(o=>o.classList.remove('over'));active=li;return move(x,y,ev)}}
     if(ev&&ev.cancelable)ev.preventDefault();drag.li.style.transform=`translateY(${y-drag.y0}px)`;
@@ -505,10 +507,10 @@ function editT(i){editAct(i,'m')}
     for(let k=0;k<items.length;k++){const r=items[k].getBoundingClientRect();if(lastY<r.top+r.height/2){to=k;break}}
     const [a]=acts.splice(d.from,1);acts.splice(to,0,a);store('acts',acts);render()};
   const ok=t=>{const li=t.closest&&t.closest('li');return li&&L.contains(li)&&!t.closest('button,input,.t,.tchip,.contb')?li:null};
-  L.addEventListener('touchstart',e=>{const li=ok(e.target);if(!li||e.touches.length>1)return;const t=e.touches[0];startHold(li,t.clientX,t.clientY)},{passive:true});
+  L.addEventListener('touchstart',e=>{isMouse=false;const li=ok(e.target);if(!li||e.touches.length>1)return;const t=e.touches[0];startHold(li,t.clientX,t.clientY)},{passive:true});
   L.addEventListener('touchmove',e=>{const t=e.touches[0];move(t.clientX,t.clientY,e)},{passive:false});
   L.addEventListener('touchend',()=>end(false));L.addEventListener('touchcancel',()=>end(true));
-  L.addEventListener('mousedown',e=>{if(e.button!==0)return;const li=ok(e.target);if(li){e.preventDefault();startHold(li,e.clientX,e.clientY)}});
+  L.addEventListener('mousedown',e=>{if(e.button!==0)return;const li=ok(e.target);if(li){isMouse=true;e.preventDefault();startHold(li,e.clientX,e.clientY)}});
   L.addEventListener('dragstart',e=>e.preventDefault());
   window.addEventListener('mousemove',e=>move(e.clientX,e.clientY,e));window.addEventListener('mouseup',()=>end(false));
   L.addEventListener('contextmenu',e=>{if(e.target.closest('li'))e.preventDefault()});
@@ -1122,7 +1124,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=51;
+const APP_VER=52;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
