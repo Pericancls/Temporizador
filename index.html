@@ -347,7 +347,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v69</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v70</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -388,7 +388,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </section>
 
 <section id="s4">
-  <div class="wvtop"><h2>Visualización semanal</h2>
+  <div class="wvtop"><h2>Vista panorámica</h2>
     <div class="seg wvseg"><button id="wvW" class="on" onclick="wvSet('sem')">Semanal</button><button id="wvM" onclick="wvSet('mes')">Mensual</button></div>
     <div class="calhead wvnav"><button onclick="wvMove(-1)">‹</button><b id="wvLabel"></b><button onclick="wvMove(1)">›</button><button class="wvtoday" onclick="wvToday()">Hoy</button></div></div>
   <div class="muted wvhint" id="wvHint"></div>
@@ -425,11 +425,11 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
   <button id="n1" onclick="tab(1)"><span>📋</span>Actividades</button>
   <button id="n2" onclick="tab(2)"><span>📅</span>Registro</button>
   <button id="n3" onclick="tab(3)"><span>📊</span>Reportes</button>
-  <button id="n4" onclick="tab(4)"><span>🗓</span><b class="lg">Visualización semanal</b><b class="sm">Semana</b></button>
+  <button id="n4" onclick="tab(4)"><span>🗓</span><b class="lg">Vista panorámica</b><b class="sm">Panorámica</b></button>
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v69</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v70</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1566,7 +1566,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=69;
+const APP_VER=70;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
