@@ -236,12 +236,36 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 .seg{display:flex;background:#1c1c1e;border-radius:10px;padding:3px;margin:10px 0}
 .seg button{flex:1;background:none;border:none;color:#aaa;padding:9px;border-radius:8px;font-size:15px}
 .seg button.on{background:#3a3a3c;color:#fff}
+.deskonly{display:none}
+@media (min-width:1100px) and (pointer:fine){
+  #s1.on{display:grid;grid-template-columns:minmax(0,2fr) minmax(320px,1fr);gap:32px;max-width:1400px}
+  .deskonly{display:block}
+  #dayPrev{position:sticky;top:16px;align-self:start;background:#141416;border:1px solid #242428;border-radius:16px;padding:16px 16px 12px;max-height:calc(100vh - 110px);display:flex;flex-direction:column}
+}
+#dayPrev h3{margin:0;font-size:17px}#dayPrev .dpsub{color:#8e8e93;font-size:13px;margin:2px 0 10px}
+.dpscroll{overflow:auto;flex:1;min-height:0;margin-right:-8px;padding-right:8px}
+.dptl{position:relative;margin:14px 0 0 52px}
+.dph{position:absolute;left:-52px;right:0;border-top:1px solid #26262a;font-size:11px;color:#6e6e73}
+.dph span{position:absolute;left:0;top:-7px;background:#141416;padding-right:4px}
+.dph.mid{border-top:2px solid #5e5ce6}.dph.mid span{color:#a5a3ff;font-weight:700}
+.dpnight{position:absolute;left:-52px;right:0;background:repeating-linear-gradient(135deg,rgba(94,92,230,.10) 0 8px,rgba(94,92,230,.04) 8px 16px)}
+.dpnow{position:absolute;left:-52px;right:0;top:0;border-top:2px solid #ff453a;z-index:3}
+.dpnow span{position:absolute;left:0;top:-9px;background:#ff453a;color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:1px 5px}
+.dpb{position:absolute;left:4px;right:0;border-radius:8px;background:#0d2a4d;border-left:4px solid #0a84ff;padding:3px 8px;overflow:hidden;font-size:13px;line-height:1.25;color:#fff;z-index:2;box-sizing:border-box}
+.dpb .tm{color:#8fb8e8;font-size:11px}.dpb b{font-weight:600}
+.dpb.cur{background:#0f3a1d;border-left-color:#34c759}.dpb.cur .tm{color:#8fd6a3}
+.dpb.pau{background:#3a2606;border-left-color:#ff9f0a}.dpb.pau .tm{color:#ffc56b}
+.dpb.brk{background:rgba(52,199,89,.10);border-left:2px solid rgba(52,199,89,.5);color:#7fd69a;font-size:11px;padding:0 8px;display:flex;align-items:center}
+.dpb.tiny{display:flex;align-items:center;gap:6px;white-space:nowrap}.dpb.tiny .tm{order:2}
+.dpb .late{color:#ff6961;font-weight:600}.dpb .early{color:#ffb340;font-weight:600}
+.dpfoot{border-top:1px solid #26262a;margin-top:10px;padding-top:10px;font-size:14px;color:#ddd}
+.dpfoot .muted{font-size:12px}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v55</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v56</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -260,7 +284,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
   <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v54)</button>
 </section>
 
-<section id="s1">
+<section id="s1"><div class="s1main">
   <h2 id="planTitle">Plan de hoy</h2>
   <div class="sync" id="syncBar1"></div>
   <div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
@@ -279,6 +303,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
   <button class="btn big" onclick="startList()">▶ Empezar</button>
   <div id="copyBox"></div>
   <button class="linkbtn" onclick="recoverForm()">↺ ¿Se cerró la app? Recuperar actividad en curso</button>
+</div><aside id="dayPrev" class="deskonly"></aside>
 </section>
 
 <section id="s3">
@@ -315,7 +340,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v55</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v56</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -387,6 +412,7 @@ function render(){
   $('total').textContent=!acts.length?'':nd?`✓ ${nd} de ${acts.length} hechas · Pendiente: ${fmtMin(t)}`:(acts.some(a=>a.prog)?'Pendiente: ':'Total planeado: ')+fmtMin(t);
   const names=[...new Set(log.map(e=>e.n))];
   $('known').innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
+  renderPrev();
 }
 $('aName').addEventListener('input',()=>{
   const s=stats()[$('aName').value.trim().toLowerCase()];
@@ -867,6 +893,48 @@ function recSave(isEdit){rfRead();if(!rf.n){$('rfN').style.borderColor='#ff3b30'
 function recClean(id){const t=dkey(new Date());Object.keys(plans).forEach(k=>{if(k<t)return;plans[k]=plans[k].filter(a=>!(a.rid===id&&!a.done&&!a.prog))});cleanPlans();store('plans',plans);setPlanDay(planDay)}
 function recDel(id){modal(`<h1>¿Eliminar?</h1><div class="muted">Se quitan sus próximas apariciones de tus planes. Lo que ya registraste se queda.</div><div class="row"><button class="btn gray" onclick="recForm('${id}')">Cancelar</button><button class="btn red" onclick="recClean('${id}');recs=recs.filter(x=>x.id!=='${id}');store('recs',recs);render();recList()">Eliminar</button></div>`)}
 
+
+/* ===== Vista de computadora: tu día proyectado ===== */
+const isDesk=()=>matchMedia('(min-width:1100px) and (pointer:fine)').matches;
+function renderPrev(){const box=$('dayPrev');if(!box||!isDesk())return;
+  const today=dkey(new Date()),isToday=planDay===today,now=new Date();now.setSeconds(0,0);
+  let t0=isToday?now.getTime():(()=>{const d=kDate(planDay);d.setHours(5,0,0,0);return d.getTime()})();
+  const live=isToday&&$('run').classList.contains('on'),blocks=[];let t=t0;
+  const push=(n,min,cls,a)=>{if(min<=0&&cls==='brk')return;const st=t;t+=Math.max(min,0)*60000;blocks.push({n,st,en:t,cls,a})};
+  let skip=null;
+  if(live){
+    if(inMini){push('Mini descanso',remain/60,'brk');if(cur){skip=cur.id;push(cur.n,(miniSaved?miniSaved.remain:0)/60,'cur',acts.find(x=>x.id===cur.id))}}
+    else if(inBreak){push('Descanso',remain/60,'brk')}
+    else if(cur&&cur.rest){push('Descanso',remain/60,'brk')}
+    else if(cur){skip=cur.id;push(cur.n,inOver?0:remain/60,'cur',acts.find(x=>x.id===cur.id))}
+  }
+  const pend=acts.filter(a=>!a.done&&a.id!==skip&&!(a.quick&&!a.prog));
+  pend.forEach(a=>{if(blocks.length&&blocks[blocks.length-1].cls!=='brk')push('Descanso',brk,'brk');push(a.n,a.prog?Math.max(0,a.prog.rem)/60:a.m,a.prog?'pau':'',a)});
+  const mid=kDate(planDay);mid.setDate(mid.getDate()+1);mid.setHours(0,0,0,0);const midT=mid.getTime();
+  const tEnd=Math.max(t,midT),span=(tEnd-t0)/60000;
+  const avail=Math.max(300,innerHeight-300),ppm=Math.max(0.6,Math.min(3,avail/Math.max(span,60)));
+  const y=ts=>(ts-t0)/60000*ppm;
+  let h='';
+  for(let k=new Date(t0);;){k.setMinutes(0,0,0);k.setHours(k.getHours()+1);if(k.getTime()>tEnd)break;const kt=k.getTime(),isMid=kt===midT;
+    h+=`<div class="dph${isMid?' mid':''}" style="top:${y(kt)}px"><span>${isMid?'12 am':fmt12(pad(k.getHours())+':00').replace(':00','')}</span></div>`}
+  if(t>midT)h+=`<div class="dpnight" style="top:${y(midT)}px;height:${y(t)-y(midT)}px"></div>`;
+  blocks.forEach(b=>{const top=y(b.st),ht=Math.max(b.cls==='brk'?3:18,y(b.en)-top-(b.cls==='brk'?0:2));
+    const hhmm=ts=>{const d=new Date(ts);return fmt12(pad(d.getHours())+':'+pad(d.getMinutes()))};
+    if(b.cls==='brk'){h+=`<div class="dpb brk" style="top:${top}px;height:${ht}px" title="${b.n} ${hhmm(b.st)}–${hhmm(b.en)}">${ht>=14?'☕ '+fmtMin((b.en-b.st)/60000):''}</div>`;return}
+    let late='';if(b.a&&b.a.t){const [hh,mm]=b.a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const diff=Math.round((b.st-d.getTime())/60000);
+      late=diff>5?` <span class="late">⏰ ${fmt12(b.a.t)} · llegarías ${fmtMin(diff)} tarde</span>`:diff<-5?` <span class="early">⏰ es a las ${fmt12(b.a.t)} · aquí irías ${fmtMin(-diff)} antes</span>`:` <span class="tm">⏰ ${fmt12(b.a.t)}</span>`}
+    const tiny=ht<34,min=(b.en-b.st)/60000;
+    h+=`<div class="dpb ${b.cls}${tiny?' tiny':''}" style="top:${top}px;height:${ht}px" title="${esc(b.n)} · ${hhmm(b.st)}–${hhmm(b.en)}">${tiny?`<b>${esc(b.n)}</b><span class="tm">${hhmm(b.st)}</span>${late}`:`<div class="tm">${hhmm(b.st)}–${hhmm(b.en)} · ${b.cls==='cur'?(inOver?'en tiempo extra':'en curso'):fmtMin(min)}</div><b>${b.a&&b.a.rid?'🔁 ':''}${esc(b.n)}</b>${late?'<div>'+late+'</div>':''}`}</div>`});
+  const endD=new Date(t),endTxt=fmt12(pad(endD.getHours())+':'+pad(endD.getMinutes()));
+  const foot=!blocks.length?'<div class="muted">No hay actividades pendientes.</div>':
+    t>midT?`Terminarías <b>${endD.getHours()<5?'en la madrugada':'el día siguiente'}</b> a las <b>${endTxt}</b><div class="muted">Te pasas ${fmtMin((t-midT)/60000)} de la medianoche.</div>`:
+    `Terminarías a las <b>${endTxt}</b><div class="muted">Te quedan ${fmtMin((midT-t)/60000)} libres antes de la medianoche.</div>`;
+  const sc=box.querySelector('.dpscroll'),st=sc?sc.scrollTop:0;
+  box.innerHTML=`<h3>🕒 Así se vería tu día</h3><div class="dpsub">${isToday?'Desde ahora, en el orden de tu lista, con descansos de '+brk+' min':'Previsualización empezando a las 5:00 am'}</div>
+    <div class="dpscroll"><div class="dptl" style="height:${y(tEnd)+12}px">${isToday?'<div class="dpnow"><span>Ahora</span></div>':''}${h}</div></div><div class="dpfoot">${foot}</div>`;
+  const sc2=box.querySelector('.dpscroll');if(sc2)sc2.scrollTop=st}
+setInterval(()=>{if($('s1').classList.contains('on'))renderPrev()},20000);
+window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))renderPrev()});
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1194,7 +1262,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=55;
+const APP_VER=56;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
