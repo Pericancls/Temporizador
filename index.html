@@ -248,7 +248,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 #blBox.dropok{border-color:#0a84ff;background:#0d1a2b}
 #blBox h3{margin:0;font-size:17px}#blBox .dpsub{color:#8e8e93;font-size:13px;margin:2px 0 10px}
 .blin{display:flex;gap:6px;margin-bottom:10px}.blin input{padding:9px 10px;font-size:14px}.blin .n{flex:1}.blin .m{width:52px;text-align:center}.blin button{padding:8px 12px;font-size:16px}
-#blList{list-style:none;margin:0;padding:0;overflow:auto;flex:1;min-height:40px}
+#blList{position:relative;list-style:none;margin:0;padding:0;overflow:auto;flex:1;min-height:40px}
 #blList li{padding:8px 8px 8px 10px;margin-bottom:6px;gap:8px;cursor:grab;font-size:14px;border:1px solid transparent}
 #blList li:hover{border-color:#333}#blList li.dragging{opacity:.4}
 #blList li .n{font-size:14px;line-height:1.25}#blList li .t{font-size:12px;padding:4px 6px;cursor:pointer}
@@ -257,6 +257,9 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 .blfoot{border-top:1px solid #26262a;margin-top:8px;padding-top:8px;font-size:12px;color:#8e8e93}
 .blempty{color:#6e6e73;font-size:13px;padding:14px 4px;text-align:center;border:1px dashed #333;border-radius:10px}
 .s1main.dropzone #list{outline:2px dashed #0a84ff;outline-offset:6px;border-radius:12px;min-height:56px}
+.dghost{position:fixed;z-index:50;pointer-events:none;opacity:.92;box-shadow:0 10px 30px rgba(0,0,0,.7);transform:rotate(-1.5deg);margin:0!important;list-style:none}
+@media (min-width:1100px) and (pointer:fine){#list li{cursor:grab}body.dragging,body.dragging *{cursor:grabbing!important;user-select:none}}
+li.dsrc{opacity:.3}
 .dropline{position:absolute;left:0;right:0;height:3px;background:#0a84ff;border-radius:2px;z-index:5;pointer-events:none;box-shadow:0 0 8px #0a84ff}
 .dpscroll{overflow:auto;flex:1;min-height:0;margin-right:-8px;padding-right:8px}
 .dptl{position:relative;margin:14px 0 0 52px}
@@ -280,7 +283,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v57</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v58</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -355,7 +358,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v57</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v58</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -567,7 +570,7 @@ function editT(i){editAct(i,'m')}
   L.addEventListener('touchstart',e=>{isMouse=false;const li=ok(e.target);if(!li||e.touches.length>1)return;const t=e.touches[0];startHold(li,t.clientX,t.clientY)},{passive:true});
   L.addEventListener('touchmove',e=>{const t=e.touches[0];move(t.clientX,t.clientY,e)},{passive:false});
   L.addEventListener('touchend',()=>end(false));L.addEventListener('touchcancel',()=>end(true));
-  L.addEventListener('mousedown',e=>{if(e.button!==0)return;const li=ok(e.target);if(li){isMouse=true;e.preventDefault();startHold(li,e.clientX,e.clientY)}});
+  L.addEventListener('mousedown',e=>{if(e.button!==0||isDesk())return;const li=ok(e.target);if(li){isMouse=true;e.preventDefault();startHold(li,e.clientX,e.clientY)}});
   L.addEventListener('dragstart',e=>e.preventDefault());
   window.addEventListener('mousemove',e=>move(e.clientX,e.clientY,e));window.addEventListener('mouseup',()=>end(false));
   L.addEventListener('contextmenu',e=>{if(e.target.closest('li'))e.preventDefault()});
@@ -958,21 +961,14 @@ function overBl(x,y){const b=$('blBox');if(!b||!isDesk())return false;const r=b.
 function blHi(on){const b=$('blBox');if(b)b.classList.toggle('dropok',!!on)}
 function renderBl(){const box=$('blBox');if(!box||!isDesk())return;
   if(!box.dataset.init){box.dataset.init=1;
-    box.innerHTML=`<h3>📥 Backlog</h3><div class="dpsub">Pendientes de la semana. Arrástralos a tu día, o arrastra una actividad del plan hacia acá.</div>
+    box.innerHTML=`<h3>📥 Backlog</h3><div class="dpsub">Pendientes de la semana. Arrastra libremente entre el backlog y tu plan.</div>
     <div class="blin"><input class="n" id="blN" placeholder="Nueva tarea"><input class="m" id="blM" type="number" placeholder="--"><button class="btn" onclick="blAdd()">+</button></div>
     <ul id="blList"></ul><div class="blfoot" id="blFoot"></div>`;
     ['blN','blM'].forEach(x=>$(x).addEventListener('keydown',e=>{if(e.key==='Enter')blAdd()}));
-    const L=$('blList');
-    L.addEventListener('dragstart',e=>{const li=e.target.closest('li[data-id]');if(!li)return;blDrag=li.dataset.id;li.classList.add('dragging');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',li.querySelector('.n').textContent)}catch(_){}document.querySelector('.s1main').classList.add('dropzone')});
-    L.addEventListener('dragend',()=>{blDrag=null;L.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging'));dropClear()});
-    const M=document.querySelector('.s1main');
-    M.addEventListener('dragover',e=>{if(!blDrag)return;e.preventDefault();e.dataTransfer.dropEffect='move';dropMark(e.clientY)});
-    M.addEventListener('dragleave',e=>{if(!blDrag||M.contains(e.relatedTarget))return;const d=$('list').querySelector('.dropline');if(d)d.remove()});
-    M.addEventListener('drop',e=>{if(!blDrag)return;e.preventDefault();const id=blDrag,ix=dropIdx(e.clientY);blDrag=null;dropClear();blToDay(id,ix)});
   }
   const now=Date.now();
   $('blList').innerHTML=bl.length?bl.map(b=>{const age=Math.floor((now-(b.c||now))/86400000);
-    return `<li draggable="true" data-id="${b.id}"><span class="n">${esc(b.n)}${age>=7?`<br><span class="age">hace ${age} días</span>`:''}</span><span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')" title="Editar">${b.quick?'⚡ <5 min':b.m+' min'}</span><button class="go" onclick="blToDay('${b.id}')" title="Agregar al final del plan">→</button><button onclick="blDel('${b.id}')" title="Borrar">✕</button></li>`}).join('')
+    return `<li data-id="${b.id}"><span class="n">${esc(b.n)}${age>=7?`<br><span class="age">hace ${age} días</span>`:''}</span><span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')" title="Editar">${b.quick?'⚡ <5 min':b.m+' min'}</span><button class="go" onclick="blToDay('${b.id}')" title="Agregar al final del plan">→</button><button onclick="blDel('${b.id}')" title="Borrar">✕</button></li>`}).join('')
     :'<div class="blempty">Vacío. Escribe arriba las tareas que quieras tener a la mano esta semana.</div>';
   const tot=bl.reduce((s,b)=>s+(b.quick?5:(+b.m||0)),0);
   $('blFoot').textContent=bl.length?`${bl.length} tarea${bl.length>1?'s':''} · ${fmtMin(tot)}`:''}
@@ -987,8 +983,8 @@ function blToDay(id,ix){const b=bl.find(x=>x.id===id);if(!b)return;const {c,...i
   lastBl={b,bi,id:it.id,k:planDay};toast(`Agregada a ${dayName(planDay)}: ${esc(b.n)}`,'Deshacer','undoBl()')}
 let lastBl=null;
 function undoBl(){const m=lastBl;if(!m)return;lastBl=null;plans[m.k]=(plans[m.k]||[]).filter(x=>x.id!==m.id);store('plans',plans);bl.splice(Math.min(m.bi,bl.length),0,m.b);store('bl',bl);setPlanDay(planDay);render();hideToast()}
-function toBacklog(i){const a=acts[i];if(!a||a.done)return;if(a.rid&&(a.rk||planDay)===planDay)recSkip(a.rid,planDay);
-  acts.splice(i,1);store('acts',acts);const {done,rid,rk,warned30,t,cid,...rest}=a;bl.unshift({...rest,id:uid(),c:Date.now()});store('bl',bl);render();
+function toBacklog(i,bi){const a=acts[i];if(!a||a.done)return;if(a.rid&&(a.rk||planDay)===planDay)recSkip(a.rid,planDay);
+  acts.splice(i,1);store('acts',acts);const {done,rid,rk,warned30,t,cid,...rest}=a;const nb={...rest,id:uid(),c:Date.now()};if(bi==null)bl.unshift(nb);else bl.splice(Math.min(bi,bl.length),0,nb);store('bl',bl);render();
   toast(`📥 Al backlog: ${esc(a.n)}`)}
 function blDel(id){const b=bl.find(x=>x.id===id);if(!b)return;bl=bl.filter(x=>x.id!==id);store('bl',bl);renderBl();lastBlDel=b;toast(`Borrada: ${esc(b.n)}`,'Deshacer','bl.push(lastBlDel);store(\'bl\',bl);renderBl();hideToast()')}
 let lastBlDel=null;
@@ -997,6 +993,44 @@ function blEdit(id){const b=bl.find(x=>x.id===id);if(!b)return;
   <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="blSaveEd('${id}')">Aceptar</button></div>`);setTimeout(()=>$('beN').focus(),50)}
 function blSaveEd(id){const b=bl.find(x=>x.id===id);if(!b)return;const n=$('beN').value.trim(),m=parseFloat($('beM').value);if(!n)return;b.n=n;if(m>0){b.m=m;delete b.quick}else{b.m=5;b.quick=true}store('bl',bl);closeModal();renderBl()}
 window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))renderBl()});
+
+/* ===== Arrastre libre en computadora: plan ⇄ backlog, y deslizar a la derecha = día siguiente ===== */
+(function(){
+  let st=null;
+  const skip=t=>t.closest('button,input,select,.t,.tchip,.contb,a');
+  const itemsOf=(box,ex)=>[...box.querySelectorAll(':scope > li')].filter(x=>x!==ex);
+  const idxAt=(its,y)=>{for(let k=0;k<its.length;k++){const r=its[k].getBoundingClientRect();if(y<r.top+r.height/2)return k}return its.length};
+  const line=(box,its,ix)=>{box.querySelectorAll('.dropline').forEach(d=>d.remove());const d=document.createElement('div');d.className='dropline';
+    d.style.top=(its.length?(ix<its.length?its[ix].offsetTop-5:its[its.length-1].offsetTop+its[its.length-1].offsetHeight+1):0)+'px';box.appendChild(d)};
+  const clear=()=>{document.querySelectorAll('.dropline').forEach(d=>d.remove());blHi(false);const m=document.querySelector('.s1main');if(m)m.classList.remove('dropzone')};
+  const target=(x,y)=>{const B=$('blBox');if(B){const r=B.getBoundingClientRect();if(x<r.right+14)return 'bl'}const M=document.querySelector('.s1main');if(M){const r=M.getBoundingClientRect();if(x>=r.left-14&&x<=r.right+14)return 'plan'}return null};
+  document.addEventListener('mousedown',e=>{if(e.button!==0||!isDesk()||!$('s1').classList.contains('on'))return;
+    const li=e.target.closest('#list > li, #blList > li');if(!li||skip(e.target))return;
+    if(li.classList.contains('done')&&li.closest('#list'))return;
+    e.preventDefault();const src=li.closest('#list')?'plan':'bl';
+    st={li,src,i:src==='plan'?+li.dataset.i:null,id:src==='bl'?li.dataset.id:null,x0:e.clientX,y0:e.clientY,mode:null,ghost:null,tgt:null,ix:0}});
+  window.addEventListener('mousemove',e=>{if(!st)return;const dx=e.clientX-st.x0,dy=e.clientY-st.y0;
+    if(!st.mode){if(Math.hypot(dx,dy)<6)return;
+      if(st.src==='plan'&&dx>10&&Math.abs(dx)>Math.abs(dy)*1.5){st.mode='swipe';const h=document.createElement('div');h.className='swh r';h.style.top=st.li.offsetTop+'px';h.style.height=st.li.offsetHeight+'px';
+        h.innerHTML=`<span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span></span>`;$('list').appendChild(h);st.h=h;st.li.classList.add('swiping')}
+      else{st.mode='drag';const r=st.li.getBoundingClientRect();const g=st.li.cloneNode(true);g.classList.add('dghost');g.style.width=r.width+'px';g.style.left=r.left+'px';g.style.top=r.top+'px';
+        document.body.appendChild(g);st.ghost=g;st.ox=st.x0-r.left;st.oy=st.y0-r.top;st.li.classList.add('dsrc');document.body.classList.add('dragging')}}
+    if(st.mode==='swipe'){const d=Math.max(0,dx);st.li.style.transform=`translateX(${d}px)`;st.h.classList.toggle('go',d>90);return}
+    st.ghost.style.left=(e.clientX-st.ox)+'px';st.ghost.style.top=(e.clientY-st.oy)+'px';
+    const t=target(e.clientX,e.clientY);st.tgt=t;clear();
+    if(t==='bl'){blHi(true);const box=$('blList'),its=itemsOf(box,st.src==='bl'?st.li:null);st.ix=idxAt(its,e.clientY);line(box,its,st.ix)}
+    else if(t==='plan'){document.querySelector('.s1main').classList.add('dropzone');const box=$('list'),its=itemsOf(box,st.src==='plan'?st.li:null);st.ix=idxAt(its,e.clientY);line(box,its,st.ix)}});
+  window.addEventListener('mouseup',e=>{if(!st)return;const s0=st;st=null;
+    if(s0.mode==='swipe'){const dx=e.clientX-s0.x0;s0.h.remove();s0.li.style.transform='';s0.li.classList.remove('swiping');if(dx>90)sendTo(s0.i,shiftDay(planDay,1));return}
+    if(s0.mode!=='drag')return;
+    s0.ghost.remove();s0.li.classList.remove('dsrc');document.body.classList.remove('dragging');clear();
+    const sup=ev=>{ev.stopPropagation();ev.preventDefault()};window.addEventListener('click',sup,{capture:true,once:true});setTimeout(()=>window.removeEventListener('click',sup,{capture:true}),50);
+    const t=s0.tgt,ix=s0.ix;if(!t)return;
+    if(s0.src==='plan'&&t==='plan'){const [a]=acts.splice(s0.i,1);acts.splice(ix,0,a);store('acts',acts);render()}
+    else if(s0.src==='plan'&&t==='bl'){toBacklog(s0.i,ix)}
+    else if(s0.src==='bl'&&t==='plan'){blToDay(s0.id,ix)}
+    else if(s0.src==='bl'&&t==='bl'){const from=bl.findIndex(x=>x.id===s0.id);if(from<0)return;const [b]=bl.splice(from,1);bl.splice(ix,0,b);store('bl',bl);renderBl()}});
+})();
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1324,7 +1358,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=57;
+const APP_VER=58;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
