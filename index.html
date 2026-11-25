@@ -356,7 +356,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .mcal .mg .t{background:#ff453a;color:#fff;border-radius:50%;font-weight:800}
 .mcal .mi{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center}
 .mcal .mi .d{font-size:34px;font-weight:300;line-height:1}.mcal .mi .wd{font-size:11px;color:#ff453a;font-weight:700;text-transform:uppercase}
-@media (max-width:600px){.mcal .mg,.mcal .mh{display:none}.mcal .mi{display:flex}.topl .daynav label{font-size:14px;line-height:1.2}}
+@media (max-width:600px){.topg{grid-template-columns:minmax(0,1fr) 64px;gap:8px}.addg{grid-template-columns:minmax(0,1fr) 98px 44px;gap:6px}.addg #aTime{padding:8px 4px;font-size:15px}.hidebtn .lg{display:none}.mcal .mi .d{font-size:28px}.mcal .mg,.mcal .mh{display:none}.mcal .mi{display:flex}.topl .daynav label{font-size:14px;line-height:1.2}}
 .ev{text-align:left}
 .evtop{display:flex;justify-content:space-between;align-items:center;margin:-8px -6px 14px}
 .evtop b{font-size:17px}.evtop button{background:none;border:none;color:#0a84ff;font-size:17px;padding:4px 6px;cursor:pointer}.evtop .add{font-weight:700}.evtop .add:disabled{color:#48484a}
@@ -377,12 +377,20 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .dpqc span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dpqc button{width:18px;height:18px;border-radius:50%;border:2px solid #ffd60a;background:none;padding:0;cursor:pointer;flex:none}
 .dpqc button:hover{background:rgba(255,214,10,.3)}
+.addg{display:grid;grid-template-columns:minmax(0,1fr) 132px 48px;gap:8px}
+.addg input{min-width:0;box-sizing:border-box}
+.addg #aTime{background:#1c1c1e;border:1px solid #333;color:#fff;border-radius:12px;padding:8px 8px;font-size:16px;width:100%;color-scheme:dark}
+.addg #aMin{width:100%;text-align:center}
+.addg .btn{padding:0}
+.hidebtn{justify-self:start;background:#1c1c1e;border:1px solid #333;color:#c7c7cc;border-radius:10px;padding:8px 12px;font-size:14px;cursor:pointer;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.hidebtn .sm{display:none}@media (max-width:600px){.hidebtn .sm{display:inline}}
+.hidebtn.on{color:#64d2ff;border-color:#1f4d6b}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v73</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v74</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -405,12 +413,14 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
   <div class="ptrow"><h2 id="planTitle">Plan de hoy</h2><div class="sync" id="syncBar1"></div></div>
   <div class="topg"><div class="topl">
   <div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
-  <div class="row">
+  <div class="addg">
     <input class="name" id="aName" placeholder="Actividad" list="known">
-    <input class="min" id="aMin" type="number" inputmode="numeric" placeholder="--">
+    <input type="time" id="aTime" title="Hora programada (opcional)">
     <button class="btn" onclick="add()">+</button>
+    <button class="hidebtn" id="hideBtn" onclick="toggleHideDone()"></button>
+    <input class="min" id="aMin" type="number" inputmode="numeric" placeholder="-- min" title="Duración en minutos">
+    <span></span>
   </div></div><button class="mcal" id="mcal" onclick="newEvent()" title="Programar una actividad en otra fecha"></button></div>
-  <div class="timerow"><span>⏰ Hora programada <small>(opcional)</small></span><input type="time" id="aTime"><button class="clr" onclick="$('aTime').value=''">✕</button></div>
   <datalist id="known"></datalist>
   <div class="muted" id="hint" style="margin:-4px 0 10px;font-size:14px"></div>
   <ul id="list"></ul>
@@ -465,7 +475,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v73</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v74</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -527,7 +537,8 @@ function render(){
   {const qk=a=>a.quick&&!a.prog;if(acts.some((a,i)=>i>0&&qk(a)&&!qk(acts[i-1]))){const o=[...acts.filter(qk),...acts.filter(a=>!qk(a))];acts.splice(0,acts.length,...o);store('acts',acts)}}
   acts.forEach(a=>{if(!a.id)a.id=uid()});
   const ncnt={};notes.forEach(n=>{if(!n.del&&n.act)ncnt[n.act]=(ncnt[n.act]||0)+1});
-  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span><button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button>${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
+  const nDone=acts.filter(a=>a.done).length,hb=$('hideBtn');if(hb){hb.innerHTML=hideDone?`👁<span class="lg"> Mostrar terminadas</span>${nDone?' ('+nDone+')':''}`:'🙈<span class="lg"> Ocultar terminadas</span>';hb.title=hideDone?'Mostrar terminadas':'Ocultar terminadas';hb.classList.toggle('on',hideDone)}
+  $('list').innerHTML=acts.length?acts.map((a,i)=>hideDone&&a.done?'':`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span><button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button>${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join('')+(hideDone&&nDone===acts.length?'<div class="empty">Todo lo de este día está terminado 🎉</div>':''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
@@ -546,7 +557,7 @@ $('aName').addEventListener('input',()=>{
   if(s){$('hint').textContent=`Histórico: promedio real ${fmtMin(s.avg)} (${s.c} veces) · sin minutos = tarea rápida`}
   else $('hint').textContent='';
 });
-function add(){const n=$('aName').value.trim(),m=parseFloat($('aMin').value);if(!n)return;const q=!(m>0);const tm=$('aTime').value;acts.push({n,m:q?5:m,id:uid(),...(q?{quick:true}:{}),...(tm?{t:tm}:{})});$('aName').value='';$('aMin').value='';$('aTime').value='';$('hint').textContent='';store('acts',acts);render()}
+function add(){const n=$('aName').value.trim();let m=parseFloat($('aMin').value);if(!n)return;const tm=$('aTime').value;if(!(m>0)&&tm)m=30;const q=!(m>0);acts.push({n,m:q?5:m,id:uid(),...(q?{quick:true}:{}),...(tm&&!q?{t:tm}:{})});$('aName').value='';$('aMin').value='';$('aTime').value='';$('hint').textContent='';store('acts',acts);render()}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function toggleDone(i){const a=acts[i];if(!a)return;
   if(a.done){a.done=false;if(a.cid){log=log.filter(e=>e.cid!==a.cid);delete a.cid;store('log',log)}store('acts',acts);render();return}
@@ -674,7 +685,7 @@ function editT(i){editAct(i,'m')}
     if(cancel||Math.abs(lastY-d.y0)<10){d.li.classList.remove('drag');d.li.style.transform='';return}
     const items=[...L.querySelectorAll('li')].filter(o=>o!==d.li);let to=items.length;
     for(let k=0;k<items.length;k++){const r=items[k].getBoundingClientRect();if(lastY<r.top+r.height/2){to=k;break}}
-    const [a]=acts.splice(d.from,1);acts.splice(to,0,a);store('acts',acts);render()};
+    const ref=to<items.length?acts[+items[to].dataset.i]:null;const [a]=acts.splice(d.from,1);const j=ref?acts.indexOf(ref):acts.length;acts.splice(j<0?acts.length:j,0,a);store('acts',acts);render()};
   const ok=t=>{const li=t.closest&&t.closest('li');return li&&L.contains(li)&&!t.closest('button,input,.t,.tchip,.contb')?li:null};
   L.addEventListener('touchstart',e=>{isMouse=false;const li=ok(e.target);if(!li||e.touches.length>1)return;const t=e.touches[0];startHold(li,t.clientX,t.clientY)},{passive:true});
   L.addEventListener('touchmove',e=>{const t=e.touches[0];move(t.clientX,t.clientY,e)},{passive:false});
@@ -685,7 +696,9 @@ function editT(i){editAct(i,'m')}
   L.addEventListener('contextmenu',e=>{if(e.target.closest('li'))e.preventDefault()});
 })();
 function mv(i,d){const j=i+d;if(j<0)return;[acts[i],acts[j]]=[acts[j],acts[i]];store('acts',acts);render()}
-$('aName').addEventListener('keydown',e=>{if(e.key==='Enter')add()});$('aMin').addEventListener('keydown',e=>{if(e.key==='Enter')add()});
+['aName','aMin','aTime'].forEach(x=>$(x).addEventListener('keydown',e=>{if(e.key==='Enter')add()}));
+let hideDone=(()=>{try{return localStorage.getItem('hideDone')==='1'}catch(e){return false}})();
+function toggleHideDone(){hideDone=!hideDone;try{localStorage.setItem('hideDone',hideDone?'1':'0')}catch(e){}render()}
 
 /* ---- Corredor ---- */
 let inOver=false,overStart=0,inMini=false,miniSaved=null,inBreak=false,brk=(()=>{const v=load('brk',10);return v>=0?v:10})(),warned=false,queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
@@ -1151,16 +1164,16 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
     if(t==='bl'){blHi(true);const box=$('blList'),its=itemsOf(box,st.src==='bl'?st.li:null);st.ix=idxAt(its,e.clientY);st.bef=its[st.ix]?its[st.ix].dataset.id:null;line(box,its,st.ix)}
     else if(t==='wk'){$('wkZone').classList.add('over')}
     else if(t==='next'){const P=$('dayPrev');P.dataset.next=planDay===dkey(new Date())?'📅 Suelta aquí para mandarla a mañana':'📅 Suelta aquí para mandarla al día siguiente';P.classList.add('dropnext')}
-    else if(t==='plan'){document.querySelector('.s1main').classList.add('dropzone');const box=$('list'),its=itemsOf(box,st.src==='plan'?st.li:null);st.ix=idxAt(its,e.clientY);line(box,its,st.ix)}});
+    else if(t==='plan'){document.querySelector('.s1main').classList.add('dropzone');const box=$('list'),its=itemsOf(box,st.src==='plan'?st.li:null);st.ix=idxAt(its,e.clientY);st.ref=its[st.ix]?acts[+its[st.ix].dataset.i]:null;line(box,its,st.ix)}});
   window.addEventListener('mouseup',e=>{if(!st)return;const s0=st;st=null;
     if(s0.mode==='swipe'){const dx=e.clientX-s0.x0;s0.h.remove();s0.li.style.transform='';s0.li.classList.remove('swiping');if(dx>90)sendTo(s0.i,shiftDay(planDay,1));return}
     if(s0.mode!=='drag')return;
     s0.ghost.remove();s0.li.classList.remove('dsrc');document.body.classList.remove('dragging');clear();
     const sup=ev=>{ev.stopPropagation();ev.preventDefault()};window.addEventListener('click',sup,{capture:true,once:true});setTimeout(()=>window.removeEventListener('click',sup,{capture:true}),50);
     const t=s0.tgt,ix=s0.ix;if(!t)return;
-    if(s0.src==='plan'&&t==='plan'){const [a]=acts.splice(s0.i,1);acts.splice(ix,0,a);store('acts',acts);render()}
+    if(s0.src==='plan'&&t==='plan'){const [a]=acts.splice(s0.i,1);const j=s0.ref?acts.indexOf(s0.ref):acts.length;acts.splice(j<0?acts.length:j,0,a);store('acts',acts);render()}
     else if(s0.src==='plan'&&t==='bl'){const j=s0.bef?bl.findIndex(x=>x.id===s0.bef):-1;toBacklog(s0.i,j>=0?j:bl.length)}
-    else if(s0.src==='bl'&&t==='plan'){blToDay(s0.id,ix)}
+    else if(s0.src==='bl'&&t==='plan'){const j=s0.ref?acts.indexOf(s0.ref):acts.length;blToDay(s0.id,j<0?acts.length:j)}
     else if(t==='wk'){if(s0.src==='plan')toWeekendPlan(s0.i);else{const b=bl.find(x=>x.id===s0.id);if(b&&!b.wk)toWeekendBl(s0.id)}}
     else if(s0.src==='plan'&&t==='next'){sendTo(s0.i,shiftDay(planDay,1))}
     else if(s0.src==='bl'&&t==='next'){blToDate(s0.id,shiftDay(planDay,1))}
@@ -1646,7 +1659,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=73;
+const APP_VER=74;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
