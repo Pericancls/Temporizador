@@ -395,12 +395,23 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .evq{gap:6px;justify-content:space-between;flex-wrap:nowrap;padding-top:4px}
 .evq button{flex:1;min-width:0;white-space:nowrap;background:#3a3a3c;border:none;color:#fff;border-radius:16px;padding:6px 4px;font-size:14px;cursor:pointer}.evq button.on{background:#0a84ff}
 .evbl{width:100%;background:#1a2a3d;color:#64d2ff;border:1px solid #1f4d6b;border-radius:12px;padding:13px;font-size:16px;font-weight:600;cursor:pointer;margin-top:2px}
+.navpair{flex:1.7;display:flex}.navpair button{flex:1}
+#n5{display:none}
+@media (max-width:1099px),(pointer:coarse){#n5{display:flex}.navpair button{font-size:10px!important;letter-spacing:-.2px}}
+#bmList{list-style:none;margin:0;padding:0}
+#bmList li,#bmWkL li{padding:10px 8px 10px 12px;gap:6px}
+#bmList li .n,#bmWkL li .n{font-size:16px;line-height:1.25}
+.bmb{background:#2c2c2e;border:none;color:#fff;border-radius:10px;height:36px;min-width:36px;padding:0 8px;font-size:15px;cursor:pointer;flex:none}
+.bmb.go{background:#0a84ff;font-weight:700}.bmb.wkb{background:#3a3006}.bmb.x{background:none;color:#8e8e93}
+#bmWk{margin-top:16px}#bmWkL{list-style:none;margin:8px 0 0;padding:0}
+#bmWkL li{background:rgba(0,0,0,.35);border:1px solid rgba(255,214,10,.25);border-radius:12px;margin-bottom:6px}
+#bmWkL li .wkd{font-size:12px;color:#ffd60a;font-weight:600}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v79</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v80</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -444,6 +455,13 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </div><aside id="dayPrev" class="deskonly"></aside>
 </section>
 
+<section id="s5">
+  <h2>📥 Backlog</h2>
+  <div class="muted" style="margin:-6px 0 12px;font-size:14px">Pendientes de la semana. Pícale → para pasarla a tu plan.</div>
+  <div class="row"><input class="name" id="bmN" placeholder="Nueva tarea"><input class="min" id="bmM" type="number" inputmode="numeric" placeholder="-- min"><button class="btn" onclick="bmAdd()">+</button></div>
+  <ul id="bmList"></ul><div class="blfoot" id="bmFoot"></div>
+  <div class="wkz" id="bmWk" style="max-height:none"></div>
+</section>
 <section id="s4">
   <div class="wvtop"><h2>Vista panorámica</h2>
     <div class="seg wvseg"><button id="wvW" class="on" onclick="wvSet('sem')">Semanal</button><button id="wvM" onclick="wvSet('mes')">Mensual</button></div>
@@ -482,13 +500,13 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <nav>
   <button id="n2" onclick="tab(2)"><span>📓</span>Registro</button>
   <button id="n0" class="on" onclick="tab(0)"><span>⏱</span>Temporizador</button>
-  <button id="n1" onclick="tab(1)"><span>📋</span>Actividades</button>
+  <div class="navpair"><button id="n5" onclick="tab(5)"><span>📥</span>Backlog</button><button id="n1" onclick="tab(1)"><span>📋</span>Actividades</button></div>
   <button id="n4" onclick="tab(4)"><span>📅</span><b class="lg">Vista panorámica</b><b class="sm">Panorámica</b></button>
   <button id="n3" onclick="tab(3)"><span>📊</span>Reportes</button>
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v79</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v80</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -538,7 +556,7 @@ function moveDay(n){setPlanDay(shiftDay(planDay,n));render()}
 function pickDay(v){if(v){setPlanDay(v);render()}}
 const fmtMin=m=>{m=Math.round(m);return m>=60?Math.floor(m/60)+'h '+(m%60)+'min':m+' min'};
 
-function tab(i){[0,1,2,3,4].forEach(k=>{$('s'+k).classList.toggle('on',k===i);$('n'+k).classList.toggle('on',k===i)});if(i===2)renderLog();if(i===1)render();if(i===3)renderRep();if(i===4)renderWeek()}
+function tab(i){if(i===5&&isDesk())i=1;[0,1,2,3,4,5].forEach(k=>{$('s'+k).classList.toggle('on',k===i);$('n'+k).classList.toggle('on',k===i)});if(i===2)renderLog();if(i===1)render();if(i===3)renderRep();if(i===4)renderWeek();if(i===5)renderBlM()}
 
 /* ---- Temporizador simple ---- */
 function setT(m){$('tMin').value=m;prev()}
@@ -682,7 +700,7 @@ function editT(i){editAct(i,'m')}
     if(!drag){const dx=x-sx,dy=y-sy;
       if(!sw&&Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.5&&!active.classList.contains('done')){clearTimeout(holdT);
         sw={li:active,i:+active.dataset.i};const h=document.createElement('div');h.className='swh';h.style.top=active.offsetTop+'px';h.style.height=active.offsetHeight+'px';
-        h.innerHTML=`<span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span class="swl">‹ Otro día</span>`;L.appendChild(h);active.classList.add('swiping')}
+        h.innerHTML=`<span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span class="swl">‹ 📥 Backlog</span>`;L.appendChild(h);active.classList.add('swiping')}
       if(sw){if(ev&&ev.cancelable)ev.preventDefault();sw.li.style.transform=`translateX(${dx}px)`;const h=L.querySelector('.swh');
         if(h){h.classList.toggle('r',dx>0);h.classList.toggle('l',dx<0);h.classList.toggle('go',Math.abs(dx)>90)}blHi(overBl(x,y));return}
       if(isMouse&&Math.abs(dy)>6&&Math.abs(dy)>Math.abs(dx)){clearTimeout(holdT);drag={li:active,from:+active.dataset.i,y0:sy};active.classList.add('drag')}
@@ -692,7 +710,7 @@ function editT(i){editAct(i,'m')}
     if(ev&&ev.cancelable)ev.preventDefault();drag.li.style.transform=`translateY(${y-drag.y0}px)`;
     [...L.querySelectorAll('li')].forEach(o=>{if(o===drag.li)return;const r=o.getBoundingClientRect();o.classList.toggle('over',y>r.top&&y<r.bottom)})};
   const end=cancel=>{clearTimeout(holdT);active=null;
-    if(sw){const dx=lastX-sx,i=sw.i;const ob=overBl(lastX,lastY);blHi(false);swClear();if(!cancel&&ob){toBacklog(i);return}if(!cancel){if(dx>90)sendTo(i,shiftDay(planDay,1));else if(dx<-90)pickDayFor(i)}return}
+    if(sw){const dx=lastX-sx,i=sw.i;const ob=overBl(lastX,lastY);blHi(false);swClear();if(!cancel&&ob){toBacklog(i);return}if(!cancel){if(dx>90)sendTo(i,shiftDay(planDay,1));else if(dx<-90)toBacklog(i)}return}
     if(!drag)return;const d=drag;drag=null;
     L.querySelectorAll('li.over').forEach(o=>o.classList.remove('over'));
     if(cancel||Math.abs(lastY-d.y0)<10){d.li.classList.remove('drag');d.li.style.transform='';return}
@@ -1110,7 +1128,7 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
 let blDrag=null;
 function overBl(x,y){const b=$('blBox');if(!b||!isDesk())return false;const r=b.getBoundingClientRect();return r.width>0&&x>=r.left-10&&x<=r.right+10}
 function blHi(on){const b=$('blBox');if(b)b.classList.toggle('dropok',!!on)}
-function renderBl(){const box=$('blBox');if(!box||!isDesk())return;
+function renderBl(){renderBlM();const box=$('blBox');if(!box||!isDesk())return;
   if(!box.dataset.init){box.dataset.init=1;
     box.innerHTML=`<h3>📥 Backlog</h3><div class="dpsub">Pendientes de la semana. Arrastra libremente entre el backlog y tu plan.</div>
     <div class="blin"><input class="n" id="blN" placeholder="Nueva tarea"><input class="m" id="blM" type="number" placeholder="--"><button class="btn" onclick="blAdd()">+</button></div>
@@ -1139,9 +1157,9 @@ let lastBl=null;
 function blToDate(k0,k){const b=bl.find(x=>x.id===k0);if(!b)return;const sn=snap();wkUnlink(b);const {c,wk,...it}=b;it.id=uid();const bi=bl.findIndex(x=>x.id===k0);bl=bl.filter(x=>x.id!==k0);store('bl',bl);
   plans[k]=(plans[k]||[]).concat(it);store('plans',plans);render();lastSnap=sn;toast(`Mandada a ${dayName(k)}: ${esc(b.n)}`,'Deshacer','undoSnap()')}
 function undoBl(){const m=lastBl;if(!m)return;lastBl=null;plans[m.k]=(plans[m.k]||[]).filter(x=>x.id!==m.id);store('plans',plans);bl.splice(Math.min(m.bi,bl.length),0,m.b);store('bl',bl);setPlanDay(planDay);render();hideToast()}
-function toBacklog(i,bi){const a=acts[i];if(!a||a.done)return;if(a.rid&&(a.rk||planDay)===planDay)recSkip(a.rid,planDay);
+function toBacklog(i,bi){const a=acts[i];if(!a||a.done)return;const sn=snap();if(a.rid&&(a.rk||planDay)===planDay)recSkip(a.rid,planDay);
   acts.splice(i,1);store('acts',acts);const {done,rid,rk,warned30,t,cid,...rest}=a;const nb={...rest,id:uid(),c:Date.now()};if(bi==null)bl.unshift(nb);else bl.splice(Math.min(bi,bl.length),0,nb);store('bl',bl);render();
-  toast(`📥 Al backlog: ${esc(a.n)}`)}
+  lastSnap=sn;toast(`📥 Al backlog: ${esc(a.n)}`,'Deshacer','undoSnap()')}
 function blDel(id){const b=bl.find(x=>x.id===id);if(!b)return;bl=bl.filter(x=>x.id!==id);store('bl',bl);renderBl();lastBlDel=b;toast(`Borrada: ${esc(b.n)}`,'Deshacer','bl.push(lastBlDel);store(\'bl\',bl);renderBl();hideToast()')}
 let lastBlDel=null;
 function wkDel(id){const b=bl.find(x=>x.id===id);if(!b)return;const sn=snap();wkUnlink(b);bl=bl.filter(x=>x.id!==id);store('bl',bl);render();lastSnap=sn;toast(`Quitada del fin de semana: ${esc(b.n)}`,'Deshacer','undoSnap()')}
@@ -1364,6 +1382,21 @@ function dnDraw(){const t=$('dnTxt');if(!t)return;if(document.activeElement===t&
 function dnInput(){const k=dnDay||selDay,v=$('dnTxt').value;$('dnSt').textContent='Guardando…';clearTimeout(dnT);
   dnFn=()=>{dnFn=null;if(v.trim())dnotes[k]={t:v,u:Date.now()};else dnotes[k]={t:'',u:Date.now()};store('dnotes',dnotes);$('dnSt').textContent='Guardado ✓';
     const cell=[...document.querySelectorAll('#grid .day')].find(c=>c.getAttribute('onclick')===`pick('${k}')`);if(cell)cell.classList.toggle('nt',!!v.trim())};dnT=setTimeout(()=>dnFn&&dnFn(),600)}
+
+/* ===== Backlog en el iPhone ===== */
+['bmN','bmM'].forEach(x=>{const e=$(x);if(e)e.addEventListener('keydown',ev=>{if(ev.key==='Enter')bmAdd()})});
+function bmAdd(){const n=$('bmN').value.trim(),m=parseFloat($('bmM').value);if(!n)return;const q=!(m>0);
+  bl.push({id:uid(),n,m:q?5:m,...(q?{quick:true}:{}),c:Date.now()});$('bmN').value='';$('bmM').value='';store('bl',bl);renderBlM();$('bmN').focus()}
+function renderBlM(){const L=$('bmList');if(!L)return;const now=Date.now(),main=bl.filter(b=>!b.wk),wkl=bl.filter(b=>b.wk).sort((a,b)=>a.wk.k<b.wk.k?-1:1);
+  const pill=b=>`<span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')">${b.quick?'⚡ <5 min':b.m+' min'}</span>`;
+  const dn=planDay===dkey(new Date())?'hoy':dayName(planDay);
+  L.innerHTML=main.length?main.map(b=>{const age=Math.floor((now-(b.c||now))/86400000);
+    return `<li><span class="n">${esc(b.n)}${age>=7?`<br><span class="age" style="font-size:12px;color:#ffb340">hace ${age} días</span>`:''}</span>${pill(b)}<button class="bmb wkb" onclick="toWeekendBl('${b.id}')" title="Al fin de semana">🏖️</button><button class="bmb go" onclick="blToDay('${b.id}')" title="Pasar a ${dn}">→</button><button class="bmb x" onclick="blDel('${b.id}')">✕</button></li>`}).join('')
+    :'<div class="blempty">Vacío. Escribe arriba las tareas que quieras tener a la mano esta semana.</div>';
+  const tot=main.reduce((s,b)=>s+(b.quick?5:(+b.m||0)),0);$('bmFoot').textContent=main.length?`${main.length} tarea${main.length>1?'s':''} · ${fmtMin(tot)} · → las pasa a ${dn}`:'';
+  const [sa,su]=wkDays(),full=wkCount(sa)>=WK_MAX&&wkCount(su)>=WK_MAX;const W=$('bmWk');W.classList.toggle('full',full);
+  W.innerHTML=`<b>🏖️ Fin de semana</b><div class="wks">${cap(wkLbl(sa))}: ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))}: ${wkCount(su)}/${WK_MAX}${full?' · <span class="fullt">¡Lleno!</span>':''}</div>`+
+    (wkl.length?`<ul id="bmWkL">${wkl.map(b=>`<li><span class="n">${esc(b.n)}<br><span class="wkd">${cap(wkLbl(b.wk.k))}</span></span>${pill(b)}<button class="bmb go" onclick="blToDay('${b.id}')">→</button><button class="bmb x" onclick="wkDel('${b.id}')">✕</button></li>`).join('')}</ul>`:`<div class="wks" style="margin-top:6px">Pícale 🏖️ a una tarea para mandarla al ${wkLbl(sa)} o ${wkLbl(su)}.</div>`)}
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1691,7 +1724,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=79;
+const APP_VER=80;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
