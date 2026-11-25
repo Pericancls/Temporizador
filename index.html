@@ -311,6 +311,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .wvseg{margin:0!important;width:auto!important}.wvseg button{padding:8px 16px}
 .wvnav{margin:0!important;gap:8px}.wvnav b{min-width:190px;text-align:center}
 .wvtoday{width:auto!important;padding:0 14px;font-size:14px!important}
+.wvhide{display:flex;align-items:center;gap:8px;font-size:14px;color:#ddd;cursor:pointer;white-space:nowrap;background:#1c1c1e;border-radius:10px;padding:9px 12px}.wvhide input{width:18px;height:18px;margin:0;accent-color:#0a84ff}
 .wvhint{font-size:12px;margin-bottom:8px}
 .wk{display:grid;grid-template-columns:52px repeat(7,minmax(110px,1fr));background:#111113}
 .wkscroll{overflow:auto;max-height:calc(100vh - 230px);border-radius:14px;border:1px solid #242428}
@@ -347,7 +348,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v70</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v71</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -390,7 +391,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <section id="s4">
   <div class="wvtop"><h2>Vista panorámica</h2>
     <div class="seg wvseg"><button id="wvW" class="on" onclick="wvSet('sem')">Semanal</button><button id="wvM" onclick="wvSet('mes')">Mensual</button></div>
-    <div class="calhead wvnav"><button onclick="wvMove(-1)">‹</button><b id="wvLabel"></b><button onclick="wvMove(1)">›</button><button class="wvtoday" onclick="wvToday()">Hoy</button></div></div>
+    <div class="calhead wvnav"><button onclick="wvMove(-1)">‹</button><b id="wvLabel"></b><button onclick="wvMove(1)">›</button><button class="wvtoday" onclick="wvToday()">Hoy</button></div><label class="wvhide"><input type="checkbox" id="wvHide" onchange="wvHideSet(this.checked)"> Ocultar las que ya hice</label></div>
   <div class="muted wvhint" id="wvHint"></div>
   <div id="wvBody"></div>
 </section>
@@ -429,7 +430,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v70</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v71</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1169,19 +1170,20 @@ function noteDel(id){const n=notes.find(x=>x.id===id);if(!n)return;n.del=true;la
   toast('Nota borrada','Deshacer','delete lastNote.del;store(\'notes\',notes);notesDraw();render();hideToast()')}
 
 /* ===== Visualización semanal / mensual ===== */
-let wvMode='sem',wvRef=dkey(new Date());const WV_H0=5,WV_H1=24;
+let wvMode='sem',wvRef=dkey(new Date()),wvHide=(()=>{try{return localStorage.getItem('wvHide')==='1'}catch(e){return false}})();
+function wvHideSet(v){wvHide=v;try{localStorage.setItem('wvHide',v?'1':'0')}catch(e){}renderWeek()}const WV_H0=5,WV_H1=24;
 const wvMon=k=>{const d=kDate(k),w=(d.getDay()+6)%7;d.setDate(d.getDate()-w);return dkey(d)};
 const WD_S=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 function wvSet(m){wvMode=m;$('wvW').classList.toggle('on',m==='sem');$('wvM').classList.toggle('on',m==='mes');renderWeek()}
 function wvMove(n){const d=kDate(wvRef);if(wvMode==='sem')d.setDate(d.getDate()+7*n);else{d.setDate(1);d.setMonth(d.getMonth()+n)}wvRef=dkey(d);renderWeek()}
 function wvToday(){wvRef=dkey(new Date());renderWeek()}
-function wvItems(k){materialize(k);return plans[k]||[]}
+function wvItems(k){materialize(k);const l=plans[k]||[];return wvHide?l.filter(a=>!a.done):l}
 function wvHourH(){return innerWidth<700?40:48}
-function renderWeek(){if(wvMode==='mes')return renderMonth();
+function renderWeek(){const hb=$('wvHide');if(hb)hb.checked=wvHide;if(wvMode==='mes')return renderMonth();
   const H=wvHourH(),mon=wvMon(wvRef),days=[...Array(7)].map((_,i)=>shiftDay(mon,i)),td=dkey(new Date());
   const d0=kDate(days[0]),d6=kDate(days[6]);
   $('wvLabel').textContent=d0.getMonth()===d6.getMonth()?`${d0.getDate()} – ${d6.getDate()} de ${MES[d6.getMonth()]}`:`${d0.getDate()} ${MES[d0.getMonth()].slice(0,3)} – ${d6.getDate()} ${MES[d6.getMonth()].slice(0,3)}`;
-  $('wvHint').textContent='Pica un espacio vacío para crear una actividad de 30 min a esa hora. Pica una actividad para editarla. En gris: lo que registraste.';
+  $('wvHint').textContent='Pica un espacio vacío para crear una actividad de 30 min a esa hora. Pica una actividad para editarla.'+(wvHide?'':' En gris: lo que registraste.');
   const totH=(WV_H1-WV_H0)*H,y=(h,m)=>((h-WV_H0)*60+m)/60*H;
   let head='<div class="wkh corner"></div>',all='<div class="wkall lab">sin<br>hora</div>',axis='',cols='';
   for(let h=WV_H0+1;h<WV_H1;h++)axis+=`<span style="top:${y(h,0)}px">${fmt12(pad(h)+':00').replace(':00','')}</span>`;
@@ -1193,7 +1195,7 @@ function renderWeek(){if(wvMode==='mes')return renderMonth();
     all+=`<div class="wkall" data-k="${k}">${untimed.map(o=>`<div class="wkchip${o.a.done?' done':''}${o.a.quick?' q':''}" onclick="event.stopPropagation();wvEdit('${k}','${o.a.id}')" title="${esc(o.a.n)}">${o.a.quick?'⚡ ':''}${esc(o.a.n)}</div>`).join('')}</div>`;
     items.forEach(a=>{if(!a.quick){planned+=+a.m||0;cnt++}});
     // registro (gris)
-    let lg='';log.filter(e=>e.d===k||(e.segs||[]).some(sg=>dkey(new Date(sg.s))===k)).forEach(e=>(e.segs||[]).forEach(sg=>{if(sg.e==null)return;const s0=new Date(sg.s);if(dkey(s0)!==k)return;
+    let lg='';if(!wvHide)log.filter(e=>e.d===k||(e.segs||[]).some(sg=>dkey(new Date(sg.s))===k)).forEach(e=>(e.segs||[]).forEach(sg=>{if(sg.e==null)return;const s0=new Date(sg.s);if(dkey(s0)!==k)return;
       const top=Math.max(0,y(s0.getHours(),s0.getMinutes()+s0.getSeconds()/60)),ht=Math.max(6,(sg.e-sg.s)/60000/60*H);if(top>totH)return;
       lg+=`<div class="wklog" style="top:${top}px;height:${Math.min(ht,totH-top)}px">${ht>=16?esc(e.n):''}</div>`}));
     // actividades con hora, en columnas si se enciman
@@ -1220,7 +1222,7 @@ function renderMonth(){const r=kDate(wvRef);r.setDate(1);const m=r.getMonth(),st
   $('wvHint').textContent='Pica un espacio vacío de un día para crear una actividad de 30 min. Pica el número del día para ver esa semana.';
   let h=WD_S.map(w=>`<div class="moh">${w}</div>`).join(''),planned=0,cnt=0;const last=new Date(r.getFullYear(),m+1,0);
   const weeks=Math.ceil((((r.getDay()+6)%7)+last.getDate())/7);
-  for(let i=0;i<weeks*7;i++){const k=shiftDay(start,i),d=kDate(k),out=d.getMonth()!==m,items=(out?(plans[k]||[]):wvItems(k)).slice().sort((a,b)=>(a.t||'99')<(b.t||'99')?-1:1);
+  for(let i=0;i<weeks*7;i++){const k=shiftDay(start,i),d=kDate(k),out=d.getMonth()!==m,items=(out?(plans[k]||[]).filter(a=>!wvHide||!a.done):wvItems(k)).slice().sort((a,b)=>(a.t||'99')<(b.t||'99')?-1:1);
     if(!out)items.forEach(a=>{if(!a.quick){planned+=+a.m||0;cnt++}});
     const show=items.slice(0,4);
     h+=`<div class="mocell${out?' out':''}${k===td?' today':''}" data-k="${k}"><span class="mon" onclick="event.stopPropagation();wvRef='${k}';wvSet('sem')">${d.getDate()}</span>${show.map(a=>`<div class="wkchip${a.done?' done':''}${a.quick?' q':''}" onclick="event.stopPropagation();wvEdit('${k}','${a.id}')" title="${esc(a.n)}">${a.t?`<span style="color:#8fb8e8">${fmt12(a.t).replace(' ','')}</span> `:''}${a.quick?'⚡ ':''}${esc(a.n)}</div>`).join('')}${items.length>4?`<div class="momore">+${items.length-4} más</div>`:''}</div>`}
@@ -1566,7 +1568,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=70;
+const APP_VER=71;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
