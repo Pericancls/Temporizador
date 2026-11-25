@@ -344,12 +344,45 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .mocell.today .mon{background:#ff453a;color:#fff}
 .momore{font-size:11px;color:#8e8e93;padding-left:4px}
 .wvsum{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:#8e8e93;margin-top:8px}
+
+.topg{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:10px;margin-bottom:12px;align-items:stretch}
+.topl .row{margin-bottom:0}
+.mcal{background:#1c1c1e;border:1px solid #2c2c2e;border-radius:14px;padding:5px 6px 3px;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:stretch;min-width:0;overflow:hidden}
+.mcal:hover{border-color:#ff453a}
+.mcal .mh{color:#ff453a;font-size:11px;font-weight:700;text-transform:uppercase;text-align:left;padding:0 3px 2px;letter-spacing:.3px;display:flex;justify-content:space-between}
+.mcal .mh i{font-style:normal;color:#8e8e93;font-weight:600}
+.mcal .mg{display:grid;grid-template-columns:repeat(7,1fr);gap:0 1px;font-size:9px;line-height:11.5px;text-align:center;color:#d1d1d6;flex:1;align-content:space-evenly}
+.mcal .mg .w{color:#6e6e73;font-weight:700;font-size:8.5px}.mcal .mg .o{color:transparent}
+.mcal .mg .t{background:#ff453a;color:#fff;border-radius:50%;font-weight:800}
+.mcal .mi{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center}
+.mcal .mi .d{font-size:34px;font-weight:300;line-height:1}.mcal .mi .wd{font-size:11px;color:#ff453a;font-weight:700;text-transform:uppercase}
+@media (max-width:600px){.mcal .mg,.mcal .mh{display:none}.mcal .mi{display:flex}.topl .daynav label{font-size:14px;line-height:1.2}}
+.ev{text-align:left}
+.evtop{display:flex;justify-content:space-between;align-items:center;margin:-8px -6px 14px}
+.evtop b{font-size:17px}.evtop button{background:none;border:none;color:#0a84ff;font-size:17px;padding:4px 6px;cursor:pointer}.evtop .add{font-weight:700}.evtop .add:disabled{color:#48484a}
+.evg{background:#2c2c2e;border-radius:12px;margin-bottom:14px;overflow:hidden}
+.evr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;min-height:28px;border-bottom:1px solid #3a3a3c;font-size:16px}
+.evr:last-child{border-bottom:none}
+.evr input,.evr select{background:#3a3a3c;border:none;color:#fff;border-radius:8px;padding:7px 10px;font-size:15px;font-family:inherit;color-scheme:dark}
+.evr input.full{background:none;padding:2px 0;width:100%;font-size:17px;border-radius:0}
+.evr .dur{width:70px;text-align:center}
+.evr.hide{display:none}
+.sw{position:relative;width:51px;height:31px;flex:none}.sw input{opacity:0;width:0;height:0}
+.sw span{position:absolute;inset:0;background:#48484a;border-radius:31px;transition:.2s;cursor:pointer}
+.sw span:before{content:'';position:absolute;width:27px;height:27px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+span{background:#34c759}.sw input:checked+span:before{transform:translateX(20px)}
+#evNote{width:100%;min-height:70px;background:none;border:none;color:#fff;font:inherit;font-size:15px;resize:vertical;padding:0;outline:none}
+.dpq{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.dpqc{display:flex;align-items:center;gap:6px;background:#3a3006;border:1px solid rgba(255,214,10,.45);border-radius:9px;padding:4px 9px 4px 5px;font-size:13px;color:#ffe27a;max-width:100%}
+.dpqc span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dpqc button{width:18px;height:18px;border-radius:50%;border:2px solid #ffd60a;background:none;padding:0;cursor:pointer;flex:none}
+.dpqc button:hover{background:rgba(255,214,10,.3)}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v72</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v73</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -370,12 +403,13 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 
 <section id="s1"><aside id="blBox" class="deskonly"></aside><div class="s1main">
   <div class="ptrow"><h2 id="planTitle">Plan de hoy</h2><div class="sync" id="syncBar1"></div></div>
+  <div class="topg"><div class="topl">
   <div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
   <div class="row">
     <input class="name" id="aName" placeholder="Actividad" list="known">
     <input class="min" id="aMin" type="number" inputmode="numeric" placeholder="--">
     <button class="btn" onclick="add()">+</button>
-  </div>
+  </div></div><button class="mcal" id="mcal" onclick="newEvent()" title="Programar una actividad en otra fecha"></button></div>
   <div class="timerow"><span>⏰ Hora programada <small>(opcional)</small></span><input type="time" id="aTime"><button class="clr" onclick="$('aTime').value=''">✕</button></div>
   <datalist id="known"></datalist>
   <div class="muted" id="hint" style="margin:-4px 0 10px;font-size:14px"></div>
@@ -431,7 +465,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v72</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v73</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -505,7 +539,7 @@ function render(){
   $('total').textContent=!acts.length?'':nd?`✓ ${nd} de ${acts.length} hechas · Pendiente: ${fmtMin(t)}`:(acts.some(a=>a.prog)?'Pendiente: ':'Total planeado: ')+fmtMin(t);
   const names=[...new Set(log.map(e=>e.n))];
   $('known').innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
-  renderPrev();renderBl();
+  renderPrev();renderBl();drawMcal();
 }
 $('aName').addEventListener('input',()=>{
   const s=stats()[$('aName').value.trim().toLowerCase()];
@@ -1038,7 +1072,8 @@ function renderPrev(){const box=$('dayPrev');if(!box||!isDesk())return;
     t>midT?`Terminarías <b>${endD.getHours()<5?'en la madrugada':'el día siguiente'}</b> a las <b>${endTxt}</b><div class="muted">Te pasas ${fmtMin((t-midT)/60000)} de la medianoche.</div>`:
     `Terminarías a las <b>${endTxt}</b><div class="muted">Te quedan ${fmtMin((midT-t)/60000)} libres antes de la medianoche.</div>`)+clTxt;
   const sc=box.querySelector('.dpscroll'),st=sc?sc.scrollTop:0;
-  box.innerHTML=`<h3>🕒 Minuto a minuto</h3><div class="dpsub">${isToday?'Desde ahora, en el orden de tu lista, con descansos de '+brk+' min':'Previsualización empezando a las 5:00 am'}</div>
+  const qk=acts.map((a,i)=>({a,i})).filter(o=>o.a.quick&&!o.a.prog&&!o.a.done);
+  box.innerHTML=`<h3>🕒 Minuto a minuto</h3>${qk.length?`<div class="dpq">${qk.map(o=>`<div class="dpqc" title="${esc(o.a.n)}"><button onclick="toggleDone(${o.i})" title="Marcar como hecha"></button><span>⚡ ${esc(o.a.n)}</span></div>`).join('')}</div>`:'<div style="height:8px"></div>'}
     <div class="dpscroll"><div class="dptl" style="height:${y(tEnd)+12}px">${isToday?'<div class="dpnow"><span>Ahora</span></div>':''}${h}</div></div><div class="dpfoot">${foot}</div>`;
   const sc2=box.querySelector('.dpscroll');if(sc2)sc2.scrollTop=st}
 setInterval(()=>{if($('s1').classList.contains('on'))renderPrev()},20000);
@@ -1247,6 +1282,43 @@ function wvSave(k,id){const a=(plans[k]||[]).find(x=>x.id===id);if(!a)return clo
 function wvDel(k,id){const l=plans[k]||[],j=l.findIndex(x=>x.id===id);if(j<0)return closeModal();const sn=snap(),a=l[j];if(a.rid)recSkip(a.rid,a.rk||k);l.splice(j,1);store('plans',plans);setPlanDay(planDay);closeModal();renderWeek();
   lastSnap=sn;toast(`Borrada: ${esc(a.n)}`,'Deshacer','undoSnap();renderWeek()')}
 setInterval(()=>{if($('s4').classList.contains('on')&&wvMode==='sem'&&!$('modal').classList.contains('on'))renderWeek()},60000);
+
+/* ===== Mini calendario + "Nueva actividad" estilo iPhone ===== */
+function drawMcal(){const b=$('mcal');if(!b)return;const n=new Date(),y=n.getFullYear(),m=n.getMonth(),first=(new Date(y,m,1).getDay()+6)%7,dim=new Date(y,m+1,0).getDate();
+  let g=['L','M','M','J','V','S','D'].map(x=>`<span class="w">${x}</span>`).join('');for(let i=0;i<first;i++)g+='<span class="o">.</span>';
+  for(let d=1;d<=dim;d++)g+=`<span${d===n.getDate()?' class="t"':''}>${d}</span>`;
+  b.innerHTML=`<div class="mh">${MES[m]}<i>＋</i></div><div class="mg">${g}</div><div class="mi"><span class="wd">${WD_S[(n.getDay()+6)%7]}</span><span class="d">${n.getDate()}</span></div>`}
+function newEvent(){const td=dkey(new Date()),def=planDay>td?planDay:td,n=new Date();n.setMinutes(0,0,0);n.setHours(n.getHours()+1);const st=pad(n.getHours())+':00',en=pad(n.getHours())+':30';
+  modal(`<div class="ev"><div class="evtop"><button onclick="closeModal()">Cancelar</button><b>Nueva actividad</b><button class="add" id="evAdd" onclick="evSave()" disabled>Agregar</button></div>
+  <div class="evg"><div class="evr"><input class="full" id="evN" placeholder="Título" list="known" autocomplete="off"></div></div>
+  <div class="evg">
+    <div class="evr"><span>Sin hora</span><label class="sw"><input type="checkbox" id="evAll" onchange="evUpd()"><span></span></label></div>
+    <div class="evr"><span>Fecha</span><input type="date" id="evD" value="${def}"></div>
+    <div class="evr evt"><span>Empieza</span><input type="time" id="evS" value="${st}" oninput="evLink('s')"></div>
+    <div class="evr evt"><span>Termina</span><input type="time" id="evE" value="${en}" oninput="evLink('e')"></div>
+    <div class="evr"><span>Duración</span><span><input class="dur" type="number" id="evM" value="30" min="1" oninput="evLink('m')"> min</span></div>
+  </div>
+  <div class="evg">
+    <div class="evr"><span>Repetir</span><select id="evR" onchange="evUpd()"><option value="no">Nunca</option><option value="day">Cada día</option><option value="wkday">Entre semana (L–V)</option><option value="week">Cada semana</option><option value="month">Cada mes</option><option value="custom">Personalizar…</option></select></div>
+    <div class="evr hide" id="evUr"><span>Termina la repetición</span><input type="date" id="evU" placeholder="fin de año"></div>
+  </div>
+  <div class="evg"><div class="evr"><textarea id="evNote" placeholder="Notas"></textarea></div></div></div>`);
+  $('evN').addEventListener('input',()=>{$('evAdd').disabled=!$('evN').value.trim()});$('evN').addEventListener('keydown',e=>{if(e.key==='Enter'&&$('evN').value.trim())evSave()});
+  setTimeout(()=>$('evN').focus(),60)}
+function evUpd(){const all=$('evAll').checked;document.querySelectorAll('.evt').forEach(r=>r.classList.toggle('hide',all));
+  const r=$('evR').value;if(r==='custom'){const n=$('evN').value.trim();closeModal();recForm();setTimeout(()=>{if(n&&$('rfN'))$('rfN').value=n},50);return}
+  $('evUr').classList.toggle('hide',r==='no')}
+function evLink(w){const s=$('evS').value,e=$('evE').value,m=parseFloat($('evM').value);const tm=x=>{const [h,mm]=x.split(':').map(Number);return h*60+mm},ft=v=>{v=((v%1440)+1440)%1440;return pad(Math.floor(v/60))+':'+pad(v%60)};
+  if((w==='s'||w==='m')&&s&&m>0)$('evE').value=ft(tm(s)+m);
+  else if(w==='e'&&s&&e){let d=tm(e)-tm(s);if(d<=0)d+=1440;$('evM').value=d}}
+function evSave(){const n=$('evN').value.trim();if(!n){$('evN').focus();return}const k=$('evD').value||dkey(new Date()),all=$('evAll').checked,s=all?'':$('evS').value,e=all?'':$('evE').value,m=Math.max(1,parseFloat($('evM').value)||30),r=$('evR').value,note=$('evNote').value.trim();
+  let msg;
+  if(r==='no'){const it={n,m,id:uid(),...(s?{t:s}:{})};plans[k]=plans[k]||[];plans[k].push(it);store('plans',plans);msg=`Agregada a ${dayName(k)}${s?' a las '+fmt12(s):''}`}
+  else{const d=kDate(k),wd=(d.getDay()+6)%7,yEnd=d.getFullYear()+'-12-31';
+    const rec={id:uid(),n,type:r==='month'?'monthday':'week',days:r==='day'?[0,1,2,3,4,5,6]:r==='wkday'?[0,1,2,3,4]:r==='week'?[wd]:[],md:d.getDate(),nth:1,wd,start:s||'',end:s?e:'',dur:m,from:k,until:$('evU').value||yEnd,skip:[]};
+    recs.push(rec);store('recs',recs);msg=`🔁 ${n} se repetirá desde ${dayName(k)}`}
+  if(note){notes.unshift({id:uid(),ts:Date.now(),txt:note,act:n});store('notes',notes)}
+  closeModal();setPlanDay(planDay);render();if($('s4')&&$('s4').classList.contains('on'))renderWeek();toast(esc(msg))}
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1574,7 +1646,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=72;
+const APP_VER=73;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
