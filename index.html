@@ -288,6 +288,9 @@ li.dsrc{opacity:.3}
 .dpfoot{border-top:1px solid #26262a;margin-top:10px;padding-top:10px;font-size:14px;color:#ddd}
 .dpfoot .muted{font-size:12px}
 .ptrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.ptrow h2{margin:0}
+.ntb{background:none;border:1px solid #3a3a3c;border-radius:8px;width:30px;height:30px;flex:none;font-size:14px;padding:0;cursor:pointer;position:relative;opacity:.55;display:flex;align-items:center;justify-content:center}
+.ntb.has{opacity:1;border-color:#64d2ff}.ntb i{position:absolute;top:-6px;right:-6px;background:#64d2ff;color:#000;font-style:normal;font-size:10px;font-weight:700;border-radius:8px;min-width:15px;height:15px;line-height:15px;text-align:center;padding:0 3px}
+li.done .ntb{opacity:.35}li.done .ntb.has{opacity:.8}
 .notebtn{background:#1c1c1e;border:1px solid #3a3a3c;color:#fff;border-radius:12px;padding:7px 12px;font-size:18px;display:flex;align-items:center;gap:6px;cursor:pointer}
 .notebtn span{font-size:14px;color:#c7c7cc}
 #ntTxt{width:100%;min-height:150px;resize:vertical;font:inherit;font-size:16px;line-height:1.4;padding:12px;box-sizing:border-box}
@@ -300,7 +303,7 @@ li.dsrc{opacity:.3}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v66</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v67</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -320,7 +323,7 @@ li.dsrc{opacity:.3}
 </section>
 
 <section id="s1"><aside id="blBox" class="deskonly"></aside><div class="s1main">
-  <div class="ptrow"><h2 id="planTitle">Plan de hoy</h2><button class="notebtn" onclick="notesOpen()" title="Mis notas">📝<span>Notas</span></button></div>
+  <h2 id="planTitle">Plan de hoy</h2>
   <div class="sync" id="syncBar1"></div>
   <div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
   <div class="row">
@@ -375,7 +378,7 @@ li.dsrc{opacity:.3}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v66</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v67</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -436,7 +439,8 @@ function render(){
   materialize(planDay);wkClean();
   {const qk=a=>a.quick&&!a.prog;if(acts.some((a,i)=>i>0&&qk(a)&&!qk(acts[i-1]))){const o=[...acts.filter(qk),...acts.filter(a=>!qk(a))];acts.splice(0,acts.length,...o);store('acts',acts)}}
   acts.forEach(a=>{if(!a.id)a.id=uid()});
-  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span>${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
+  const ncnt={};notes.forEach(n=>{if(!n.del&&n.act)ncnt[n.act]=(ncnt[n.act]||0)+1});
+  $('list').innerHTML=acts.length?acts.map((a,i)=>`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'⏰'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span><button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button>${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join(''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
@@ -1096,20 +1100,19 @@ function wkPlace(rest,b,sn){const k=wkPick();plans[k]=plans[k]||[];const it={...
 
 /* ===== Notas personales (qué siento / qué me frena) ===== */
 function mergeNotes(r,l){const m=new Map();(Array.isArray(r)?r:[]).concat(l||[]).forEach(n=>{if(!n||!n.id)return;const o=m.get(n.id);if(!o||(n.del&&!o.del))m.set(n.id,n)});return [...m.values()].sort((a,b)=>b.ts-a.ts)}
-function notesOpen(){const runAct=$('run').classList.contains('on')&&cur&&!cur.rest?cur.n:'';
-  const opts=[...new Set([runAct,...acts.filter(a=>!a.done).map(a=>a.n)].filter(Boolean))];
-  modal(`<h1>📝 Notas</h1><div class="muted" style="margin-bottom:8px">Lo que sientes, piensas o identificas que te está frenando.</div>
-  <textarea id="ntTxt" placeholder="Escribe aquí…"></textarea>
-  <label>¿Sobre alguna actividad? <small class="muted">(opcional)</small></label><select id="ntAct" class="selx" style="width:100%"><option value="">— Ninguna —</option>${opts.map(n=>`<option${n===runAct?' selected':''}>${esc(n)}</option>`).join('')}</select>
+let ntAct='';
+function notesOpen(i){const a=acts[i];if(!a)return;ntAct=a.n;
+  modal(`<h1>📝 Notas</h1><div class="muted" style="margin-bottom:8px">${esc(a.n)}</div>
+  <textarea id="ntTxt" placeholder="¿Qué sientes, qué piensas, qué te está frenando?"></textarea>
   <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="noteSave()">Guardar</button></div>
   <div class="ntl" id="ntList"></div>`);notesDraw();setTimeout(()=>$('ntTxt').focus(),60)}
-function notesDraw(){const L=$('ntList');if(!L)return;const ns=notes.filter(n=>!n.del).sort((a,b)=>b.ts-a.ts);
-  L.innerHTML=ns.length?ns.map(n=>{const d=new Date(n.ts);return `<div class="nti"><div class="nh"><span>${dayName(dkey(d))} · ${hm(n.ts)}${n.act?` · <span class="na">${esc(n.act)}</span>`:''}</span><button onclick="noteDel('${n.id}')" title="Borrar">✕</button></div><div class="nb">${esc(n.txt)}</div></div>`}).join(''):'<div class="muted" style="font-size:13px">Aún no tienes notas.</div>'}
-function noteSave(){const t=$('ntTxt').value.trim();if(!t){$('ntTxt').focus();return}const a=$('ntAct').value;
-  notes.unshift({id:uid(),ts:Date.now(),txt:t,...(a?{act:a}:{})});store('notes',notes);$('ntTxt').value='';$('ntAct').selectedIndex=[...$('ntAct').options].findIndex(o=>o.defaultSelected)>=0?[...$('ntAct').options].findIndex(o=>o.defaultSelected):0;notesDraw();toast('📝 Nota guardada')}
+function notesDraw(){const L=$('ntList');if(!L)return;const ns=notes.filter(n=>!n.del&&n.act===ntAct).sort((a,b)=>b.ts-a.ts);
+  L.innerHTML=ns.length?ns.map(n=>{const d=new Date(n.ts);return `<div class="nti"><div class="nh"><span>${dayName(dkey(d))} · ${hm(n.ts)}</span><button onclick="noteDel('${n.id}')" title="Borrar">✕</button></div><div class="nb">${esc(n.txt)}</div></div>`}).join(''):'<div class="muted" style="font-size:13px">Aún no hay notas de esta actividad.</div>'}
+function noteSave(){const t=$('ntTxt').value.trim();if(!t){$('ntTxt').focus();return}
+  notes.unshift({id:uid(),ts:Date.now(),txt:t,act:ntAct});store('notes',notes);$('ntTxt').value='';notesDraw();render();toast('📝 Nota guardada')}
 let lastNote=null;
-function noteDel(id){const n=notes.find(x=>x.id===id);if(!n)return;n.del=true;lastNote=n;store('notes',notes);notesDraw();
-  toast('Nota borrada','Deshacer','delete lastNote.del;store(\'notes\',notes);notesDraw();hideToast()')}
+function noteDel(id){const n=notes.find(x=>x.id===id);if(!n)return;n.del=true;lastNote=n;store('notes',notes);notesDraw();render();
+  toast('Nota borrada','Deshacer','delete lastNote.del;store(\'notes\',notes);notesDraw();render();hideToast()')}
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1437,7 +1440,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=66;
+const APP_VER=67;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
