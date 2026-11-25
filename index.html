@@ -287,7 +287,7 @@ li.dsrc{opacity:.3}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v62</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v63</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -362,7 +362,7 @@ li.dsrc{opacity:.3}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v62</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v63</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -598,7 +598,7 @@ function restDone(sound){running=false;clearInterval(timer);inOver=false;remain=
 function startSingle(){unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
 /* ---- Sesiones de trabajo (de qué hora a qué hora) ---- */
 function normSegs(a){return(a||[]).map(x=>Array.isArray(x)?{s:x[0],e:x[1]}:x)}
-function fixData(){log.forEach(e=>{if(e.segs)e.segs=normSegs(e.segs)});Object.values(plans).forEach(l=>(l||[]).forEach(a=>{if(a.prog&&a.prog.segs)a.prog.segs=normSegs(a.prog.segs)}))}
+function fixData(){let unf=false;log.forEach(e=>{if(e.segs)e.segs=normSegs(e.segs);if(typeof e.extra==='number'){e.real=Math.max(0,Math.round((e.real-e.extra)*10)/10);delete e.extra;unf=true}});if(unf)setTimeout(()=>store('log',log),50);Object.values(plans).forEach(l=>(l||[]).forEach(a=>{if(a.prog&&a.prog.segs)a.prog.segs=normSegs(a.prog.segs)}))}
 function segOpen(){if(!cur)return;cur.segs=normSegs(cur.segs);const l=cur.segs[cur.segs.length-1];if(!l||l.e!=null)cur.segs.push({s:Date.now(),e:null})}
 function segClose(t){if(!cur||!cur.segs)return;cur.segs=normSegs(cur.segs);const l=cur.segs[cur.segs.length-1];if(l&&l.e==null)l.e=Math.max(l.s,t||Date.now())}
 function segsOf(e){if(e.segs&&e.segs.length)return normSegs(e.segs).filter(x=>x.e!=null);const [y,m,d]=e.d.split('-').map(Number),[h,mi]=e.h.split(':').map(Number);const st=new Date(y,m-1,d,h,mi).getTime();return[{s:st,e:st+e.real*60000}]}
@@ -731,10 +731,9 @@ function done(){
   $('run').classList.remove('on');release();clearRun();
   modal(`<h1>¡Listo! 🎉</h1><div class="muted">Todo quedó guardado en el Registro.</div><div class="row"><button class="btn" onclick="closeModal();tab(2)">Ver registro</button><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`);
 }
-const AUTO_EXTRA=10; /* minutos que se suman automáticamente a cada registro del temporizador */
 function save(ok){
   segClose();const st=new Date(cur.start);
-  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10+AUTO_EXTRA,extra:AUTO_EXTRA,ext:cur.ext,ok,...(cur.segs&&cur.segs.length?{segs:normSegs(cur.segs).filter(x=>x.e!=null)}:{})});
+  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10,ext:cur.ext,ok,...(cur.segs&&cur.segs.length?{segs:normSegs(cur.segs).filter(x=>x.e!=null)}:{})});
   store('log',log);
   if(ok&&cur.id)markDone(cur.id);
 }
@@ -1383,7 +1382,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=62;
+const APP_VER=63;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
