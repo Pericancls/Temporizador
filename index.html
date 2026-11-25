@@ -171,6 +171,11 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(90px + env(safe-area-inset-bottom));z-index:30;background:#2c2c2e;color:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:15px;box-shadow:0 6px 24px rgba(0,0,0,.6);transform:translateY(150%);opacity:0;transition:.25s}
 #toast.on{transform:none;opacity:1}#toast span{flex:1}#toast button{background:none;border:none;color:#ff9f0a;font-weight:700;font-size:15px}
 .entry.openw{border:1px dashed #6b4508;background:#1f1608}
+.blrow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.blrow input{flex:1;min-width:0;padding:10px 6px;font-size:15px}.blrow span{color:#888}
+.blrow button{background:none;border:none;color:#888;font-size:18px;padding:0 4px}
+.addbl{width:100%;background:none;border:1px dashed #444;color:#0a84ff;border-radius:10px;padding:10px;font-size:15px}
+.eetot{margin-top:10px;color:#aaa;font-size:15px}.eetot b{color:#fff}
 /* modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
 #modal.on{display:flex}
@@ -206,7 +211,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v49</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v50</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -221,7 +226,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v49)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v50)</button>
 </section>
 
 <section id="s1">
@@ -272,7 +277,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v49</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v50</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -881,21 +886,28 @@ function openEntry(i){const e=log[i];if(!e)return;
   <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="addPost(${i})">＋ Agregar nota</button></div>
   <button class="linkbtn" style="padding:12px 0 0" onclick="editEntry(${i})">✎ Editar este registro</button></div>`);
 }
-function editEntry(i){const e=log[i];if(!e)return;
+let eeBl=[],eeDay='';
+function hhmm(ts){const x=new Date(ts);return pad(x.getHours())+':'+pad(x.getMinutes())}
+function editEntry(i){const e=log[i];if(!e)return;eeDay=e.d;
+  eeBl=segsOf(e).map(x=>({s:hhmm(x.s),e:hhmm(x.e)}));
   modal(`<h1>Editar registro</h1>
   <label>Actividad</label><input id="eeN" value="${esc(e.n)}">
-  <label>Hora de inicio</label><input id="eeH" type="time" value="${e.h}">
-  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Tiempo estimado (min)</label><input id="eeP" type="number" inputmode="decimal" value="${e.plan}"></div>
-  <div style="flex:1"><label>Tiempo real (min)</label><input id="eeR" type="number" inputmode="decimal" value="${e.real}"></div></div>
+  <label>Tiempo estimado (min)</label><input id="eeP" type="number" inputmode="decimal" value="${e.plan}" style="width:100%">
+  <label>🕒 Bloques de trabajo</label><div id="eeB"></div>
+  <button class="addbl" onclick="eeBl.push({s:'',e:''});eeDraw()">＋ Agregar otro bloque</button>
+  <div class="eetot" id="eeT"></div>
   <label style="display:flex;align-items:center;gap:10px;color:#fff"><input id="eeOk" type="checkbox" ${e.ok?'checked':''} style="width:22px;height:22px"> La terminé</label>
   <button class="nowbtn" onclick="entryOngoing(${i})">⏱ Sigue en curso (pasarla a mi plan con la hora actual)</button>
-  ${segsOf(e).length>1?'<div class="muted" style="font-size:13px;margin-top:6px">Si cambias la hora o el tiempo real, sus pausas se juntan en un solo horario.</div>':''}
   <div class="row"><button class="btn gray" onclick="openEntry(${i})">Cancelar</button><button class="btn" onclick="saveEntry(${i})">✓ Guardar</button></div>`);
+  eeDraw();
 }
+function eeDraw(){$('eeB').innerHTML=eeBl.map((b,k)=>`<div class="blrow"><input type="time" value="${b.s}" oninput="eeBl[${k}].s=this.value;eeTot()"><span>a</span><input type="time" value="${b.e}" oninput="eeBl[${k}].e=this.value;eeTot()">${eeBl.length>1?`<button onclick="eeBl.splice(${k},1);eeDraw()">✕</button>`:''}</div>`).join('');eeTot()}
+function eeSegs(){const [y,m,d]=eeDay.split('-').map(Number);return eeBl.filter(b=>b.s&&b.e).map(b=>{const [sh,sm]=b.s.split(':').map(Number),[eh,em]=b.e.split(':').map(Number);
+  const s=new Date(y,m-1,d,sh,sm).getTime();let e=new Date(y,m-1,d,eh,em).getTime();if(e<=s)e+=864e5;return{s,e}}).sort((a,b)=>a.s-b.s)}
+function eeTot(){const sg=eeSegs(),min=sg.reduce((a,x)=>a+(x.e-x.s),0)/60000;$('eeT').innerHTML=sg.length?`Tiempo real: <b>${fmtMin(min)}</b>${sg.length>1?` en ${sg.length} bloques`:''}`:'Pon la hora de inicio y de fin'}
 function entryOngoing(i){const e=log[i];if(!e)return;
-  const n=$('eeN').value.trim()||e.n,h=$('eeH').value||e.h,pl=parseFloat($('eeP').value)||e.plan;
-  let sg=segsOf(e).map(x=>({...x}));
-  if(h!==e.h){const [y,m,d]=e.d.split('-').map(Number),[hh,mi]=h.split(':').map(Number),st=new Date(y,m-1,d,hh,mi).getTime();sg=[{s:st,e:st}]}
+  const n=$('eeN').value.trim()||e.n,pl=parseFloat($('eeP').value)||e.plan;
+  let sg=eeSegs();if(!sg.length)sg=segsOf(e).map(x=>({...x}));
   const now=Date.now();sg[sg.length-1].e=Math.max(sg[sg.length-1].e,now);
   const elS=sg.reduce((a,x)=>a+(x.e-x.s),0)/1000,tk=dkey(new Date()),id=uid();
   const it={n,m:pl,id,prog:{el:elS,rem:Math.max(0,pl*60-elS),tot:pl*60,ext:e.ext||[],mb:0,st:sg[0].s,segs:sg}};
@@ -904,11 +916,10 @@ function entryOngoing(i){const e=log[i];if(!e)return;
   <div class="row"><button class="btn gray" onclick="closeModal()">Después</button><button class="btn" style="background:#ff9f0a;color:#000" onclick="closeModal();tab(1);resumeItem(acts.findIndex(a=>a.id==='${id}'))">▶ Continuar ahora</button></div>`);
 }
 function saveEntry(i){const e=log[i];if(!e)return closeModal();
-  const n=$('eeN').value.trim(),h=$('eeH').value,pl=parseFloat($('eeP').value),r=parseFloat($('eeR').value);
-  let bad=false;if(!n){$('eeN').style.borderColor='#ff3b30';bad=true}if(!h){$('eeH').style.borderColor='#ff3b30';bad=true}if(!(r>0)){$('eeR').style.borderColor='#ff3b30';bad=true}if(bad)return;
-  const timeChanged=h!==e.h||r!==e.real;
-  e.n=n;e.plan=pl>0?pl:r;e.ok=$('eeOk').checked;
-  if(timeChanged){e.h=h;e.real=r;const [y,m,d]=e.d.split('-').map(Number),[hh,mi]=h.split(':').map(Number),st=new Date(y,m-1,d,hh,mi).getTime();e.segs=[{s:st,e:st+r*60000}]}
+  const n=$('eeN').value.trim(),pl=parseFloat($('eeP').value),sg=eeSegs();
+  if(!n){$('eeN').style.borderColor='#ff3b30';return}if(!sg.length){$('eeT').style.color='#ff453a';return}
+  const r=Math.round(sg.reduce((a,x)=>a+(x.e-x.s),0)/60000);
+  e.n=n;e.real=r;e.plan=pl>0?pl:r;e.ok=$('eeOk').checked;e.segs=sg;e.h=hhmm(sg[0].s);
   store('log',log);renderLog();if($('vAct').classList.contains('on'))renderAct();openEntry(i)}
 function addPost(i){const t=$('pNote').value.trim();if(!t){$('pNote').style.borderColor='#ff3b30';return}
   const e=log[i];e.post=(e.post||[]).concat({ts:Date.now(),txt:t});store('log',log);renderLog();openEntry(i)}
@@ -988,7 +999,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=49;
+const APP_VER=50;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
