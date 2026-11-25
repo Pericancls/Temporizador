@@ -238,11 +238,26 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 .seg button.on{background:#3a3a3c;color:#fff}
 .deskonly{display:none}
 @media (min-width:1100px) and (pointer:fine){
-  #s1.on{display:grid;grid-template-columns:minmax(0,2fr) minmax(320px,1fr);gap:32px;max-width:1400px}
+  #s1.on{display:grid;grid-template-columns:minmax(260px,1fr) minmax(0,1.3fr) minmax(300px,1fr);gap:28px;max-width:1750px}
+  #blBox{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 110px);display:flex;flex-direction:column}
   .deskonly{display:block}
   #dayPrev{position:sticky;top:16px;align-self:start;background:#141416;border:1px solid #242428;border-radius:16px;padding:16px 16px 12px;max-height:calc(100vh - 110px);display:flex;flex-direction:column}
 }
 #dayPrev h3{margin:0;font-size:17px}#dayPrev .dpsub{color:#8e8e93;font-size:13px;margin:2px 0 10px}
+#blBox{background:#141416;border:1px solid #242428;border-radius:16px;padding:16px 16px 12px;transition:border-color .15s,background .15s}
+#blBox.dropok{border-color:#0a84ff;background:#0d1a2b}
+#blBox h3{margin:0;font-size:17px}#blBox .dpsub{color:#8e8e93;font-size:13px;margin:2px 0 10px}
+.blin{display:flex;gap:6px;margin-bottom:10px}.blin input{padding:9px 10px;font-size:14px}.blin .n{flex:1}.blin .m{width:52px;text-align:center}.blin button{padding:8px 12px;font-size:16px}
+#blList{list-style:none;margin:0;padding:0;overflow:auto;flex:1;min-height:40px}
+#blList li{padding:8px 8px 8px 10px;margin-bottom:6px;gap:8px;cursor:grab;font-size:14px;border:1px solid transparent}
+#blList li:hover{border-color:#333}#blList li.dragging{opacity:.4}
+#blList li .n{font-size:14px;line-height:1.25}#blList li .t{font-size:12px;padding:4px 6px;cursor:pointer}
+#blList li .age{font-size:11px;color:#ffb340;white-space:nowrap}
+#blList li button{background:none;border:none;color:#8e8e93;font-size:15px;padding:2px 4px;cursor:pointer}#blList li button.go{color:#0a84ff;font-weight:700}
+.blfoot{border-top:1px solid #26262a;margin-top:8px;padding-top:8px;font-size:12px;color:#8e8e93}
+.blempty{color:#6e6e73;font-size:13px;padding:14px 4px;text-align:center;border:1px dashed #333;border-radius:10px}
+.s1main.dropzone #list{outline:2px dashed #0a84ff;outline-offset:6px;border-radius:12px;min-height:56px}
+.dropline{position:absolute;left:0;right:0;height:3px;background:#0a84ff;border-radius:2px;z-index:5;pointer-events:none;box-shadow:0 0 8px #0a84ff}
 .dpscroll{overflow:auto;flex:1;min-height:0;margin-right:-8px;padding-right:8px}
 .dptl{position:relative;margin:14px 0 0 52px}
 .dph{position:absolute;left:-52px;right:0;border-top:1px solid #26262a;font-size:11px;color:#6e6e73}
@@ -265,7 +280,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v56</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v57</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -284,7 +299,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
   <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v54)</button>
 </section>
 
-<section id="s1"><div class="s1main">
+<section id="s1"><aside id="blBox" class="deskonly"></aside><div class="s1main">
   <h2 id="planTitle">Plan de hoy</h2>
   <div class="sync" id="syncBar1"></div>
   <div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
@@ -340,7 +355,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v56</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v57</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -366,8 +381,8 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 <script>
 const $=id=>document.getElementById(id);
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
-const store=(k,v)=>{if(k==='brk'||k==='recs'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
-let recs=load('recs',[]),log=load('log',[]),plans={},acts=[],planDay='';
+const store=(k,v)=>{if(k==='brk'||k==='recs'||k==='bl'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
+let bl=load('bl',[]),recs=load('recs',[]),log=load('log',[]),plans={},acts=[],planDay='';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
 const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
@@ -412,7 +427,7 @@ function render(){
   $('total').textContent=!acts.length?'':nd?`✓ ${nd} de ${acts.length} hechas · Pendiente: ${fmtMin(t)}`:(acts.some(a=>a.prog)?'Pendiente: ':'Total planeado: ')+fmtMin(t);
   const names=[...new Set(log.map(e=>e.n))];
   $('known').innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
-  renderPrev();
+  renderPrev();renderBl();
 }
 $('aName').addEventListener('input',()=>{
   const s=stats()[$('aName').value.trim().toLowerCase()];
@@ -464,6 +479,7 @@ function pickDayFor(i){const a=acts[i];if(!a)return;const t=dkey(new Date());
   const opts=[t,shiftDay(t,1),shiftDay(t,2)].filter(k=>k!==planDay);
   modal(`<h1>¿A qué día?</h1><div class="muted">${esc(a.n)}</div>
   <div class="picklist">${opts.map(k=>`<button onclick="closeModal();sendTo(${i},'${k}')"><span style="text-transform:capitalize">${dayName(k)}</span><span class="muted">${(()=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})})()}</span></button>`).join('')}</div>
+  ${isDesk()?`<button class="calbtn" style="margin-top:8px" onclick="closeModal();toBacklog(${i})">📥 Mandar al Backlog</button>`:''}
   <label>Otra fecha</label><input type="date" id="pkD" value="${shiftDay(planDay,1)}">
   <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="const v=$('pkD').value;if(v){closeModal();sendTo(${i},v)}">Mover</button></div>`)}
 function toast(msg,btn,fn){let t=$('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}
@@ -532,7 +548,7 @@ function editT(i){editAct(i,'m')}
         sw={li:active,i:+active.dataset.i};const h=document.createElement('div');h.className='swh';h.style.top=active.offsetTop+'px';h.style.height=active.offsetHeight+'px';
         h.innerHTML=`<span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span class="swl">‹ Otro día</span>`;L.appendChild(h);active.classList.add('swiping')}
       if(sw){if(ev&&ev.cancelable)ev.preventDefault();sw.li.style.transform=`translateX(${dx}px)`;const h=L.querySelector('.swh');
-        if(h){h.classList.toggle('r',dx>0);h.classList.toggle('l',dx<0);h.classList.toggle('go',Math.abs(dx)>90)}return}
+        if(h){h.classList.toggle('r',dx>0);h.classList.toggle('l',dx<0);h.classList.toggle('go',Math.abs(dx)>90)}blHi(overBl(x,y));return}
       if(isMouse&&Math.abs(dy)>6&&Math.abs(dy)>Math.abs(dx)){clearTimeout(holdT);drag={li:active,from:+active.dataset.i,y0:sy};active.classList.add('drag')}
       else{if(Math.abs(dy)>8||Math.abs(dx)>8)clearTimeout(holdT);return}}
     {const dx=x-sx,dy=y-drag.y0;if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy)*1.5&&!drag.li.classList.contains('done')){const li=drag.li;drag=null;li.classList.remove('drag');li.style.transform='';
@@ -540,7 +556,7 @@ function editT(i){editAct(i,'m')}
     if(ev&&ev.cancelable)ev.preventDefault();drag.li.style.transform=`translateY(${y-drag.y0}px)`;
     [...L.querySelectorAll('li')].forEach(o=>{if(o===drag.li)return;const r=o.getBoundingClientRect();o.classList.toggle('over',y>r.top&&y<r.bottom)})};
   const end=cancel=>{clearTimeout(holdT);active=null;
-    if(sw){const dx=lastX-sx,i=sw.i;swClear();if(!cancel){if(dx>90)sendTo(i,shiftDay(planDay,1));else if(dx<-90)pickDayFor(i)}return}
+    if(sw){const dx=lastX-sx,i=sw.i;const ob=overBl(lastX,lastY);blHi(false);swClear();if(!cancel&&ob){toBacklog(i);return}if(!cancel){if(dx>90)sendTo(i,shiftDay(planDay,1));else if(dx<-90)pickDayFor(i)}return}
     if(!drag)return;const d=drag;drag=null;
     L.querySelectorAll('li.over').forEach(o=>o.classList.remove('over'));
     if(cancel||Math.abs(lastY-d.y0)<10){d.li.classList.remove('drag');d.li.style.transform='';return}
@@ -935,6 +951,52 @@ function renderPrev(){const box=$('dayPrev');if(!box||!isDesk())return;
   const sc2=box.querySelector('.dpscroll');if(sc2)sc2.scrollTop=st}
 setInterval(()=>{if($('s1').classList.contains('on'))renderPrev()},20000);
 window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))renderPrev()});
+
+/* ===== Backlog (solo computadora) ===== */
+let blDrag=null;
+function overBl(x,y){const b=$('blBox');if(!b||!isDesk())return false;const r=b.getBoundingClientRect();return r.width>0&&x>=r.left-10&&x<=r.right+10}
+function blHi(on){const b=$('blBox');if(b)b.classList.toggle('dropok',!!on)}
+function renderBl(){const box=$('blBox');if(!box||!isDesk())return;
+  if(!box.dataset.init){box.dataset.init=1;
+    box.innerHTML=`<h3>📥 Backlog</h3><div class="dpsub">Pendientes de la semana. Arrástralos a tu día, o arrastra una actividad del plan hacia acá.</div>
+    <div class="blin"><input class="n" id="blN" placeholder="Nueva tarea"><input class="m" id="blM" type="number" placeholder="--"><button class="btn" onclick="blAdd()">+</button></div>
+    <ul id="blList"></ul><div class="blfoot" id="blFoot"></div>`;
+    ['blN','blM'].forEach(x=>$(x).addEventListener('keydown',e=>{if(e.key==='Enter')blAdd()}));
+    const L=$('blList');
+    L.addEventListener('dragstart',e=>{const li=e.target.closest('li[data-id]');if(!li)return;blDrag=li.dataset.id;li.classList.add('dragging');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',li.querySelector('.n').textContent)}catch(_){}document.querySelector('.s1main').classList.add('dropzone')});
+    L.addEventListener('dragend',()=>{blDrag=null;L.querySelectorAll('.dragging').forEach(x=>x.classList.remove('dragging'));dropClear()});
+    const M=document.querySelector('.s1main');
+    M.addEventListener('dragover',e=>{if(!blDrag)return;e.preventDefault();e.dataTransfer.dropEffect='move';dropMark(e.clientY)});
+    M.addEventListener('dragleave',e=>{if(!blDrag||M.contains(e.relatedTarget))return;const d=$('list').querySelector('.dropline');if(d)d.remove()});
+    M.addEventListener('drop',e=>{if(!blDrag)return;e.preventDefault();const id=blDrag,ix=dropIdx(e.clientY);blDrag=null;dropClear();blToDay(id,ix)});
+  }
+  const now=Date.now();
+  $('blList').innerHTML=bl.length?bl.map(b=>{const age=Math.floor((now-(b.c||now))/86400000);
+    return `<li draggable="true" data-id="${b.id}"><span class="n">${esc(b.n)}${age>=7?`<br><span class="age">hace ${age} días</span>`:''}</span><span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')" title="Editar">${b.quick?'⚡ <5 min':b.m+' min'}</span><button class="go" onclick="blToDay('${b.id}')" title="Agregar al final del plan">→</button><button onclick="blDel('${b.id}')" title="Borrar">✕</button></li>`}).join('')
+    :'<div class="blempty">Vacío. Escribe arriba las tareas que quieras tener a la mano esta semana.</div>';
+  const tot=bl.reduce((s,b)=>s+(b.quick?5:(+b.m||0)),0);
+  $('blFoot').textContent=bl.length?`${bl.length} tarea${bl.length>1?'s':''} · ${fmtMin(tot)}`:''}
+function dropIdx(y){const lis=[...$('list').querySelectorAll('li')];for(let k=0;k<lis.length;k++){const r=lis[k].getBoundingClientRect();if(y<r.top+r.height/2)return k}return lis.length}
+function dropMark(y){const L=$('list'),ix=dropIdx(y),lis=[...L.querySelectorAll('li')];let d=L.querySelector('.dropline');if(!d){d=document.createElement('div');d.className='dropline';L.appendChild(d)}
+  d.style.top=(lis.length?(ix<lis.length?lis[ix].offsetTop-5:lis[lis.length-1].offsetTop+lis[lis.length-1].offsetHeight+2):0)+'px'}
+function dropClear(){const d=$('list').querySelector('.dropline');if(d)d.remove();const M=document.querySelector('.s1main');if(M)M.classList.remove('dropzone')}
+function blAdd(){const n=$('blN').value.trim(),m=parseFloat($('blM').value);if(!n)return;const q=!(m>0);
+  bl.push({id:uid(),n,m:q?5:m,...(q?{quick:true}:{}),c:Date.now()});$('blN').value='';$('blM').value='';$('blN').focus();store('bl',bl);renderBl()}
+function blToDay(id,ix){const b=bl.find(x=>x.id===id);if(!b)return;const {c,...it}=b;it.id=uid();
+  if(ix==null||ix>acts.length)ix=acts.length;acts.splice(ix,0,it);const bi=bl.findIndex(x=>x.id===id);bl=bl.filter(x=>x.id!==id);store('bl',bl);store('acts',acts);render();
+  lastBl={b,bi,id:it.id,k:planDay};toast(`Agregada a ${dayName(planDay)}: ${esc(b.n)}`,'Deshacer','undoBl()')}
+let lastBl=null;
+function undoBl(){const m=lastBl;if(!m)return;lastBl=null;plans[m.k]=(plans[m.k]||[]).filter(x=>x.id!==m.id);store('plans',plans);bl.splice(Math.min(m.bi,bl.length),0,m.b);store('bl',bl);setPlanDay(planDay);render();hideToast()}
+function toBacklog(i){const a=acts[i];if(!a||a.done)return;if(a.rid&&(a.rk||planDay)===planDay)recSkip(a.rid,planDay);
+  acts.splice(i,1);store('acts',acts);const {done,rid,rk,warned30,t,cid,...rest}=a;bl.unshift({...rest,id:uid(),c:Date.now()});store('bl',bl);render();
+  toast(`📥 Al backlog: ${esc(a.n)}`)}
+function blDel(id){const b=bl.find(x=>x.id===id);if(!b)return;bl=bl.filter(x=>x.id!==id);store('bl',bl);renderBl();lastBlDel=b;toast(`Borrada: ${esc(b.n)}`,'Deshacer','bl.push(lastBlDel);store(\'bl\',bl);renderBl();hideToast()')}
+let lastBlDel=null;
+function blEdit(id){const b=bl.find(x=>x.id===id);if(!b)return;
+  modal(`<h1>Editar tarea</h1><label>Tarea</label><input id="beN" value="${esc(b.n)}" style="width:100%"><label>Minutos <small class="muted">(vacío = tarea rápida ⚡)</small></label><input id="beM" type="number" value="${b.quick?'':b.m}" placeholder="--" style="width:100%">
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="blSaveEd('${id}')">Aceptar</button></div>`);setTimeout(()=>$('beN').focus(),50)}
+function blSaveEd(id){const b=bl.find(x=>x.id===id);if(!b)return;const n=$('beN').value.trim(),m=parseFloat($('beM').value);if(!n)return;b.n=n;if(m>0){b.m=m;delete b.quick}else{b.m=5;b.quick=true}store('bl',bl);closeModal();renderBl()}
+window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))renderBl()});
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1230,10 +1292,10 @@ function drawSync(){
   ['syncBar1','syncBar2'].forEach(id=>{const el=$(id);if(el)el.innerHTML=h});
 }
 function queueSync(){if(!user||applying)return;setSync('busy');clearTimeout(syncT);syncT=setTimeout(pushSync,800)}
-function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,recs,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
+function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,recs,bl,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
 function applyRemote(d){applying=true;
   if(d.plans&&typeof d.plans==='object')plans=d.plans;else if(Array.isArray(d.acts)){plans={...plans};if(d.acts.length)plans[dkey(new Date())]=d.acts}
-  log=d.log||[];if(Array.isArray(d.recs)){recs=d.recs;try{localStorage.setItem('recs',JSON.stringify(recs))}catch(e){}}fixData();const mv=carryPaused();if(mv)setTimeout(queueSync,50);if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
+  log=d.log||[];if(Array.isArray(d.recs)){recs=d.recs;try{localStorage.setItem('recs',JSON.stringify(recs))}catch(e){}}if(Array.isArray(d.bl)){bl=d.bl;try{localStorage.setItem('bl',JSON.stringify(bl))}catch(e){}}fixData();const mv=carryPaused();if(mv)setTimeout(queueSync,50);if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
   try{localStorage.setItem('plans',JSON.stringify(plans));localStorage.setItem('log',JSON.stringify(log))}catch(e){}applying=false;
   render();if($('s2').classList.contains('on')){renderLog();renderAct()}}
 async function onLogin(u){
@@ -1246,9 +1308,9 @@ async function onLogin(u){
       const rp=(d.plans&&typeof d.plans==='object')?{...d.plans}:{};
       if(!d.plans&&d.acts&&d.acts.length)rp[dkey(new Date())]=d.acts;
       Object.keys(plans).forEach(k=>{if(!(rp[k]&&rp[k].length))rp[k]=plans[k]});
-      applyRemote({plans:rp,log:mergeLogs(d.log||[],log)});
-      await ref.set({plans,log,recs,acts:plans[dkey(new Date())]||[],updated:Date.now()});
-    }else await ref.set({plans,log,recs,acts:plans[dkey(new Date())]||[],updated:Date.now()});
+      applyRemote({plans:rp,log:mergeLogs(d.log||[],log),...(Array.isArray(d.recs)?{recs:d.recs}:{}),...(Array.isArray(d.bl)?{bl:d.bl}:{})});
+      await ref.set({plans,log,recs,bl,acts:plans[dkey(new Date())]||[],updated:Date.now()});
+    }else await ref.set({plans,log,recs,bl,acts:plans[dkey(new Date())]||[],updated:Date.now()});
     setSync('ok');
     unsub=ref.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;applyRemote(s.data());setSync('ok')},e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')});
   }catch(e){console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')}
@@ -1262,7 +1324,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=56;
+const APP_VER=57;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
