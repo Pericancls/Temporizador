@@ -255,9 +255,9 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 #blList li .n{font-size:14px;line-height:1.25}#blList li .t{font-size:12px;padding:4px 6px;cursor:pointer}
 #blList li .age{font-size:11px;color:#ffb340;white-space:nowrap}
 #blList li button{background:none;border:none;color:#8e8e93;font-size:15px;padding:2px 4px;cursor:pointer}#blList li button.go{color:#0a84ff;font-weight:700}
-.wkz{margin-top:10px;background:#ffd60a;color:#1c1c1e;border-radius:12px;padding:12px 14px;border:2px dashed transparent;transition:transform .12s,box-shadow .12s}
-.wkz b{font-size:15px}.wkz .wks{font-size:12px;margin-top:3px;opacity:.85}
-.wkz.over{border-color:#1c1c1e;transform:scale(1.03);box-shadow:0 0 0 4px rgba(255,214,10,.35)}
+.wkz{margin-top:10px;background:#352c05;color:#fff;border-radius:12px;padding:12px 14px;border:1px solid #ffd60a;border-left:4px solid #ffd60a;transition:transform .12s,box-shadow .12s,background .12s}
+.wkz b{font-size:15px}.wkz .wks{font-size:12px;margin-top:3px;color:#ffe27a}
+.wkz.over{background:#4a3d06;border-style:dashed;transform:scale(1.03);box-shadow:0 0 0 4px rgba(255,214,10,.25)}
 #blList li .wk{font-size:11px;color:#1c1c1e;background:#ffd60a;border-radius:6px;padding:1px 6px;white-space:nowrap;font-weight:600}
 .blfoot{border-top:1px solid #26262a;margin-top:8px;padding-top:8px;font-size:12px;color:#8e8e93}
 .blempty{color:#6e6e73;font-size:13px;padding:14px 4px;text-align:center;border:1px dashed #333;border-radius:10px}
@@ -287,12 +287,20 @@ li.dsrc{opacity:.3}
 .dpb .late{color:#ff6961;font-weight:600}.dpb .early{color:#ffb340;font-weight:600}
 .dpfoot{border-top:1px solid #26262a;margin-top:10px;padding-top:10px;font-size:14px;color:#ddd}
 .dpfoot .muted{font-size:12px}
+.ptrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.ptrow h2{margin:0}
+.notebtn{background:#1c1c1e;border:1px solid #3a3a3c;color:#fff;border-radius:12px;padding:7px 12px;font-size:18px;display:flex;align-items:center;gap:6px;cursor:pointer}
+.notebtn span{font-size:14px;color:#c7c7cc}
+#ntTxt{width:100%;min-height:150px;resize:vertical;font:inherit;font-size:16px;line-height:1.4;padding:12px;box-sizing:border-box}
+.ntl{max-height:40vh;overflow:auto;margin-top:12px;border-top:1px solid #2c2c2e;padding-top:8px}
+.nti{text-align:left;padding:10px 0;border-bottom:1px solid #222}.nti .nh{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#8e8e93;margin-bottom:4px}
+.nti .nh button{background:none;border:none;color:#8e8e93;cursor:pointer;font-size:13px}.nti .nb{white-space:pre-wrap;font-size:15px;line-height:1.4}
+.nti .na{color:#64d2ff}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v65</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v66</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -312,7 +320,7 @@ li.dsrc{opacity:.3}
 </section>
 
 <section id="s1"><aside id="blBox" class="deskonly"></aside><div class="s1main">
-  <h2 id="planTitle">Plan de hoy</h2>
+  <div class="ptrow"><h2 id="planTitle">Plan de hoy</h2><button class="notebtn" onclick="notesOpen()" title="Mis notas">📝<span>Notas</span></button></div>
   <div class="sync" id="syncBar1"></div>
   <div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
   <div class="row">
@@ -367,7 +375,7 @@ li.dsrc{opacity:.3}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v65</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v66</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -393,8 +401,8 @@ li.dsrc{opacity:.3}
 <script>
 const $=id=>document.getElementById(id);
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
-const store=(k,v)=>{if(k==='brk'||k==='recs'||k==='bl'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
-let bl=load('bl',[]),recs=load('recs',[]),log=load('log',[]),plans={},acts=[],planDay='';
+const store=(k,v)=>{if(k==='brk'||k==='recs'||k==='bl'||k==='notes'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
+let notes=load('notes',[]),bl=load('bl',[]),recs=load('recs',[]),log=load('log',[]),plans={},acts=[],planDay='';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
 const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
@@ -1085,6 +1093,23 @@ function wkPlace(rest,b,sn){const k=wkPick();plans[k]=plans[k]||[];const it={...
   if(b)b.wk={k,pid:it.id};else bl.push({...rest,id:uid(),c:Date.now(),wk:{k,pid:it.id}});
   store('plans',plans);store('bl',bl);setPlanDay(planDay);render();lastSnap=sn;
   toast(`🏖️ ${esc(it.n)} → ${wkLbl(k)} (${wkCount(k)}/${WK_MAX})`,'Deshacer','undoSnap()')}
+
+/* ===== Notas personales (qué siento / qué me frena) ===== */
+function mergeNotes(r,l){const m=new Map();(Array.isArray(r)?r:[]).concat(l||[]).forEach(n=>{if(!n||!n.id)return;const o=m.get(n.id);if(!o||(n.del&&!o.del))m.set(n.id,n)});return [...m.values()].sort((a,b)=>b.ts-a.ts)}
+function notesOpen(){const runAct=$('run').classList.contains('on')&&cur&&!cur.rest?cur.n:'';
+  const opts=[...new Set([runAct,...acts.filter(a=>!a.done).map(a=>a.n)].filter(Boolean))];
+  modal(`<h1>📝 Notas</h1><div class="muted" style="margin-bottom:8px">Lo que sientes, piensas o identificas que te está frenando.</div>
+  <textarea id="ntTxt" placeholder="Escribe aquí…"></textarea>
+  <label>¿Sobre alguna actividad? <small class="muted">(opcional)</small></label><select id="ntAct" class="selx" style="width:100%"><option value="">— Ninguna —</option>${opts.map(n=>`<option${n===runAct?' selected':''}>${esc(n)}</option>`).join('')}</select>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="noteSave()">Guardar</button></div>
+  <div class="ntl" id="ntList"></div>`);notesDraw();setTimeout(()=>$('ntTxt').focus(),60)}
+function notesDraw(){const L=$('ntList');if(!L)return;const ns=notes.filter(n=>!n.del).sort((a,b)=>b.ts-a.ts);
+  L.innerHTML=ns.length?ns.map(n=>{const d=new Date(n.ts);return `<div class="nti"><div class="nh"><span>${dayName(dkey(d))} · ${hm(n.ts)}${n.act?` · <span class="na">${esc(n.act)}</span>`:''}</span><button onclick="noteDel('${n.id}')" title="Borrar">✕</button></div><div class="nb">${esc(n.txt)}</div></div>`}).join(''):'<div class="muted" style="font-size:13px">Aún no tienes notas.</div>'}
+function noteSave(){const t=$('ntTxt').value.trim();if(!t){$('ntTxt').focus();return}const a=$('ntAct').value;
+  notes.unshift({id:uid(),ts:Date.now(),txt:t,...(a?{act:a}:{})});store('notes',notes);$('ntTxt').value='';$('ntAct').selectedIndex=[...$('ntAct').options].findIndex(o=>o.defaultSelected)>=0?[...$('ntAct').options].findIndex(o=>o.defaultSelected):0;notesDraw();toast('📝 Nota guardada')}
+let lastNote=null;
+function noteDel(id){const n=notes.find(x=>x.id===id);if(!n)return;n.del=true;lastNote=n;store('notes',notes);notesDraw();
+  toast('Nota borrada','Deshacer','delete lastNote.del;store(\'notes\',notes);notesDraw();hideToast()')}
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1380,10 +1405,10 @@ function drawSync(){
   ['syncBar1','syncBar2'].forEach(id=>{const el=$(id);if(el)el.innerHTML=h});
 }
 function queueSync(){if(!user||applying)return;setSync('busy');clearTimeout(syncT);syncT=setTimeout(pushSync,800)}
-function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,recs,bl,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
+function pushSync(){if(!user)return;fixData();fbDb.collection('users').doc(user.uid).set({plans,log,brk,recs,bl,notes,acts:plans[dkey(new Date())]||[],updated:Date.now()}).then(()=>{lastErr='';setSync('ok')}).catch(e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')})}
 function applyRemote(d){applying=true;
   if(d.plans&&typeof d.plans==='object')plans=d.plans;else if(Array.isArray(d.acts)){plans={...plans};if(d.acts.length)plans[dkey(new Date())]=d.acts}
-  log=d.log||[];if(Array.isArray(d.recs)){recs=d.recs;try{localStorage.setItem('recs',JSON.stringify(recs))}catch(e){}}if(Array.isArray(d.bl)){bl=d.bl;try{localStorage.setItem('bl',JSON.stringify(bl))}catch(e){}}fixData();const mv=carryPaused();if(mv)setTimeout(queueSync,50);if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
+  log=d.log||[];if(Array.isArray(d.recs)){recs=d.recs;try{localStorage.setItem('recs',JSON.stringify(recs))}catch(e){}}if(Array.isArray(d.bl)){bl=d.bl;try{localStorage.setItem('bl',JSON.stringify(bl))}catch(e){}}if(Array.isArray(d.notes)){notes=d.notes;try{localStorage.setItem('notes',JSON.stringify(notes))}catch(e){}}fixData();const mv=carryPaused();if(mv)setTimeout(queueSync,50);if(typeof d.brk==='number'){brk=d.brk;try{localStorage.setItem('brk',JSON.stringify(brk))}catch(e){}}setPlanDay(planDay);
   try{localStorage.setItem('plans',JSON.stringify(plans));localStorage.setItem('log',JSON.stringify(log))}catch(e){}applying=false;
   render();if($('s2').classList.contains('on')){renderLog();renderAct()}}
 async function onLogin(u){
@@ -1396,8 +1421,8 @@ async function onLogin(u){
       const rp=(d.plans&&typeof d.plans==='object')?{...d.plans}:{};
       if(!d.plans&&d.acts&&d.acts.length)rp[dkey(new Date())]=d.acts;
       Object.keys(plans).forEach(k=>{if(!(rp[k]&&rp[k].length))rp[k]=plans[k]});
-      applyRemote({plans:rp,log:mergeLogs(d.log||[],log),...(Array.isArray(d.recs)?{recs:d.recs}:{}),...(Array.isArray(d.bl)?{bl:d.bl}:{})});
-      await ref.set({plans,log,recs,bl,acts:plans[dkey(new Date())]||[],updated:Date.now()});
+      applyRemote({plans:rp,log:mergeLogs(d.log||[],log),...(Array.isArray(d.recs)?{recs:d.recs}:{}),...(Array.isArray(d.bl)?{bl:d.bl}:{}),notes:mergeNotes(d.notes,notes)});
+      await ref.set({plans,log,recs,bl,notes,acts:plans[dkey(new Date())]||[],updated:Date.now()});
     }else await ref.set({plans,log,recs,bl,acts:plans[dkey(new Date())]||[],updated:Date.now()});
     setSync('ok');
     unsub=ref.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;applyRemote(s.data());setSync('ok')},e=>{console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')});
@@ -1412,7 +1437,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=65;
+const APP_VER=66;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
