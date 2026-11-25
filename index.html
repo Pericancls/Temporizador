@@ -169,7 +169,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 .swh span{opacity:0;transition:opacity .15s}.swh.r{background:#1f5c33}.swh.r .swr{opacity:.7}.swh.l{background:#1a3a66}.swh.l .swl{opacity:.7}
 .swh.go.r{background:#34c759}.swh.go.l{background:#0a84ff}.swh.go span{opacity:1!important}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(90px + env(safe-area-inset-bottom));z-index:30;background:#2c2c2e;color:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:15px;box-shadow:0 6px 24px rgba(0,0,0,.6);transform:translateY(150%);opacity:0;transition:.25s}
-#toast.on{transform:none;opacity:1}#toast span{flex:1}#toast button{background:none;border:none;color:#ff9f0a;font-weight:700;font-size:15px}
+#toast{pointer-events:none}#toast.on{transform:none;opacity:1;pointer-events:auto}#toast span{flex:1}#toast button{background:none;border:none;color:#ff9f0a;font-weight:700;font-size:15px}
 .entry.openw{border:1px dashed #6b4508;background:#1f1608}
 .blrow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .blrow input{flex:1;min-width:0;padding:10px 6px;font-size:15px}.blrow span{color:#888}
@@ -241,7 +241,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v54</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v55</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -315,7 +315,7 @@ li .t.quick{background:#2a2208!important;color:#ffd60a!important}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v54</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v55</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1194,7 +1194,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=54;
+const APP_VER=55;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
