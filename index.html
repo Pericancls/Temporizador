@@ -206,7 +206,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v48</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v49</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -221,7 +221,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
   </div>
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v48)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v49)</button>
 </section>
 
 <section id="s1">
@@ -272,7 +272,7 @@ li.swiping{transition:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v48</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v49</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -356,10 +356,16 @@ function toggleDone(i){const a=acts[i];if(!a)return;
   const pr=a.prog,now=Date.now(),real=pr?Math.max(1,Math.round(pr.el/60)):a.m,st=pr&&pr.st?pr.st:now-real*60000,x=new Date(st);
   modal(`<h1>✓ Terminar actividad</h1><div class="muted">${esc(a.n)}</div>
   <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora de inicio</label><input id="qdH" type="time" value="${pad(x.getHours())}:${pad(x.getMinutes())}"></div>
-  <div style="flex:1"><label>Tiempo real (min)</label><input id="qdR" type="number" inputmode="decimal" value="${real}"></div></div>
+  <div style="flex:1"><label>Hora de terminación</label><input id="qdE" type="time"></div></div>
+  <label>Tiempo real (min)</label><input id="qdR" type="number" inputmode="decimal" value="${real}" style="width:100%">
   <div class="muted" style="font-size:13px;margin-top:6px">Planeado: ${fmtMin(a.m)}. Se guarda en tu registro.</div>
   <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" style="background:#34c759" onclick="quickDone(${i},'${pad(x.getHours())}:${pad(x.getMinutes())}',${real})">✓ Terminada</button></div>
-  <button class="linkbtn" style="padding:10px 0 0;color:#888" onclick="closeModal();acts[${i}].done=true;delete acts[${i}].prog;store('acts',acts);render()">Solo marcar, sin registrar</button>`)}
+  <button class="linkbtn" style="padding:10px 0 0;color:#888" onclick="closeModal();acts[${i}].done=true;delete acts[${i}].prog;store('acts',acts);render()">Solo marcar, sin registrar</button>`);
+  qdSync('r');$('qdH').addEventListener('input',()=>qdSync('r'));$('qdR').addEventListener('input',()=>qdSync('r'));$('qdE').addEventListener('input',()=>qdSync('e'))}
+/* Inicio + tiempo real ⇄ hora de terminación */
+function qdSync(src){const h=$('qdH').value;if(!h)return;const [hh,mi]=h.split(':').map(Number),st=hh*60+mi;
+  if(src==='e'){const e=$('qdE').value;if(!e)return;const [eh,em]=e.split(':').map(Number);let d=eh*60+em-st;if(d<=0)d+=1440;$('qdR').value=d;$('qdR').style.borderColor=''}
+  else{const r=parseFloat($('qdR').value);if(!(r>0))return;const t=Math.round(st+r)%1440;$('qdE').value=pad(Math.floor(t/60))+':'+pad(t%60)}}
 function quickDone(i,h0,r0){const a=acts[i];if(!a)return closeModal();
   const h=$('qdH').value||h0,r=parseFloat($('qdR').value);if(!(r>0)){$('qdR').style.borderColor='#ff3b30';return}
   const pr=a.prog,t=new Date(),[hh,mi]=h.split(':').map(Number);let st=new Date(t.getFullYear(),t.getMonth(),t.getDate(),hh,mi).getTime();
@@ -982,7 +988,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=48;
+const APP_VER=49;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
