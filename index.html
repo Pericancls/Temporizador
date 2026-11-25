@@ -730,9 +730,10 @@ function done(){
   $('run').classList.remove('on');release();clearRun();
   modal(`<h1>¡Listo! 🎉</h1><div class="muted">Todo quedó guardado en el Registro.</div><div class="row"><button class="btn" onclick="closeModal();tab(2)">Ver registro</button><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`);
 }
+const AUTO_EXTRA=10; /* minutos que se suman automáticamente a cada registro del temporizador */
 function save(ok){
   segClose();const st=new Date(cur.start);
-  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10,ext:cur.ext,ok,...(cur.segs&&cur.segs.length?{segs:normSegs(cur.segs).filter(x=>x.e!=null)}:{})});
+  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur.n,plan:cur.plan,real:Math.round(cur.elapsed/6)/10+AUTO_EXTRA,extra:AUTO_EXTRA,ext:cur.ext,ok,...(cur.segs&&cur.segs.length?{segs:normSegs(cur.segs).filter(x=>x.e!=null)}:{})});
   store('log',log);
   if(ok&&cur.id)markDone(cur.id);
 }
