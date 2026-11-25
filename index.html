@@ -287,7 +287,7 @@ li.dsrc{opacity:.3}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v63</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v64</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -362,7 +362,7 @@ li.dsrc{opacity:.3}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v63</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v64</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -958,7 +958,7 @@ function renderPrev(){const box=$('dayPrev');if(!box||!isDesk())return;
     const pos=b.cls==='brk'||!(b.ncol>1)?'':`left:calc(4px + (100% - 4px) * ${b.col} / ${b.ncol});right:auto;width:calc((100% - 4px) / ${b.ncol} - 3px);`;
     const hhmm=ts=>{const d=new Date(ts);return fmt12(pad(d.getHours())+':'+pad(d.getMinutes()))};
     if(b.cls==='brk'){h+=`<div class="dpb brk" style="top:${top}px;height:${ht}px" title="${b.n} ${hhmm(b.st)}–${hhmm(b.en)}">${ht>=14?'☕ '+fmtMin((b.en-b.st)/60000):''}</div>`;return}
-    let late='';if(b.cls==='fix')late=` <span class="tm">⏰ hora fija</span>`;else if(b.a&&b.a.t){const [hh,mm]=b.a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const diff=Math.round((b.st-d.getTime())/60000);
+    let late='';if(b.cls==='fix')late='';else if(b.a&&b.a.t){const [hh,mm]=b.a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const diff=Math.round((b.st-d.getTime())/60000);
       late=diff>5?` <span class="late">⏰ ${fmt12(b.a.t)} · llegarías ${fmtMin(diff)} tarde</span>`:diff<-5?` <span class="early">⏰ es a las ${fmt12(b.a.t)} · aquí irías ${fmtMin(-diff)} antes</span>`:` <span class="tm">⏰ ${fmt12(b.a.t)}</span>`}
     const tiny=ht<34,min=(b.en-b.st)/60000;
     h+=`<div class="dpb ${b.cls}${tiny?' tiny':''}${b.ncol>1?' narrow':''}" style="top:${top}px;height:${ht}px;${pos}" title="${esc(b.n)} · ${hhmm(b.st)}–${hhmm(b.en)}">${tiny?`<b>${esc(b.n)}</b><span class="tm">${hhmm(b.st)}</span>${late}`:`<div class="tm">${hhmm(b.st)}–${hhmm(b.en)} · ${b.cls==='cur'?(inOver?'en tiempo extra':'en curso'):fmtMin(min)}</div><b>${b.a&&b.a.rid?'🔁 ':''}${esc(b.n)}</b>${late?'<div>'+late+'</div>':''}`}</div>`});
@@ -968,7 +968,7 @@ function renderPrev(){const box=$('dayPrev');if(!box||!isDesk())return;
     t>midT?`Terminarías <b>${endD.getHours()<5?'en la madrugada':'el día siguiente'}</b> a las <b>${endTxt}</b><div class="muted">Te pasas ${fmtMin((t-midT)/60000)} de la medianoche.</div>`:
     `Terminarías a las <b>${endTxt}</b><div class="muted">Te quedan ${fmtMin((midT-t)/60000)} libres antes de la medianoche.</div>`)+clTxt;
   const sc=box.querySelector('.dpscroll'),st=sc?sc.scrollTop:0;
-  box.innerHTML=`<h3>🕒 Así se vería tu día</h3><div class="dpsub">${isToday?'Desde ahora, en el orden de tu lista, con descansos de '+brk+' min. Las de hora fija ⏰ van a su hora.':'Previsualización empezando a las 5:00 am'}</div>
+  box.innerHTML=`<h3>🕒 Minuto a minuto</h3><div class="dpsub">${isToday?'Desde ahora, en el orden de tu lista, con descansos de '+brk+' min':'Previsualización empezando a las 5:00 am'}</div>
     <div class="dpscroll"><div class="dptl" style="height:${y(tEnd)+12}px">${isToday?'<div class="dpnow"><span>Ahora</span></div>':''}${h}</div></div><div class="dpfoot">${foot}</div>`;
   const sc2=box.querySelector('.dpscroll');if(sc2)sc2.scrollTop=st}
 setInterval(()=>{if($('s1').classList.contains('on'))renderPrev()},20000);
@@ -1382,7 +1382,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=63;
+const APP_VER=64;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
