@@ -392,12 +392,15 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .exbtn{width:100%;margin-top:12px;background:#2a1508;color:#ff9f0a;border:2px solid #a85a0c;border-radius:12px;padding:14px;font-size:17px;font-weight:700;cursor:pointer}.exbtn small{color:#ffc56b;font-weight:500;margin-left:6px}
 .tcol{display:contents}.tchip.tc2{display:none}
 @media (max-width:600px){.tchip.tc1{display:none}.tcol{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none}.tchip.tc2{display:inline-flex;font-size:12px;padding:2px 7px;min-height:0}.tchip.tc2.none{font-size:13px;padding:0 4px;background:none}}
+.evq{gap:6px;justify-content:space-between;flex-wrap:nowrap;padding-top:4px}
+.evq button{flex:1;min-width:0;white-space:nowrap;background:#3a3a3c;border:none;color:#fff;border-radius:16px;padding:6px 4px;font-size:14px;cursor:pointer}.evq button.on{background:#0a84ff}
+.evbl{width:100%;background:#1a2a3d;color:#64d2ff;border:1px solid #1f4d6b;border-radius:12px;padding:13px;font-size:16px;font-weight:600;cursor:pointer;margin-top:2px}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v78</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v79</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -485,7 +488,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v78</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v79</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1321,18 +1324,25 @@ function newEvent(){const td=dkey(new Date()),def=planDay>td?planDay:td,n=new Da
     <div class="evr evt"><span>Empieza</span><input type="time" id="evS" value="${st}" oninput="evLink('s')"></div>
     <div class="evr evt"><span>Termina</span><input type="time" id="evE" value="${en}" oninput="evLink('e')"></div>
     <div class="evr"><span>Duración</span><span><input class="dur" type="number" id="evM" value="30" min="1" oninput="evLink('m')"> min</span></div>
+    <div class="evr evq">${[30,40,60,120,180].map(v=>`<button type="button" data-v="${v}" class="${v===30?'on':''}" onclick="evQuick(${v})">${v<60?v+' min':v/60+' h'}</button>`).join('')}</div>
   </div>
   <div class="evg">
     <div class="evr"><span>Repetir</span><select id="evR" onchange="evUpd()"><option value="no">Nunca</option><option value="day">Cada día</option><option value="wkday">Entre semana (L–V)</option><option value="week">Cada semana</option><option value="month">Cada mes</option><option value="custom">Personalizar…</option></select></div>
     <div class="evr hide" id="evUr"><span>Termina la repetición</span><input type="date" id="evU" placeholder="fin de año"></div>
   </div>
-  <div class="evg"><div class="evr"><textarea id="evNote" placeholder="Notas"></textarea></div></div></div>`);
+  <div class="evg"><div class="evr"><textarea id="evNote" placeholder="Notas"></textarea></div></div>
+  <button type="button" class="evbl" onclick="evToBacklog()">📥 Agregar a Backlog</button></div>`);
   $('evN').addEventListener('input',()=>{$('evAdd').disabled=!$('evN').value.trim()});$('evN').addEventListener('keydown',e=>{if(e.key==='Enter'&&$('evN').value.trim())evSave()});
   setTimeout(()=>$('evN').focus(),60)}
+function evHi(){const v=parseFloat($('evM')&&$('evM').value);document.querySelectorAll('.evq button').forEach(b=>b.classList.toggle('on',+b.dataset.v===v))}
+function evQuick(v){$('evM').value=v;evLink('m')}
+function evToBacklog(){const n=$('evN').value.trim();if(!n){$('evN').focus();$('evN').placeholder='Escribe un título primero';return}const m=Math.max(1,parseFloat($('evM').value)||30),note=$('evNote').value.trim();
+  bl.push({id:uid(),n,m,c:Date.now()});store('bl',bl);if(note){notes.unshift({id:uid(),ts:Date.now(),txt:note,act:n});store('notes',notes)}
+  closeModal();render();toast(`📥 Al backlog: ${esc(n)} (${m} min)`)}
 function evUpd(){const all=$('evAll').checked;document.querySelectorAll('.evt').forEach(r=>r.classList.toggle('hide',all));
   const r=$('evR').value;if(r==='custom'){const n=$('evN').value.trim();closeModal();recForm();setTimeout(()=>{if(n&&$('rfN'))$('rfN').value=n},50);return}
   $('evUr').classList.toggle('hide',r==='no')}
-function evLink(w){const s=$('evS').value,e=$('evE').value,m=parseFloat($('evM').value);const tm=x=>{const [h,mm]=x.split(':').map(Number);return h*60+mm},ft=v=>{v=((v%1440)+1440)%1440;return pad(Math.floor(v/60))+':'+pad(v%60)};
+function evLink(w){setTimeout(evHi,0);const s=$('evS').value,e=$('evE').value,m=parseFloat($('evM').value);const tm=x=>{const [h,mm]=x.split(':').map(Number);return h*60+mm},ft=v=>{v=((v%1440)+1440)%1440;return pad(Math.floor(v/60))+':'+pad(v%60)};
   if((w==='s'||w==='m')&&s&&m>0)$('evE').value=ft(tm(s)+m);
   else if(w==='e'&&s&&e){let d=tm(e)-tm(s);if(d<=0)d+=1440;$('evM').value=d}}
 function evSave(){const n=$('evN').value.trim();if(!n){$('evN').focus();return}const k=$('evD').value||dkey(new Date()),all=$('evAll').checked,s=all?'':$('evS').value,e=all?'':$('evE').value,m=Math.max(1,parseFloat($('evM').value)||30),r=$('evR').value,note=$('evNote').value.trim();
@@ -1681,7 +1691,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=78;
+const APP_VER=79;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
