@@ -287,7 +287,7 @@ li.dsrc{opacity:.3}
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v60</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v61</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -303,7 +303,7 @@ li.dsrc{opacity:.3}
   <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
   <button class="recbtn" onclick="recList()">🔁 Actividades recurrentes</button>
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
-  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización (tienes la v54)</button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización</button>
 </section>
 
 <section id="s1"><aside id="blBox" class="deskonly"></aside><div class="s1main">
@@ -362,7 +362,7 @@ li.dsrc{opacity:.3}
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v60</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v61</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1381,12 +1381,13 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=60;
+const APP_VER=61;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
 }
 function doUpdate(v){if($('run').classList.contains('on'))saveRun();location.replace(location.pathname+'?v='+v+'&t='+Date.now())}
+document.addEventListener('DOMContentLoaded',()=>{const b=$('updBtn');if(b)b.textContent='⟳ Buscar actualización (tienes la v'+APP_VER+')'});
 async function checkUpdate(manual){
   const b=$('updBtn');if(manual)b.textContent='⟳ Buscando…';
   try{const v=await latestVer();
