@@ -448,12 +448,22 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .side .exb.ex2 i{background:#0a84ff;color:#000;font-size:min(2.6vw,11px);letter-spacing:-1px}
 @media (orientation:portrait){.side .exb{width:46px;height:46px}.side .exb i{width:20px;height:20px;font-size:11px}.exits{gap:6px}}
 #bkS,#bkE,#ebT{color-scheme:dark}
+.bar2{position:fixed;left:0;right:0;top:0;z-index:16;background:#5b2a86;color:#fff;align-items:center;gap:10px;padding:max(8px,env(safe-area-inset-top)) 12px 8px;font-size:15px;box-shadow:0 2px 12px rgba(0,0,0,.5)}
+.bar2 .bn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}.bar2 .bn small{opacity:.7;font-weight:500;font-size:12px}
+.bar2 b{font-size:20px;font-variant-numeric:tabular-nums}.bar2 b.ov{color:#ffb340}
+.bar2 button{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:10px;width:38px;height:34px;font-size:15px;font-weight:800;cursor:pointer;flex:none}
+body.hasbar2 .brkbar{top:calc(max(8px,env(safe-area-inset-top)) + 42px)}
+body.hasbar2 section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 56px)}
+body.hasbar2.hasbar section{padding-top:calc(max(20px,env(safe-area-inset-top)) + 110px)}
+body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}body.hasbar2 #runTop{top:calc(max(10px,env(safe-area-inset-top)) + 50px)}
+.bgpill{background:#5b2a86;color:#fff;border:none;border-radius:16px;padding:8px 10px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;flex:none}
+.picklist button span.muted{display:block;font-size:12px;margin-top:2px}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v101</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v102</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -548,8 +558,8 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
   <button id="n3" onclick="tab(3)"><span>📊</span>Reportes</button>
 </nav>
 
-<div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v101</div>
+<div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v102</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -612,7 +622,7 @@ function render(){
   acts.forEach(a=>{if(!a.id)a.id=uid()});
   const ncnt={};notes.forEach(n=>{if(!n.del&&n.act)ncnt[n.act]=(ncnt[n.act]||0)+1});
   const nDone=acts.filter(a=>a.done).length,hb=$('hideBtn');if(hb){hb.innerHTML=hideDone?`👁<span class="lg"> Mostrar terminadas</span>${nDone?' ('+nDone+')':''}`:'<svg class="eyec" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10c2.5 3.5 5.5 5 9 5s6.5-1.5 9-5"/><path d="M6.5 13.6 5 16M12 15v2.8M17.5 13.6 19 16"/></svg><span class="lg"> Ocultar terminadas</span>';hb.title=hideDone?'Mostrar terminadas':'Ocultar terminadas';hb.classList.toggle('on',hideDone)}
-  $('list').innerHTML=acts.length?acts.map((a,i)=>hideDone&&a.done?'':`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip tc1${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span><button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button><span class="tcol">${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}<span class="tcrow">${a.done||(a.quick&&!a.prog)?'':`<span class="tchip tc2${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}${a.prog&&!a.done?`<button class="rstb r2" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}</span></span>${a.prog&&!a.done?`<button class="rstb r1" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join('')+(hideDone&&nDone===acts.length?'<div class="empty">Todo lo de este día está terminado 🎉</div>':''):'<div class="empty">Agrega tus actividades</div>';
+  $('list').innerHTML=acts.length?acts.map((a,i)=>hideDone&&a.done?'':`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip tc1${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span><button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button><span class="tcol">${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}<span class="tcrow">${a.done||(a.quick&&!a.prog)?'':`<span class="tchip tc2${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}${a.prog&&!a.done?`<button class="rstb r2" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}</span></span>${a.prog&&!a.done?`<button class="rstb r1" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}${cur2&&cur2.id===a.id&&!a.done?`<button class="bgpill" onclick="bgMenu()">▶▶ 2º plano</button>`:''}${a.done||(a.quick&&!a.prog)||(cur2&&cur2.id===a.id)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join('')+(hideDone&&nDone===acts.length?'<div class="empty">Todo lo de este día está terminado 🎉</div>':''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
@@ -796,8 +806,8 @@ function restDone(sound){running=false;clearInterval(timer);inOver=false;remain=
   if(sound){startAlarm();say('Se acabó tu descanso')}
   const el=cur.elapsed;if(el>=30)save(true);quit();
   modal(`<h1>☕ Descanso ${sound?'terminado':'registrado'}</h1><div class="muted">${el>=30?`Quedó en tu registro: ${fmtMin(el/60)}.`:'Fue muy corto, no se registró.'}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
-function startExercise(){busyStop();unlockAudio();queue=[{n:'Ejercicio',m:25}];go(0)}
-function startSingle(){busyStop();unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
+function startExercise(){if(dualAsk(()=>{unlockAudio();queue=[{n:'Ejercicio',m:25}];go(0)}))return;busyStop();unlockAudio();queue=[{n:'Ejercicio',m:25}];go(0)}
+function startSingle(){if(dualAsk(()=>{unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}))return;busyStop();unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
 /* ---- Sesiones de trabajo (de qué hora a qué hora) ---- */
 function normSegs(a){return(a||[]).map(x=>Array.isArray(x)?{s:x[0],e:x[1]}:x)}
 function fixData(){let unf=false;log.forEach(e=>{if(e.segs)e.segs=normSegs(e.segs);if(typeof e.extra==='number'){e.real=Math.max(0,Math.round((e.real-e.extra)*10)/10);delete e.extra;unf=true}});if(unf)setTimeout(()=>store('log',log),50);Object.values(plans).forEach(l=>(l||[]).forEach(a=>{if(a.prog&&a.prog.segs)a.prog.segs=normSegs(a.prog.segs)}))}
@@ -823,8 +833,9 @@ function pauseExit(){
   store('plans',plans);closeModal();quit();render();
   toast(`⏸ Pausada: ${esc(cur.n)} · llevas ${fmtMin(cur.elapsed/60)}`);
 }
-function resumeItem(i){busyStop();const a=acts[i];if(!a||a.done)return;unlockAudio();
-  queue=[a].concat(acts.filter(x=>!x.done&&x!==a&&(!x.quick||x.prog))).map(x=>({...x}));go(0)}
+function resumeItem(i){const a=acts[i];if(!a||a.done)return;if(cur2&&cur2.id===a.id)return bgMenu();if(mainBusy()&&cur.id===a.id){restoreRunView();return}if(dualAsk(()=>resumeItem0(a.id)))return;busyStop();resumeItem0(a.id)}
+function resumeItem0(id){const a=acts.find(x=>x.id===id);if(!a||a.done)return;unlockAudio();
+  queue=[a].concat(acts.filter(x=>!x.done&&x!==a&&(!x.quick||x.prog)&&!(cur2&&x.id===cur2.id))).map(x=>({...x}));go(0)}
 function begin(secs,rem){
   restoreRunView();
   inOver=false;total=secs;remain=rem!=null?rem:secs;warned=false;stopAlarm();
@@ -1499,6 +1510,46 @@ function saveBlockStart(){const v=$('ebT').value;if(!v)return;cur.segs=normSegs(
   if(ns<prevEnd){$('ebMsg').innerHTML='<span style="color:#ff453a">Se encima con el bloque anterior ('+hm(sg[sg.length-2].s)+'–'+hm(prevEnd)+').</span>';return}
   const delta=(l.s-ns)/1000;l.s=ns;cur.elapsed=Math.max(0,cur.elapsed+delta);if(!inOver)remain-=delta;if(sg.length===1)cur.start=ns;else cur.start=Math.min(cur.start,sg[0].s);
   saveRun();closeModal();draw&&draw();runTopUpd();toast(`Inicio corregido a ${hm(ns)} (${delta>=0?'+':''}${Math.round(delta/60)} min)`)}
+
+/* ===== Segunda actividad corriendo en paralelo (2º plano) ===== */
+let cur2=(()=>{try{const v=JSON.parse(localStorage.getItem('run2')||'null');return v&&v.id!=null?v:null}catch(e){return null}})(),c2T=null,dualFn=null;
+function c2Save(){try{cur2?localStorage.setItem('run2',JSON.stringify(cur2)):localStorage.removeItem('run2')}catch(e){}}
+function c2El(){if(!cur2)return 0;return cur2.el+(cur2.since?(Date.now()-cur2.since)/1000:0)}
+function mainBusy(){return $('run').classList.contains('on')&&cur&&!cur.rest&&!inBreak}
+function dualAsk(fn){if(!mainBusy())return false;dualFn=fn;
+  if(cur2){modal(`<h1>Ya tienes dos corriendo</h1><div class="muted" style="margin-bottom:12px">Pausa una para empezar otra.</div>
+    <div class="picklist"><button onclick="closeModal();busyStop();dualGo()">⏸ Pausar <b>${esc(cur.n)}</b><span class="muted">principal</span></button>
+    <button onclick="closeModal();bgPause();dualMove()">⏸ Pausar <b>${esc(cur2.n)}</b><span class="muted">2º plano</span></button></div>
+    <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`);return true}
+  modal(`<h1>Ya está corriendo</h1><div class="muted" style="margin-bottom:12px"><b style="color:#fff">${esc(cur.n)}</b> sigue activa. ¿Qué hago con ella?</div>
+  <div class="picklist"><button onclick="closeModal();busyStop();dualGo()">⏸ Pausarla</button><button onclick="closeModal();dualMove()">▶▶ Que sigan corriendo las dos<span class="muted">pasa a 2º plano</span></button></div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`);return true}
+function dualGo(){const f=dualFn;dualFn=null;if(f)f()}
+function dualMove(){if(!mainBusy()){dualGo();return}if(cur2){toast('Ya hay una en 2º plano');return}
+  if(inMini)endMini(false,true);const segs=normSegs(cur.segs||[]);const last=segs[segs.length-1];if(!last||last.e!=null)segs.push({s:Date.now(),e:null});
+  const el=cur.elapsed;cur2={id:cur.id,n:cur.n,plan:cur.plan,tot:inOver?total+overSecs():total,ext:cur.ext||[],st:cur.start,segs:segs.slice(0,-1),open:segs[segs.length-1].s,el,since:Date.now(),warned:inOver};
+  running=false;clearInterval(timer);quit();c2Save();c2Start();dualGo()}
+function c2Start(){clearInterval(c2T);if(!cur2){bar2Upd();return}c2T=setInterval(c2Tick,1000);c2Tick()}
+function c2Tick(){if(!cur2){clearInterval(c2T);bar2Upd();return}const rem=cur2.tot-c2El();
+  if(rem<=0&&!cur2.warned){cur2.warned=true;c2Save();try{beep()}catch(e){}try{say('Se acabó el tiempo de '+cur2.n)}catch(e){}toast(`⏰ Se acabó el tiempo de ${esc(cur2.n)} (2º plano)`,'Opciones','bgMenu()',10000)}
+  bar2Upd()}
+function bar2Upd(){const b=$('bar2');if(!b)return;if(!cur2){b.style.display='none';document.body.classList.remove('hasbar2');return}
+  const rem=cur2.tot-c2El(),a=Math.abs(rem),h=Math.floor(a/3600),t=(rem<0?'+':'')+(h?h+':'+pad(Math.floor(a%3600/60)):pad(Math.floor(a/60)))+':'+pad(Math.floor(a%60));
+  if(!b._init){b._init=1;b.innerHTML=`<span class="bt">▶▶</span><span class="bn"><span class="b2n"></span> <small>2º plano</small></span><b class="b2t"></b><button onclick="event.stopPropagation();bgPause()" title="Pausar">❚❚</button><button onclick="event.stopPropagation();bgFinish()" title="Terminar">✓</button>`;b.querySelector('.bn').onclick=bgMenu}
+  const nn=b.querySelector('.b2n'),tt=b.querySelector('.b2t');if(nn.textContent!==cur2.n)nn.textContent=cur2.n;if(tt.textContent!==t)tt.textContent=t;tt.classList.toggle('ov',rem<0);
+  b.style.display='flex';document.body.classList.add('hasbar2')}
+function c2Segs(){const sg=normSegs(cur2.segs||[]).filter(x=>x.e!=null);sg.push({s:cur2.open,e:Date.now()});return sg}
+function bgPause(){if(!cur2)return;const el=c2El(),sg=c2Segs();let it=findItem(cur2.id);
+  if(!it){const tk=dkey(new Date());plans[tk]=plans[tk]||[];it={n:cur2.n,m:cur2.plan,id:cur2.id||uid()};plans[tk].push(it)}
+  it.prog={el,rem:Math.max(0,cur2.tot-el),tot:cur2.tot,ext:cur2.ext||[],mb:0,st:cur2.st,segs:sg};it.done=false;const n=cur2.n;
+  cur2=null;c2Save();clearInterval(c2T);bar2Upd();store('plans',plans);setPlanDay(planDay);render();toast(`⏸ Pausada: ${esc(n)} · llevas ${fmtMin(el/60)}`)}
+function bgFinish(){if(!cur2)return;const el=c2El(),sg=c2Segs(),st=new Date(cur2.st||sg[0].s);
+  log.push({d:dkey(st),h:pad(st.getHours())+':'+pad(st.getMinutes()),n:cur2.n,plan:cur2.plan,real:Math.round(el/6)/10,ext:cur2.ext||[],ok:true,segs:sg});store('log',log);
+  const id=cur2.id,n=cur2.n;cur2=null;c2Save();clearInterval(c2T);bar2Upd();if(id)markDone(id);render();toast(`✓ ${esc(n)} registrada · ${fmtMin(el/60)}`)}
+function bgMenu(){if(!cur2)return;modal(`<h1>▶▶ ${esc(cur2.n)}</h1><div class="muted" style="margin-bottom:12px">Corriendo en 2º plano · llevas ${fmtMin(c2El()/60)}</div>
+  <div class="picklist"><button onclick="closeModal();bgFinish()">✓ Terminarla y registrar</button><button onclick="closeModal();bgPause()">⏸ Pausarla</button></div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`)}
+setTimeout(c2Start,400);
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1626,6 +1677,7 @@ function tlColor(n){let h=0;for(const c of n.toLowerCase())h=(h*31+c.charCodeAt(
 function openWork(){const out=[];
   Object.values(plans).forEach(l=>(l||[]).forEach(a=>{if(!a.prog||a.done)return;let sg=normSegs(a.prog.segs).filter(x=>x.e!=null);
     if(!sg.length&&a.prog.st&&a.prog.el>0)sg=[{s:a.prog.st,e:a.prog.st+a.prog.el*1000}];if(sg.length)out.push({n:a.n,segs:sg,kind:'pausa',el:a.prog.el})}));
+  if(cur2){const sg=c2Segs();out.push({n:cur2.n,segs:sg,kind:'curso',el:c2El()})}
   if($('run').classList.contains('on')&&cur&&!inBreak){const now=Date.now();const sg=normSegs(cur.segs).map(x=>({s:x.s,e:x.e==null?now:x.e})).filter(x=>x.e>x.s);
     if(sg.length)out.push({n:cur.n,segs:sg,kind:'curso',el:cur.elapsed})}
   return out}
@@ -1834,7 +1886,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=101;
+const APP_VER=102;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
