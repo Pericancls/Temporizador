@@ -430,12 +430,15 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .eb{display:grid;grid-template-columns:minmax(150px,auto) 1fr;gap:6px 14px;margin-top:6px;font-size:14px;align-items:start}
 .ebt{color:#ddd;white-space:nowrap}
 @media (max-width:600px){.eb,.ebh{grid-template-columns:112px 1fr;gap:6px 10px}.ebt{white-space:normal;font-size:13px;line-height:1.35}.ebt .muted{display:block}}.ebn{color:#ddd;min-width:0}.ebnote{background:#2c2c2e;border-radius:8px;padding:5px 8px;margin-bottom:4px;font-size:13px;line-height:1.35}.ebnone{color:#48484a}
+.rstb{width:34px;height:34px;flex:none;border-radius:50%;border:1.5px solid #ff9f0a;background:none;color:#ff9f0a;font-size:18px;font-weight:700;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}.rstb:hover{background:rgba(255,159,10,.15)}
+.tcrow{display:contents}.rstb.r2{display:none}
+@media (max-width:600px){.tcrow{display:flex;align-items:center;gap:8px}.rstb.r1{display:none}.rstb.r2{display:flex;width:26px;height:26px;font-size:14px}li .t.tprog{font-size:12px!important;padding:4px 7px!important}}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v93</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v94</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -531,7 +534,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v93</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v94</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -595,7 +598,7 @@ function render(){
   acts.forEach(a=>{if(!a.id)a.id=uid()});
   const ncnt={};notes.forEach(n=>{if(!n.del&&n.act)ncnt[n.act]=(ncnt[n.act]||0)+1});
   const nDone=acts.filter(a=>a.done).length,hb=$('hideBtn');if(hb){hb.innerHTML=hideDone?`👁<span class="lg"> Mostrar terminadas</span>${nDone?' ('+nDone+')':''}`:'<svg class="eyec" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10c2.5 3.5 5.5 5 9 5s6.5-1.5 9-5"/><path d="M6.5 13.6 5 16M12 15v2.8M17.5 13.6 19 16"/></svg><span class="lg"> Ocultar terminadas</span>';hb.title=hideDone?'Mostrar terminadas':'Ocultar terminadas';hb.classList.toggle('on',hideDone)}
-  $('list').innerHTML=acts.length?acts.map((a,i)=>hideDone&&a.done?'':`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip tc1${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span><button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button><span class="tcol">${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}${a.done||(a.quick&&!a.prog)?'':`<span class="tchip tc2${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}</span>${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join('')+(hideDone&&nDone===acts.length?'<div class="empty">Todo lo de este día está terminado 🎉</div>':''):'<div class="empty">Agrega tus actividades</div>';
+  $('list').innerHTML=acts.length?acts.map((a,i)=>hideDone&&a.done?'':`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip tc1${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span><button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button><span class="tcol">${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}<span class="tcrow">${a.done||(a.quick&&!a.prog)?'':`<span class="tchip tc2${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}${a.prog&&!a.done?`<button class="rstb r2" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}</span></span>${a.prog&&!a.done?`<button class="rstb r1" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join('')+(hideDone&&nDone===acts.length?'<div class="empty">Todo lo de este día está terminado 🎉</div>':''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
@@ -1435,6 +1438,13 @@ function renderBlM(){const L=$('bmList');if(!L)return;const now=Date.now(),main=
   const [sa,su]=wkDays(),full=wkCount(sa)>=WK_MAX&&wkCount(su)>=WK_MAX;const W=$('bmWk');W.classList.toggle('full',full);
   W.innerHTML=`<b>🏖️ Fin de semana</b><div class="wks">${cap(wkLbl(sa))}: ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))}: ${wkCount(su)}/${WK_MAX}${full?' · <span class="fullt">¡Lleno!</span>':''}</div>`+
     (wkl.length?`<ul id="bmWkL">${wkl.map(b=>`<li><span class="n">${esc(b.n)}<br><span class="wkd">${cap(wkLbl(b.wk.k))}</span></span>${pill(b)}<button class="bmb go" onclick="blToDay('${b.id}')">→</button><button class="bmb x" onclick="wkDel('${b.id}')">✕</button></li>`).join('')}</ul>`:`<div class="wks" style="margin-top:6px">Pícale 🏖️ a una tarea para mandarla al ${wkLbl(sa)} o ${wkLbl(su)}.</div>`)}
+
+/* ===== Reset: borra el último bloque de una actividad pausada ===== */
+function resetLast(i){const a=acts[i];if(!a||!a.prog)return;const sn=snap(),p=a.prog;const segs=normSegs(p.segs||[]).filter(x=>x.e!=null);let msg;
+  if(segs.length){const l=segs.pop(),d=(l.e-l.s)/1000;p.el=Math.max(0,(p.el||0)-d);p.rem=(p.rem||0)+d;p.segs=segs;msg=`↺ Borrado el bloque ${hm(l.s)}–${hm(l.e)} de ${esc(a.n)}`}
+  else{p.el=0;msg=`↺ ${esc(a.n)} regresó a cero`}
+  if(!p.segs||!p.segs.length||p.el<1){delete a.prog;msg+=segs.length?'':' · quedó sin empezar'}
+  store('acts',acts);render();if($('s2').classList.contains('on'))renderLog();lastSnap=sn;toast(msg,'Deshacer','undoSnap()',8000)}
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
 let rpMode='sem',rpOff=0,ccUnit='pct';
@@ -1770,7 +1780,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=93;
+const APP_VER=94;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
