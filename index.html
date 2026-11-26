@@ -469,12 +469,15 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 @media not all and (min-width:1100px) and (pointer:fine){.mmbtn{display:inline-block}.ptrow h2{margin-right:auto}
   #dayPrev.mmshow{display:flex;flex-direction:column;background:#141416;border:1px solid #242428;border-radius:16px;padding:14px 12px 10px;margin-bottom:12px;max-height:62vh}}
 .exbtn.bkf{background:#2a2306;color:#ffd60a;border-color:#a8890c}.exbtn.bkf small{color:#ffe27a}
+.endbtn{display:block;margin:1.6vh auto 0;background:#fff;color:#0b6b2f;border:none;border-radius:16px;padding:12px 22px;font-size:min(4.6vw,19px);font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#run:not(.brk) .endbtn{background:#34c759;color:#000}
+@media (orientation:landscape){.endbtn{padding:10px 20px;font-size:min(2.4vw,18px)}}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v107</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v108</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -571,7 +574,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v107</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v108</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -581,7 +584,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
   <div class="mid">
     <div id="clock">00:00</div>
     <div class="lbl"><div id="label"></div>
-    <div id="sub"></div><div id="brkAct" class="brkact" style="display:none"><button class="ba skip" onclick="skipBreak()">⏭ Saltar descanso</button><button class="ba rest" onclick="restChosen()">☕ Descansar</button></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button><button class="minib ntmid" onclick="runNote()">📝 Nota</button></div>
+    <div id="sub"></div><div id="brkAct" class="brkact" style="display:none"><button class="ba skip" onclick="skipBreak()">⏭ Saltar descanso</button><button class="ba rest" onclick="restChosen()">☕ Descansar</button></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button><button class="minib ntmid" onclick="runNote()">📝 Nota</button><button id="endBtn" class="endbtn" onclick="endAct()">✓ Terminar actividad</button></div>
   </div>
   <div class="side">
     <div class="exits"><button class="exb ex1" onclick="exitKeep()" title="Salir y continuar" aria-label="Salir y continuar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>▶</i></button><button class="exb ex2" onclick="stop()" title="Salir y pausar" aria-label="Salir y pausar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>❚❚</i></button></div>
@@ -879,7 +882,7 @@ function tick(){
   if(remain<=0){cur.elapsed+=remain;timeUp(-remain);return}
   draw();
 }
-function draw(){p5Upd();brkUpd();runTopUpd();const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
+function draw(){p5Upd();brkUpd();runTopUpd();endBtnUpd();const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
   const txt=pad(Math.floor(s/60))+':'+pad(x);if($('clock').textContent!==txt){const L=$('clock').textContent.length;$('clock').textContent=txt;if(L!==txt.length)fit()}
   const mm=document.querySelector('.mid');if(mm.clientWidth&&$('clock').scrollWidth>mm.clientWidth+2)fit();$('clock').style.color=(inBreak||inMini||(cur&&cur.rest))?'#fff':color(total?remain/total:0)}
 function color(r){
@@ -939,6 +942,8 @@ function extend(){
   cur.ext.push({pct:isNaN(p)?null:p,min:x,...(nt?{note:nt}:{})});closeModal();begin(x*60,x*60-ov);
 }
 function yes(){if(inOver)segClose(overStart);inOver=false;running=false;clearInterval(timer);closeModal();save(true);advance()}
+function endAct(){if(inBreak||inMini)return;if(isRest())return restDone(false);finish()}
+function endBtnUpd(){const b=$('endBtn');if(!b)return;const show=!inBreak&&!inMini&&!!cur;const t=cur&&cur.rest?'✓ Terminar descanso':'✓ Terminar actividad';if(b._s!==show){b._s=show;b.style.display=show?'':'none'}if(b.textContent!==t)b.textContent=t}
 function finish(){if(inMini)return endMini(false);if(inBreak)return endBreak(false);running=false;clearInterval(timer);save(true);beep(true);advance()}
 function skip(){running=false;clearInterval(timer);if(cur.elapsed>=60)save(false);advance()}
 function advance(){if(idx+1<queue.length){if(brk>0)startBreak();else go(idx+1)}else{done()}}
@@ -1922,7 +1927,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=107;
+const APP_VER=108;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
