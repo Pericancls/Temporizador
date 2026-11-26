@@ -424,12 +424,18 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
   #calView .grid .day{aspect-ratio:auto;height:30px;min-height:0;font-size:13px;border-radius:7px}#calView .grid .day small{font-size:9px;line-height:1}#calView .grid{gap:4px}
   .rgL .calhead b{font-size:15px}.rgL .calhead button{width:34px;height:32px;font-size:16px}.rgL .rgb{font-size:14px;padding:10px 8px}
   #calView[style*="display: none"],#calView[style*="display:none"]{display:none!important}}
+.etop{align-items:flex-start;flex-wrap:wrap}.etop b{font-size:16px}
+.enums{display:flex;gap:12px;font-size:13px;color:#999;white-space:nowrap;flex-wrap:wrap;justify-content:flex-end}.enums b{color:#fff;font-weight:600;font-size:13px}.enums b.over{color:#ff9f0a}.enums b.under{color:#34c759}
+.ebh{display:grid;grid-template-columns:minmax(150px,auto) 1fr;gap:14px;font-size:11px;color:#6e6e73;text-transform:uppercase;letter-spacing:.4px;margin-top:10px;padding-bottom:4px;border-bottom:1px solid #2c2c2e}
+.eb{display:grid;grid-template-columns:minmax(150px,auto) 1fr;gap:6px 14px;margin-top:6px;font-size:14px;align-items:start}
+.ebt{color:#ddd;white-space:nowrap}
+@media (max-width:600px){.eb,.ebh{grid-template-columns:112px 1fr;gap:6px 10px}.ebt{white-space:normal;font-size:13px;line-height:1.35}.ebt .muted{display:block}}.ebn{color:#ddd;min-width:0}.ebnote{background:#2c2c2e;border-radius:8px;padding:5px 8px;margin-bottom:4px;font-size:13px;line-height:1.35}.ebnone{color:#48484a}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v91</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v92</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -525,7 +531,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v91</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v92</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1581,12 +1587,18 @@ function renderTl(){
   const w=$('tlWrap');if(w)w.scrollTop=Math.max(0,(blocks[0].a-d0)/864e5*H-40);
 }
 function entry(e){
-  const diff=e.real-e.plan;
-  const ext=e.ext&&e.ext.length?`<div class="meta">Extensiones: ${e.ext.map(x=>`+${x.min} min${x.pct!=null?` (faltaba ${x.pct}%)`:''}`).join(', ')}</div>`+e.ext.filter(x=>x.note).map(x=>`<div class="note">📝 ${esc(x.note).replace(/\n/g,'<br>')}</div>`).join(''):'';
-  const pn=(e.post||[]).length;
-  return`<div class="entry" onclick="openEntry(${e.i})"><div class="top"><b>${esc(e.n)}</b><span class="muted">${e.manual?'✍︎ ':''}${e.h}</span></div>
-  <div class="meta">Planeado ${fmtMin(e.plan)} · Real <span class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</span> (${diff>=0?'+':''}${Math.round(diff)} min)${e.ok?'':' · <span class="over">sin terminar</span>'}</div><div class="meta">🕒 ${segTxt(e)}</div>${ext}${pn?`<div class="note post">🗒️ ${pn} nota${pn>1?'s':''} después</div>`:''}
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span class="muted" style="font-size:12px">Toca para ver y agregar notas</span><span><button class="edl" onclick="event.stopPropagation();editEntry(${e.i})">editar</button><button onclick="event.stopPropagation();rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></span></div></div>`;
+  const diff=e.real-e.plan,extMin=(e.ext||[]).reduce((a,x)=>a+(+x.min||0),0),total=e.plan+extMin;
+  const sg=segsOf(e),pn=(e.post||[]).length,G=90000;
+  const an=notes.filter(n=>!n.del&&n.act===e.n);
+  const extN=(e.ext||[]).filter(x=>x.note);
+  const rows=sg.map((b,k)=>{const ns=an.filter(n=>n.ts>=b.s-G&&n.ts<=b.e+G).sort((a,c)=>a.ts-c.ts).map(n=>`<div class="ebnote">📝 ${esc(n.txt).replace(/\n/g,'<br>')}</div>`);
+    if(k===sg.length-1)extN.forEach(x=>ns.push(`<div class="ebnote">📝 <span class="muted">al pedir +${x.min} min:</span> ${esc(x.note).replace(/\n/g,'<br>')}</div>`));
+    return `<div class="ebt">🕒 ${hm(b.s)}–${hm(b.e)} <span class="muted">· ${fmtMin((b.e-b.s)/60000)}</span></div><div class="ebn">${ns.join('')||'<span class="ebnone">—</span>'}</div>`}).join('');
+  return`<div class="entry" onclick="openEntry(${e.i})"><div class="top etop"><div><b>${esc(e.n)}</b>${e.manual?' <span class="muted">✍︎</span>':''}${e.ok?'':' <span class="over" style="font-size:13px">sin terminar</span>'}</div>
+  <div class="enums"><span>Planeado <b>${fmtMin(e.plan)}</b></span><span>Real <b class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</b></span><span title="Planeado + tiempo extra que pediste">Total <b>${fmtMin(total)}</b></span></div></div>
+  <div class="ebh"><span>Bloques</span><span>Notas por bloque</span></div><div class="eb">${rows}</div>
+  ${pn?`<div class="note post">🗒️ ${pn} nota${pn>1?'s':''} después</div>`:''}
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="muted" style="font-size:12px">Toca para ver y agregar notas</span><span><button class="edl" onclick="event.stopPropagation();editEntry(${e.i})">editar</button><button onclick="event.stopPropagation();rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></span></div></div>`;
 }
 function manualForm(){
   const now=new Date(),hh=selDay===dkey(now)?pad(now.getHours())+':'+pad(now.getMinutes()):'12:00';
@@ -1756,7 +1768,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=91;
+const APP_VER=92;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
