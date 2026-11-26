@@ -473,7 +473,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v105</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v106</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -569,7 +569,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v105</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v106</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -1153,7 +1153,8 @@ function recDel(id){modal(`<h1>¿Eliminar?</h1><div class="muted">Se quitan sus 
 const isDesk=()=>matchMedia('(min-width:1100px) and (pointer:fine)').matches;
 function renderPrev(){placePrev();const box=$('dayPrev');if(!box||!(isDesk()||mmOn))return;
   const today=dkey(new Date()),isToday=planDay===today,now=new Date();now.setSeconds(0,0);
-  let t0=isToday?now.getTime():(()=>{const d=kDate(planDay);d.setHours(5,0,0,0);return d.getTime()})();
+  const d5=(()=>{const d=kDate(planDay);d.setHours(5,0,0,0);return d.getTime()})(),liveNow=isToday&&$('run').classList.contains('on');
+  let t0=isToday?(liveNow?now.getTime():Math.max(now.getTime(),d5)):d5;const atNow=isToday&&t0===now.getTime();
   const live=isToday&&$('run').classList.contains('on'),blocks=[];let t=t0;
   const push=(n,min,cls,a)=>{if(min<=0&&cls==='brk')return;const st=t;t+=Math.max(min,0)*60000;blocks.push({n,st,en:t,cls,a})};
   let skip=null;
@@ -1175,7 +1176,7 @@ function renderPrev(){placePrev();const box=$('dayPrev');if(!box||!(isDesk()||mm
   const avail=Math.max(300,innerHeight-300),ppm=Math.max(0.6,Math.min(3,avail/Math.max(span,60)));
   const y=ts=>(ts-t0)/60000*ppm;
   let h='';
-  for(let k=new Date(t0);;){k.setMinutes(0,0,0);k.setHours(k.getHours()+1);if(k.getTime()>tEnd)break;const kt=k.getTime(),isMid=kt===midT;
+  for(let k=new Date(t0-1);;){k.setMinutes(0,0,0);k.setHours(k.getHours()+1);if(k.getTime()>tEnd)break;const kt=k.getTime(),isMid=kt===midT;
     h+=`<div class="dph${isMid?' mid':''}" style="top:${y(kt)}px"><span>${isMid?'12 am':fmt12(pad(k.getHours())+':00').replace(':00','')}</span></div>`}
   if(t>midT)h+=`<div class="dpnight" style="top:${y(midT)}px;height:${y(t)-y(midT)}px"></div>`;
   // acomodo en columnas cuando se enciman (como en un calendario)
@@ -1201,7 +1202,7 @@ function renderPrev(){placePrev();const box=$('dayPrev');if(!box||!(isDesk()||mm
   const sc=box.querySelector('.dpscroll'),st=sc?sc.scrollTop:0;
   const qk=acts.map((a,i)=>({a,i})).filter(o=>o.a.quick&&!o.a.prog&&!o.a.done);
   box.innerHTML=`<h3>🕒 Minuto a minuto</h3>${qk.length?`<div class="dpq">${qk.map(o=>`<div class="dpqc" title="${esc(o.a.n)}"><button onclick="toggleDone(${o.i})" title="Marcar como hecha"></button><span>⚡ ${esc(o.a.n)}</span></div>`).join('')}</div>`:'<div style="height:8px"></div>'}
-    <div class="dpscroll"><div class="dptl" style="height:${y(tEnd)+12}px">${isToday?'<div class="dpnow"><span>Ahora</span></div>':''}${h}</div></div><div class="dpfoot">${foot}</div>`;
+    <div class="dpscroll"><div class="dptl" style="height:${y(tEnd)+12}px">${atNow?'<div class="dpnow"><span>Ahora</span></div>':''}${h}</div></div><div class="dpfoot">${foot}</div>`;
   const sc2=box.querySelector('.dpscroll');if(sc2)sc2.scrollTop=st}
 setInterval(()=>{if($('s1').classList.contains('on'))renderPrev()},20000);
 window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))renderPrev()});
@@ -1918,7 +1919,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=105;
+const APP_VER=106;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
