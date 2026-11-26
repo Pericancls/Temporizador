@@ -2,7 +2,7 @@
 
 const $=id=>document.getElementById(id);
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
-const store=(k,v)=>{if(k==='brk'||k==='recs'||k==='bl'||k==='notes'||k==='dnotes'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
+const store=(k,v)=>{if(k==='brk'||k==='recs'||k==='bl'||k==='notes'||k==='dnotes'||k==='qb'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
 let dnotes=(()=>{const v=load('dnotes',{});return v&&typeof v==='object'&&!Array.isArray(v)?v:{}})(),notes=load('notes',[]),bl=load('bl',[]),recs=load('recs',[]),log=load('log',[]),plans={},acts=[],planDay='';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0');

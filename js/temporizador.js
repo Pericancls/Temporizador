@@ -18,7 +18,6 @@ function restDone(sound){running=false;clearInterval(timer);inOver=false;remain=
   const el=cur.elapsed;if(el>=30)save(true);quit();
   modal(`<h1>☕ Descanso ${sound?'terminado':'registrado'}</h1><div class="muted">${el>=30?`Quedó en tu registro: ${fmtMin(el/60)}.`:'Fue muy corto, no se registró.'}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
 function startQuick(n,m){if(dualAsk(()=>{unlockAudio();queue=[{n,m}];go(0)}))return;busyStop();unlockAudio();queue=[{n,m}];go(0)}
-function startExercise(){if(dualAsk(()=>{unlockAudio();queue=[{n:'Ejercicio',m:25}];go(0)}))return;busyStop();unlockAudio();queue=[{n:'Ejercicio',m:25}];go(0)}
 function startSingle(){if(dualAsk(()=>{unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}))return;busyStop();unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
 /* ---- Sesiones de trabajo (de qué hora a qué hora) ---- */
 function normSegs(a){return(a||[]).map(x=>Array.isArray(x)?{s:x[0],e:x[1]}:x)}

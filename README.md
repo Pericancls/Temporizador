@@ -21,6 +21,7 @@ Se publica con GitHub Pages en https://pericancls.github.io/Temporizador/ y se s
 | `js/reportes.js` | Reportes |
 | `js/registro.js` | Registro: calendario, lista del día, línea de 24 h, edición de bloques |
 | `js/sync.js` | Sincronización con Firebase |
+| `js/rapidos.js` | Botones rápidos del Temporizador (agregar, editar, borrar) |
 | `js/arranque.js` | Buscar actualización y arranque (siempre va al final) |
 
 Los archivos de `js/` se cargan en el orden de `index.html` y comparten variables globales.
@@ -35,5 +36,5 @@ Los archivos de `js/` se cargan en el orden de `index.html` y comparten variable
 
 - `plans`: actividades por día `{ "2026-11-26": [ {n, m, id, t?, done?, prog?, quick?, rid?, lk?, tr?} ] }`
 - `log`: registros terminados `{d, h, n, plan, real, ext, ok, segs:[{s,e}]}`
-- `recs` recurrentes · `bl` backlog · `notes` notas por actividad · `dnotes` notas del día · `brk` minutos de descanso
+- `recs` recurrentes · `bl` backlog · `notes` notas por actividad · `dnotes` notas del día · `brk` minutos de descanso · `qb` botones rápidos
 - `run` / `run2`: lo que está corriendo (para recuperarlo si se cierra la app)
