@@ -1,10 +1,10 @@
-style>!DOCTYPE html>
-style>html lang="es">
-style>head>
-style>meta charset="UTF-8">
-style>meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-style>title>Temporizador del día</title>
-style>style>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Temporizador del día</title>
+<style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:#000;color:#fff;font-family:-apple-system,system-ui,sans-serif;min-height:100vh;padding-bottom:90px}
 section{padding:16px;padding-top:max(20px,env(safe-area-inset-top));display:none;max-width:720px;margin:0 auto}
@@ -96,7 +96,7 @@ li.done .t{background:none;color:#888}
 li.done .chk{background:#34c759!important;border-color:#34c759!important}
 .upd{display:flex;align-items:center;gap:10px;background:#0a84ff;color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:15px}
 .upd span{flex:1}.upd button{background:#fff;color:#0a84ff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;font-size:14px}
-.selx{width:100%;background:#2c2c2e;color:#fff;border:1px solid #333;border-radius:10px;padding:12px;font-size:16px;-webkit-appearance:none;appearance:none;padding-right:38px;background-image:url("data:image/svg+xml;utf8,style>svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M0 0l6 8 6-8z' fill='%23aaa'/></svg>");background-repeat:no-repeat;background-position:right 14px center}
+.selx{width:100%;background:#2c2c2e;color:#fff;border:1px solid #333;border-radius:10px;padding:12px;font-size:16px;-webkit-appearance:none;appearance:none;padding-right:38px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M0 0l6 8 6-8z' fill='%23aaa'/></svg>");background-repeat:no-repeat;background-position:right 14px center}
 .minib{margin-top:2vh;background:#1c1c1e;color:#fff;border:1px solid #3a3a3c;border-radius:22px;padding:10px 18px;font-size:min(4vw,17px);font-weight:600}
 .prog{display:block;font-size:13px;color:#ff9f0a;margin-top:3px}
 .contb{display:inline-block;margin-top:6px;background:#ff9f0a;color:#000;border:none;border-radius:14px;padding:6px 12px;font-size:14px;font-weight:700}
@@ -447,136 +447,137 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .side .exb.ex1{color:#34c759}.side .exb.ex1 i{background:#34c759;padding-left:2px}
 .side .exb.ex2 i{background:#0a84ff;color:#000;font-size:min(2.6vw,11px);letter-spacing:-1px}
 @media (orientation:portrait){.side .exb{width:46px;height:46px}.side .exb i{width:20px;height:20px;font-size:11px}.exits{gap:6px}}
-style>/style>
-style>/head>
-style>body>
+#bkS,#bkE,#ebT{color-scheme:dark}
+</style>
+</head>
+<body>
 
-style>section id="s0" class="on">
-  style>h2>Temporizador <span style="color:#444;font-size:12px">v99</span></h2>
-  style>div id="updBox"></div>
-  style>div class="preview" id="tPrev">20:00</div>
-  style>div class="presets">
-    style>button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
-    style>button onclick="setT(15)">15</button><button onclick="setT(20)">20</button>
-    style>button onclick="setT(30)">30</button><button onclick="setT(45)">45</button>
-    style>button onclick="setT(60)">60</button>
-  style>/div>
-  style>div class="row">
-    style>input class="name" id="tName" placeholder="Nombre (opcional)">
-    style>input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
-  style>/div>
-  style>button class="btn big" onclick="startSingle()">▶ Iniciar</button>
-  style>button class="recbtn" onclick="recList()">🔁 Actividades recurrentes</button>
-  style>button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
-  style>button class="exbtn" onclick="startExercise()">🏋️ Ejercicio <small>25 min</small></button>
-  style>button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización</button>
-style>/section>
+<section id="s0" class="on">
+  <h2>Temporizador <span style="color:#444;font-size:12px">v100</span></h2>
+  <div id="updBox"></div>
+  <div class="preview" id="tPrev">20:00</div>
+  <div class="presets">
+    <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
+    <button onclick="setT(15)">15</button><button onclick="setT(20)">20</button>
+    <button onclick="setT(30)">30</button><button onclick="setT(45)">45</button>
+    <button onclick="setT(60)">60</button>
+  </div>
+  <div class="row">
+    <input class="name" id="tName" placeholder="Nombre (opcional)">
+    <input class="min" id="tMin" type="number" inputmode="numeric" value="20" oninput="prev()">
+  </div>
+  <button class="btn big" onclick="startSingle()">▶ Iniciar</button>
+  <button class="recbtn" onclick="recList()">🔁 Actividades recurrentes</button>
+  <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
+  <button class="exbtn" onclick="startExercise()">🏋️ Ejercicio <small>25 min</small></button>
+  <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización</button>
+</section>
 
-style>section id="s1"><aside id="blBox" class="deskonly"></aside><div class="s1main">
-  style>div class="ptrow"><h2 id="planTitle">Plan de hoy</h2><div class="sync" id="syncBar1"></div></div>
-  style>div class="topg"><div class="topl">
-  style>div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
-  style>div class="addg">
-    style>input class="name" id="aName" placeholder="Actividad" list="known">
-    style>input type="time" id="aTime" title="Hora programada (opcional)">
-    style>button class="btn" onclick="add()">+</button>
-    style>button class="hidebtn" id="hideBtn" onclick="toggleHideDone()"></button>
-    style>input class="min" id="aMin" type="number" inputmode="numeric" placeholder="-- min" title="Duración en minutos">
-    style>span></span>
-  style>/div></div><button class="mcal" id="mcal" onclick="newEvent()" title="Programar una actividad en otra fecha"></button></div>
-  style>datalist id="known"></datalist>
-  style>div class="muted" id="hint" style="margin:-4px 0 10px;font-size:14px"></div>
-  style>ul id="list"></ul>
-  style>div class="muted" id="total"></div>
-  style>div class="brkset">☕ Descanso entre actividades <input class="min" id="brkMin" type="number" inputmode="numeric" min="0" onchange="setBrk(this.value)"> min</div>
-  style>div id="calBox"></div>
-  style>button class="btn big" onclick="startList()">▶ Empezar</button>
-  style>div id="copyBox"></div>
-  style>button class="linkbtn" onclick="recoverForm()">↺ ¿Se cerró la app? Recuperar actividad en curso</button>
-style>/div><aside id="dayPrev" class="deskonly"></aside>
-style>/section>
+<section id="s1"><aside id="blBox" class="deskonly"></aside><div class="s1main">
+  <div class="ptrow"><h2 id="planTitle">Plan de hoy</h2><div class="sync" id="syncBar1"></div></div>
+  <div class="topg"><div class="topl">
+  <div class="daynav"><button onclick="moveDay(-1)">‹</button><label><span id="planDate"></span><input type="date" id="planPick" onchange="pickDay(this.value)"></label><button onclick="moveDay(1)">›</button></div>
+  <div class="addg">
+    <input class="name" id="aName" placeholder="Actividad" list="known">
+    <input type="time" id="aTime" title="Hora programada (opcional)">
+    <button class="btn" onclick="add()">+</button>
+    <button class="hidebtn" id="hideBtn" onclick="toggleHideDone()"></button>
+    <input class="min" id="aMin" type="number" inputmode="numeric" placeholder="-- min" title="Duración en minutos">
+    <span></span>
+  </div></div><button class="mcal" id="mcal" onclick="newEvent()" title="Programar una actividad en otra fecha"></button></div>
+  <datalist id="known"></datalist>
+  <div class="muted" id="hint" style="margin:-4px 0 10px;font-size:14px"></div>
+  <ul id="list"></ul>
+  <div class="muted" id="total"></div>
+  <div class="brkset">☕ Descanso entre actividades <input class="min" id="brkMin" type="number" inputmode="numeric" min="0" onchange="setBrk(this.value)"> min</div>
+  <div id="calBox"></div>
+  <button class="btn big" onclick="startList()">▶ Empezar</button>
+  <div id="copyBox"></div>
+  <button class="linkbtn" onclick="recoverForm()">↺ ¿Se cerró la app? Recuperar actividad en curso</button>
+</div><aside id="dayPrev" class="deskonly"></aside>
+</section>
 
-style>section id="s5">
-  style>div class="blhead m"><h2>📥 Backlog</h2><a class="picum" href="https://airtable.com/appOfREf0mVgyWXXO/tblZVWZynzvKPNAHg/viwFGlnNqaotDFN3z?blocks=hide" target="_blank" rel="noopener" title="Pendientes de PICUM en Airtable"><img src="picum.png" alt="PICUM"></a></div>
-  style>div class="row"><input class="name" id="bmN" placeholder="Nueva tarea"><input class="min" id="bmM" type="number" inputmode="numeric" placeholder="-- min"><button class="btn" onclick="bmAdd()">+</button></div>
-  style>ul id="bmList"></ul><div class="blfoot" id="bmFoot"></div>
-  style>div class="wkz" id="bmWk" style="max-height:none"></div>
-style>/section>
-style>section id="s4">
-  style>div class="wvtop"><h2>Vista panorámica</h2>
-    style>div class="seg wvseg"><button id="wvW" class="on" onclick="wvSet('sem')">Semanal</button><button id="wvM" onclick="wvSet('mes')">Mensual</button></div>
-    style>div class="calhead wvnav"><button onclick="wvMove(-1)">‹</button><b id="wvLabel"></b><button onclick="wvMove(1)">›</button><button class="wvtoday" onclick="wvToday()">Hoy</button></div><label class="wvhide"><input type="checkbox" id="wvHide" onchange="wvHideSet(this.checked)"> Ocultar las que ya hice</label></div>
-  style>div class="muted wvhint" id="wvHint"></div>
-  style>div id="wvBody"></div>
-style>/section>
-style>section id="s3">
-  style>h2>Reportes</h2>
-  style>div class="seg"><button id="rpW" class="on" onclick="rpSet('sem')">Semanal</button><button id="rpM" onclick="rpSet('mes')">Mensual</button></div>
-  style>div class="calhead"><button onclick="rpMove(-1)">‹</button><b id="rpLabel"></b><button onclick="rpMove(1)">›</button></div>
-  style>div id="rpBody"></div>
-style>/section>
-style>section id="s2">
-  style>h2>Registro</h2>
-  style>div class="sync" id="syncBar2"></div>
-  style>div class="seg"><button id="vCal" class="on" onclick="view('cal')">Por día</button><button id="vAct" onclick="view('act')">Por actividad</button></div>
-  style>div id="calView"><div class="rgL">
-    style>div class="calhead"><button onclick="month(-1)">‹</button><b id="mLabel"></b><button onclick="month(1)">›</button></div>
-    style>div class="grid" id="grid"></div>
-    style>button class="btn gray rgb" style="width:100%;margin-top:6px" onclick="manualForm()">＋ Agregar registro manual</button>
-    style>button class="btn gray rgb" style="width:100%;margin-top:8px" onclick="recoverForm()">↺ ¿Se borró tu actividad? Recuperarla</button>
-    style>/div><div class="rgM">
-    style>h3 id="dayTitle"></h3>
-    style>div id="dayList"></div>
-    style>/div><div class="rgR">
-    style>div id="dayTl"></div>
-    style>div class="dnote"><div class="dnh"><b>📝 Notas del día</b><span id="dnSt"></span></div>
-      style>textarea id="dnTxt" placeholder="¿Cómo te fue hoy? Lo que sentiste, lo que aprendiste, lo que te frenó…" oninput="dnInput()" onblur="dnFlush()"></textarea></div>
-  style>/div></div>
-  style>div id="actView" style="display:none"></div>
-  style>h3>Respaldo</h3>
-  style>div class="muted" style="font-size:14px;margin-bottom:8px">Pasa tu plan y tu registro a otro dispositivo, o guarda un respaldo.</div>
-  style>div class="row"><button class="btn gray" style="flex:1" onclick="exportData()">⬇︎ Exportar</button><button class="btn gray" style="flex:1" onclick="$('imp').click()">⬆︎ Importar</button></div>
-  style>input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="importData(this)">
-style>/section>
+<section id="s5">
+  <div class="blhead m"><h2>📥 Backlog</h2><a class="picum" href="https://airtable.com/appOfREf0mVgyWXXO/tblZVWZynzvKPNAHg/viwFGlnNqaotDFN3z?blocks=hide" target="_blank" rel="noopener" title="Pendientes de PICUM en Airtable"><img src="picum.png" alt="PICUM"></a></div>
+  <div class="row"><input class="name" id="bmN" placeholder="Nueva tarea"><input class="min" id="bmM" type="number" inputmode="numeric" placeholder="-- min"><button class="btn" onclick="bmAdd()">+</button></div>
+  <ul id="bmList"></ul><div class="blfoot" id="bmFoot"></div>
+  <div class="wkz" id="bmWk" style="max-height:none"></div>
+</section>
+<section id="s4">
+  <div class="wvtop"><h2>Vista panorámica</h2>
+    <div class="seg wvseg"><button id="wvW" class="on" onclick="wvSet('sem')">Semanal</button><button id="wvM" onclick="wvSet('mes')">Mensual</button></div>
+    <div class="calhead wvnav"><button onclick="wvMove(-1)">‹</button><b id="wvLabel"></b><button onclick="wvMove(1)">›</button><button class="wvtoday" onclick="wvToday()">Hoy</button></div><label class="wvhide"><input type="checkbox" id="wvHide" onchange="wvHideSet(this.checked)"> Ocultar las que ya hice</label></div>
+  <div class="muted wvhint" id="wvHint"></div>
+  <div id="wvBody"></div>
+</section>
+<section id="s3">
+  <h2>Reportes</h2>
+  <div class="seg"><button id="rpW" class="on" onclick="rpSet('sem')">Semanal</button><button id="rpM" onclick="rpSet('mes')">Mensual</button></div>
+  <div class="calhead"><button onclick="rpMove(-1)">‹</button><b id="rpLabel"></b><button onclick="rpMove(1)">›</button></div>
+  <div id="rpBody"></div>
+</section>
+<section id="s2">
+  <h2>Registro</h2>
+  <div class="sync" id="syncBar2"></div>
+  <div class="seg"><button id="vCal" class="on" onclick="view('cal')">Por día</button><button id="vAct" onclick="view('act')">Por actividad</button></div>
+  <div id="calView"><div class="rgL">
+    <div class="calhead"><button onclick="month(-1)">‹</button><b id="mLabel"></b><button onclick="month(1)">›</button></div>
+    <div class="grid" id="grid"></div>
+    <button class="btn gray rgb" style="width:100%;margin-top:6px" onclick="manualForm()">＋ Agregar registro manual</button>
+    <button class="btn gray rgb" style="width:100%;margin-top:8px" onclick="recoverForm()">↺ ¿Se borró tu actividad? Recuperarla</button>
+    </div><div class="rgM">
+    <h3 id="dayTitle"></h3>
+    <div id="dayList"></div>
+    </div><div class="rgR">
+    <div id="dayTl"></div>
+    <div class="dnote"><div class="dnh"><b>📝 Notas del día</b><span id="dnSt"></span></div>
+      <textarea id="dnTxt" placeholder="¿Cómo te fue hoy? Lo que sentiste, lo que aprendiste, lo que te frenó…" oninput="dnInput()" onblur="dnFlush()"></textarea></div>
+  </div></div>
+  <div id="actView" style="display:none"></div>
+  <h3>Respaldo</h3>
+  <div class="muted" style="font-size:14px;margin-bottom:8px">Pasa tu plan y tu registro a otro dispositivo, o guarda un respaldo.</div>
+  <div class="row"><button class="btn gray" style="flex:1" onclick="exportData()">⬇︎ Exportar</button><button class="btn gray" style="flex:1" onclick="$('imp').click()">⬆︎ Importar</button></div>
+  <input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="importData(this)">
+</section>
 
-style>nav>
-  style>button id="n2" onclick="tab(2)"><span>📓</span>Registro</button>
-  style>button id="n0" class="on" onclick="tab(0)"><span>⏱</span>Temporizador</button>
-  style>div class="navpair"><button id="n5" onclick="tab(5)"><span>📥</span>Backlog</button><button id="n1" onclick="tab(1)"><span>📋</span>Actividades</button></div>
-  style>button id="n4" onclick="tab(4)"><span>📅</span><b class="lg">Vista panorámica</b><b class="sm">Panorámica</b></button>
-  style>button id="n3" onclick="tab(3)"><span>📊</span>Reportes</button>
-style>/nav>
+<nav>
+  <button id="n2" onclick="tab(2)"><span>📓</span>Registro</button>
+  <button id="n0" class="on" onclick="tab(0)"><span>⏱</span>Temporizador</button>
+  <div class="navpair"><button id="n5" onclick="tab(5)"><span>📥</span>Backlog</button><button id="n1" onclick="tab(1)"><span>📋</span>Actividades</button></div>
+  <button id="n4" onclick="tab(4)"><span>📅</span><b class="lg">Vista panorámica</b><b class="sm">Panorámica</b></button>
+  <button id="n3" onclick="tab(3)"><span>📊</span>Reportes</button>
+</nav>
 
-style>div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-style>div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v99</div>
-  style>div class="side">
-    style>button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
-    style>button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
-    style>button id="ntRun" class="ntrun" onclick="runNote()">📝<small>Nota</small></button>
-    style>button id="minBtn" class="minbtn" onclick="minimizeRun()" style="display:none">⌄<small>Usar app</small></button>
-  style>/div>
-  style>div class="mid">
-    style>div id="clock">00:00</div>
-    style>div class="lbl"><div id="label"></div>
-    style>div id="sub"></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button><button class="minib ntmid" onclick="runNote()">📝 Nota</button></div>
-  style>/div>
-  style>div class="side">
-    style>div class="exits"><button class="exb ex1" onclick="exitKeep()" title="Salir y continuar" aria-label="Salir y continuar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>▶</i></button><button class="exb ex2" onclick="stop()" title="Salir y pausar" aria-label="Salir y pausar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>❚❚</i></button></div>
-    style>button onclick="play()"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
-  style>/div>
-style>/div>
+<div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v100</div>
+  <div class="side">
+    <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
+    <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+    <button id="ntRun" class="ntrun" onclick="runNote()">📝<small>Nota</small></button>
+    <button id="minBtn" class="minbtn" onclick="minimizeRun()" style="display:none">⌄<small>Usar app</small></button>
+  </div>
+  <div class="mid">
+    <div id="clock">00:00</div>
+    <div class="lbl"><div id="label"></div>
+    <div id="sub"></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button><button class="minib ntmid" onclick="runNote()">📝 Nota</button></div>
+  </div>
+  <div class="side">
+    <div class="exits"><button class="exb ex1" onclick="exitKeep()" title="Salir y continuar" aria-label="Salir y continuar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>▶</i></button><button class="exb ex2" onclick="stop()" title="Salir y pausar" aria-label="Salir y pausar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>❚❚</i></button></div>
+    <button onclick="play()"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
+  </div>
+</div>
 
-style>div id="modal"><div class="card" id="mCard"></div></div>
+<div id="modal"><div class="card" id="mCard"></div></div>
 
-style>script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-style>script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-style>script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-style>script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
 const $=id=>document.getElementById(id);
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
 const store=(k,v)=>{if(k==='brk'||k==='recs'||k==='bl'||k==='notes'||k==='dnotes'){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};return queueSync()}if(k==='acts'){plans[planDay]=acts;cleanPlans();k='plans';v=plans}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){};if(k==='plans'||k==='log')queueSync()};
 let dnotes=(()=>{const v=load('dnotes',{});return v&&typeof v==='object'&&!Array.isArray(v)?v:{}})(),notes=load('notes',[]),bl=load('bl',[]),recs=load('recs',[]),log=load('log',[]),plans={},acts=[],planDay='';
-const esc=s=>String(s).replace(/[&style>>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
 const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 function initPlans(){
@@ -610,19 +611,19 @@ function render(){
   {const qk=a=>a.quick&&!a.prog;if(acts.some((a,i)=>i>0&&qk(a)&&!qk(acts[i-1]))){const o=[...acts.filter(qk),...acts.filter(a=>!qk(a))];acts.splice(0,acts.length,...o);store('acts',acts)}}
   acts.forEach(a=>{if(!a.id)a.id=uid()});
   const ncnt={};notes.forEach(n=>{if(!n.del&&n.act)ncnt[n.act]=(ncnt[n.act]||0)+1});
-  const nDone=acts.filter(a=>a.done).length,hb=$('hideBtn');if(hb){hb.innerHTML=hideDone?`👁style>span class="lg"> Mostrar terminadas</span>${nDone?' ('+nDone+')':''}`:'<svg class="eyec" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10c2.5 3.5 5.5 5 9 5s6.5-1.5 9-5"/><path d="M6.5 13.6 5 16M12 15v2.8M17.5 13.6 19 16"/></svg><span class="lg"> Ocultar terminadas</span>';hb.title=hideDone?'Mostrar terminadas':'Ocultar terminadas';hb.classList.toggle('on',hideDone)}
-  $('list').innerHTML=acts.length?acts.map((a,i)=>hideDone&&a.done?'':`style>li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip tc1${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span><button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button><span class="tcol">${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}<span class="tcrow">${a.done||(a.quick&&!a.prog)?'':`<span class="tchip tc2${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}${a.prog&&!a.done?`<button class="rstb r2" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}</span></span>${a.prog&&!a.done?`<button class="rstb r1" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join('')+(hideDone&&nDone===acts.length?'<div class="empty">Todo lo de este día está terminado 🎉</div>':''):'<div class="empty">Agrega tus actividades</div>';
+  const nDone=acts.filter(a=>a.done).length,hb=$('hideBtn');if(hb){hb.innerHTML=hideDone?`👁<span class="lg"> Mostrar terminadas</span>${nDone?' ('+nDone+')':''}`:'<svg class="eyec" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10c2.5 3.5 5.5 5 9 5s6.5-1.5 9-5"/><path d="M6.5 13.6 5 16M12 15v2.8M17.5 13.6 19 16"/></svg><span class="lg"> Ocultar terminadas</span>';hb.title=hideDone?'Mostrar terminadas':'Ocultar terminadas';hb.classList.toggle('on',hideDone)}
+  $('list').innerHTML=acts.length?acts.map((a,i)=>hideDone&&a.done?'':`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip tc1${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span><button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button><span class="tcol">${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}<span class="tcrow">${a.done||(a.quick&&!a.prog)?'':`<span class="tchip tc2${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}${a.prog&&!a.done?`<button class="rstb r2" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}</span></span>${a.prog&&!a.done?`<button class="rstb r1" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}${a.done||(a.quick&&!a.prog)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join('')+(hideDone&&nDone===acts.length?'<div class="empty">Todo lo de este día está terminado 🎉</div>':''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   $('planPick').value=planDay;$('brkMin').value=brk;
   const nT=acts.filter(a=>a.t&&!a.done).length;
-  $('calBox').innerHTML=nT?`style>button class="calbtn" onclick="toCalendar()">📅 Agregar ${nT>1?`las ${nT} programadas`:'la programada'} a mi Calendario</button><div class="muted" style="font-size:13px;text-align:center">Con alerta 30 min antes, aunque la app esté cerrada.</div>`:'';
-  $('copyBox').innerHTML=acts.length?`style>div class="copyrow"><button onclick="copyPlan(1)">${acts.some(a=>a.done)?'Copiar pendientes al día siguiente':'Copiar al día siguiente'}</button><button onclick="clearPlan()">Vaciar este día</button></div>`:'';
+  $('calBox').innerHTML=nT?`<button class="calbtn" onclick="toCalendar()">📅 Agregar ${nT>1?`las ${nT} programadas`:'la programada'} a mi Calendario</button><div class="muted" style="font-size:13px;text-align:center">Con alerta 30 min antes, aunque la app esté cerrada.</div>`:'';
+  $('copyBox').innerHTML=acts.length?`<div class="copyrow"><button onclick="copyPlan(1)">${acts.some(a=>a.done)?'Copiar pendientes al día siguiente':'Copiar al día siguiente'}</button><button onclick="clearPlan()">Vaciar este día</button></div>`:'';
   const pend=acts.filter(a=>!a.done),t=pend.reduce((s,a)=>s+(a.prog?Math.max(0,a.prog.rem)/60:a.m),0),nd=acts.length-pend.length;
   $('total').textContent=!acts.length?'':nd?`✓ ${nd} de ${acts.length} hechas · Pendiente: ${fmtMin(t)}`:(acts.some(a=>a.prog)?'Pendiente: ':'Total planeado: ')+fmtMin(t);
   const names=[...new Set(log.map(e=>e.n))];
-  $('known').innerHTML=names.map(n=>`style>option value="${esc(n)}">`).join('');
+  $('known').innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
   renderPrev();renderBl();drawMcal();
 }
 $('aName').addEventListener('input',()=>{
@@ -638,17 +639,17 @@ function toggleDone(i){const a=acts[i];if(!a)return;if(!a.done&&$('run').classLi
     log.push({d:dkey(sd),h:pad(sd.getHours())+':'+pad(sd.getMinutes()),n:a.n,plan:5,real:5,ext:[],ok:true,quick:true,segs:[{s:st,e}],cid});
     a.done=true;a.cid=cid;store('log',log);store('acts',acts);render();toast(`⚡ Hecha: ${esc(a.n)} · ${hm(e)}`);return}
   const pr=a.prog,now=Date.now(),real=pr?Math.max(1,Math.round(pr.el/60)):a.m,st=pr&&pr.st?pr.st:now-real*60000,x=new Date(st);
-  modal(`style>h1>✓ Terminar actividad</h1><div class="muted">${esc(a.n)}</div>
-  style>div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora de inicio</label><input id="qdH" type="time" value="${pad(x.getHours())}:${pad(x.getMinutes())}"></div>
-  style>div style="flex:1"><label>Hora de terminación</label><input id="qdE" type="time"></div></div>
-  style>label>Tiempo real (min)</label><input id="qdR" type="number" inputmode="decimal" value="${real}" style="width:100%">
-  style>div class="muted" style="font-size:13px;margin-top:6px">Planeado: ${fmtMin(a.m)}. Se guarda en tu registro.</div>
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" style="background:#34c759" onclick="quickDone(${i},'${pad(x.getHours())}:${pad(x.getMinutes())}',${real})">✓ Terminada</button></div>
-  style>button class="linkbtn" style="padding:10px 0 0;color:#888" onclick="closeModal();acts[${i}].done=true;delete acts[${i}].prog;store('acts',acts);render()">Solo marcar, sin registrar</button>`);
+  modal(`<h1>✓ Terminar actividad</h1><div class="muted">${esc(a.n)}</div>
+  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora de inicio</label><input id="qdH" type="time" value="${pad(x.getHours())}:${pad(x.getMinutes())}"></div>
+  <div style="flex:1"><label>Hora de terminación</label><input id="qdE" type="time"></div></div>
+  <label>Tiempo real (min)</label><input id="qdR" type="number" inputmode="decimal" value="${real}" style="width:100%">
+  <div class="muted" style="font-size:13px;margin-top:6px">Planeado: ${fmtMin(a.m)}. Se guarda en tu registro.</div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" style="background:#34c759" onclick="quickDone(${i},'${pad(x.getHours())}:${pad(x.getMinutes())}',${real})">✓ Terminada</button></div>
+  <button class="linkbtn" style="padding:10px 0 0;color:#888" onclick="closeModal();acts[${i}].done=true;delete acts[${i}].prog;store('acts',acts);render()">Solo marcar, sin registrar</button>`);
   qdSync('r');$('qdH').addEventListener('input',()=>qdSync('r'));$('qdR').addEventListener('input',()=>qdSync('r'));$('qdE').addEventListener('input',()=>qdSync('e'))}
 /* Inicio + tiempo real ⇄ hora de terminación */
 function qdSync(src){const h=$('qdH').value;if(!h)return;const [hh,mi]=h.split(':').map(Number),st=hh*60+mi;
-  if(src==='e'){const e=$('qdE').value;if(!e)return;const [eh,em]=e.split(':').map(Number);let d=eh*60+em-st;if(dstyle>=0)d+=1440;$('qdR').value=d;$('qdR').style.borderColor=''}
+  if(src==='e'){const e=$('qdE').value;if(!e)return;const [eh,em]=e.split(':').map(Number);let d=eh*60+em-st;if(d<=0)d+=1440;$('qdR').value=d;$('qdR').style.borderColor=''}
   else{const r=parseFloat($('qdR').value);if(!(r>0))return;const t=Math.round(st+r)%1440;$('qdE').value=pad(Math.floor(t/60))+':'+pad(t%60)}}
 function quickDone(i,h0,r0){const a=acts[i];if(!a)return closeModal();
   const h=$('qdH').value||h0,r=parseFloat($('qdR').value);if(!(r>0)){$('qdR').style.borderColor='#ff3b30';return}
@@ -662,8 +663,8 @@ function quickDone(i,h0,r0){const a=acts[i];if(!a)return closeModal();
   toast(`Guardada en tu registro: ${esc(a.n)} · ${fmtMin(r)}`)}
 function markDone(id){let hit=false;Object.values(plans).forEach(l=>l.forEach(a=>{if(a.id===id){a.done=true;delete a.prog;hit=true}}));if(hit){store('plans',plans);render()}}
 function copyPlan(n){const k=shiftDay(planDay,n),src=acts.filter(a=>!a.done),cp=src.map(a=>({n:a.n,m:a.m,id:uid(),...(a.prog?{prog:a.prog}:{})}));plans[k]=(plans[k]||[]).concat(cp);store('plans',plans);
-  modal(`style>h1>Copiado ✅</h1><div class="muted">Se agregaron ${cp.length} actividades al plan de ${dayName(k)}.</div><div class="row"><button class="btn gray" onclick="closeModal()">Quedarme aquí</button><button class="btn" onclick="closeModal();setPlanDay('${k}');render()">Ir a ${dayName(k)}</button></div>`)}
-function clearPlan(){modal(`style>h1>¿Vaciar el plan?</h1><div class="muted">Se borran las actividades del plan de ${dayName(planDay)}. Tu registro no se toca.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();acts=[];store('acts',acts);render()">Vaciar</button></div>`)}
+  modal(`<h1>Copiado ✅</h1><div class="muted">Se agregaron ${cp.length} actividades al plan de ${dayName(k)}.</div><div class="row"><button class="btn gray" onclick="closeModal()">Quedarme aquí</button><button class="btn" onclick="closeModal();setPlanDay('${k}');render()">Ir a ${dayName(k)}</button></div>`)}
+function clearPlan(){modal(`<h1>¿Vaciar el plan?</h1><div class="muted">Se borran las actividades del plan de ${dayName(planDay)}. Tu registro no se toca.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();acts=[];store('acts',acts);render()">Vaciar</button></div>`)}
 /* ---- Mover una actividad a otro día (deslizando) ---- */
 let lastMove=null,toastT=null;
 function sendTo(i,k){const a=acts[i];if(!a||k===planDay)return;const from=planDay;if(a.rid&&(a.rk||from)===from)recSkip(a.rid,from);
@@ -673,24 +674,24 @@ function undoMove(){const m=lastMove;if(!m)return;lastMove=null;plans[m.k]=(plan
   plans[m.from]=plans[m.from]||[];plans[m.from].splice(Math.min(m.i,plans[m.from].length),0,m.a);store('plans',plans);setPlanDay(planDay);render();hideToast()}
 function pickDayFor(i){const a=acts[i];if(!a)return;const t=dkey(new Date());
   const opts=[t,shiftDay(t,1),shiftDay(t,2)].filter(k=>k!==planDay);
-  modal(`style>h1>¿A qué día?</h1><div class="muted">${esc(a.n)}</div>
-  style>div class="picklist">${opts.map(k=>`<button onclick="closeModal();sendTo(${i},'${k}')"><span style="text-transform:capitalize">${dayName(k)}</span><span class="muted">${(()=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})})()}</span></button>`).join('')}</div>
-  ${isDesk()?`style>button class="calbtn" style="margin-top:8px" onclick="closeModal();toBacklog(${i})">📥 Mandar al Backlog</button>`:''}
-  style>label>Otra fecha</label><input type="date" id="pkD" value="${shiftDay(planDay,1)}">
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="const v=$('pkD').value;if(v){closeModal();sendTo(${i},v)}">Mover</button></div>`)}
+  modal(`<h1>¿A qué día?</h1><div class="muted">${esc(a.n)}</div>
+  <div class="picklist">${opts.map(k=>`<button onclick="closeModal();sendTo(${i},'${k}')"><span style="text-transform:capitalize">${dayName(k)}</span><span class="muted">${(()=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})})()}</span></button>`).join('')}</div>
+  ${isDesk()?`<button class="calbtn" style="margin-top:8px" onclick="closeModal();toBacklog(${i})">📥 Mandar al Backlog</button>`:''}
+  <label>Otra fecha</label><input type="date" id="pkD" value="${shiftDay(planDay,1)}">
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="const v=$('pkD').value;if(v){closeModal();sendTo(${i},v)}">Mover</button></div>`)}
 function toast(msg,btn,fn,ms){let t=$('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}
-  t.innerHTML=`style>span>${msg}</span>${btn?`<button onclick="${fn}">${btn}</button>`:''}`;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(hideToast,ms||5000)}
+  t.innerHTML=`<span>${msg}</span>${btn?`<button onclick="${fn}">${btn}</button>`:''}`;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(hideToast,ms||5000)}
 function hideToast(){const t=$('toast');if(t)t.classList.remove('on')}
 function del(i){const a=acts[i];if(a&&a.rid)recSkip(a.rid,a.rk||planDay);acts.splice(i,1);store('acts',acts);render()}
 function fmt12(t){let [h,m]=t.split(':').map(Number);const ap=h>=12?'pm':'am';h=h%12||12;return h+':'+pad(m)+' '+ap}
 function editTime(i){editAct(i,'t')}
 function editAct(i,focus){const a=acts[i];
-  modal(`style>h1>Editar actividad</h1>
-  style>label>Actividad</label><input id="eN" value="${esc(a.n)}">
-  style>div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Tiempo (min)</label><input id="eM" type="number" inputmode="decimal" value="${a.m}"></div>
-  style>div style="flex:1"><label>⏰ Hora (opcional)</label><input id="eT" type="time" value="${a.t||''}"></div></div>
-  ${a.t?`style>button class="linkbtn" style="padding:8px 0;color:#ff453a" onclick="$('eT').value=''">Quitar hora</button>`:''}
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="saveEdit(${i})">✓ Aceptar</button></div>`);
+  modal(`<h1>Editar actividad</h1>
+  <label>Actividad</label><input id="eN" value="${esc(a.n)}">
+  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Tiempo (min)</label><input id="eM" type="number" inputmode="decimal" value="${a.m}"></div>
+  <div style="flex:1"><label>⏰ Hora (opcional)</label><input id="eT" type="time" value="${a.t||''}"></div></div>
+  ${a.t?`<button class="linkbtn" style="padding:8px 0;color:#ff453a" onclick="$('eT').value=''">Quitar hora</button>`:''}
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="saveEdit(${i})">✓ Aceptar</button></div>`);
   setTimeout(()=>{const e=$(focus==='t'?'eT':'eM');if(e&&focus!=='t'){e.focus();e.select&&e.select()}},60);
 }
 function saveEdit(i){const a=acts[i];if(!a)return closeModal();
@@ -703,9 +704,9 @@ function calOne(k,id){hideToast();const a=(plans[k]||[]).find(x=>x.id===id);if(!
 function calAsk(k,id){const a=(plans[k]||[]).find(x=>x.id===id);if(!a||!a.t)return;toast(`📅 ¿Agrego "${esc(a.n)}" a tu Calendario?`,'Sí, agregar',`calOne('${k}','${id}')`,10000)}
 const ICD=['MO','TU','WE','TH','FR','SA','SU'];
 function recCal(id){hideToast();const r=recs.find(x=>x.id===id);if(!r||!r.start)return;
-  let k=r.from,first=null;for(let i=0;istyle>400&&k<=r.until;i++){if(occurs(r,k)){first=k;break}k=shiftDay(k,1)}if(!first)return;
+  let k=r.from,first=null;for(let i=0;i<400&&k<=r.until;i++){if(occurs(r,k)){first=k;break}k=shiftDay(k,1)}if(!first)return;
   let rule;if(r.type==='week')rule='FREQ=WEEKLY;BYDAY='+(r.days||[]).map(d=>ICD[d]).join(',');
-  else if(r.type==='monthday')rule='FREQ=MONTHLY;'+(r.mdstyle>=28?'BYMONTHDAY='+r.md:'BYMONTHDAY='+Array.from({length:r.md-27},(_,i)=>28+i).join(',')+';BYSETPOS=-1');
+  else if(r.type==='monthday')rule='FREQ=MONTHLY;'+(r.md<=28?'BYMONTHDAY='+r.md:'BYMONTHDAY='+Array.from({length:r.md-27},(_,i)=>28+i).join(',')+';BYSETPOS=-1');
   else rule='FREQ=MONTHLY;BYDAY='+ICD[r.wd]+';BYSETPOS='+r.nth;
   rule+=';UNTIL='+r.until.replace(/-/g,'')+'T235959';
   const a={id:r.id,n:r.n,t:r.start,m:recDur(r)};const ex=(r.skip||[]).filter(x=>x>=first);
@@ -724,19 +725,19 @@ function calDownload(L,fname){
 /* ---- Aviso 30 min antes de una actividad programada ---- */
 let lastSched=0;
 function checkSched(){
-  const now=Date.now();if(now-lastSchedstyle>10000)return;lastSched=now;
+  const now=Date.now();if(now-lastSched<10000)return;lastSched=now;
   if($('modal').classList.contains('on'))return;
   const tk=dkey(new Date()),list=plans[tk]||[];
   for(const a of list){
     if(!a.t||a.done||a.warned30||(cur&&cur.id===a.id))continue;
     const [h,m]=a.t.split(':').map(Number),d=new Date();d.setHours(h,m,0,0);
     const mins=(d.getTime()-now)/60000;
-    if(minsstyle>=30&&mins>-5){
+    if(mins<=30&&mins>-5){
       a.warned30=true;store('plans',plans);
       const txt=mins>1?`en ${Math.round(mins)} minutos`:'ahora';
       beep();say(`Atención. ${txt.charAt(0).toUpperCase()+txt.slice(1)} tienes: ${a.n}`);
-      modal(`style>h1>⏰ Siguiente actividad</h1><div style="font-size:22px;font-weight:700;margin-top:10px">${esc(a.n)}</div><div class="muted" style="margin-top:6px">A las ${fmt12(a.t)} · ${txt}</div>
-      style>div class="row"><button class="btn" onclick="closeModal()">Entendido</button></div>`);
+      modal(`<h1>⏰ Siguiente actividad</h1><div style="font-size:22px;font-weight:700;margin-top:10px">${esc(a.n)}</div><div class="muted" style="margin-top:6px">A las ${fmt12(a.t)} · ${txt}</div>
+      <div class="row"><button class="btn" onclick="closeModal()">Entendido</button></div>`);
       return;
     }
   }
@@ -752,23 +753,23 @@ function editT(i){editAct(i,'m')}
     if(!drag){const dx=x-sx,dy=y-sy;
       if(!sw&&Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.5&&!active.classList.contains('done')){clearTimeout(holdT);
         sw={li:active,i:+active.dataset.i};const h=document.createElement('div');h.className='swh';h.style.top=active.offsetTop+'px';h.style.height=active.offsetHeight+'px';
-        h.innerHTML=`style>span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span class="swl">‹ 📥 Backlog</span>`;L.appendChild(h);active.classList.add('swiping')}
+        h.innerHTML=`<span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span class="swl">‹ 📥 Backlog</span>`;L.appendChild(h);active.classList.add('swiping')}
       if(sw){if(ev&&ev.cancelable)ev.preventDefault();sw.li.style.transform=`translateX(${dx}px)`;const h=L.querySelector('.swh');
-        if(h){h.classList.toggle('r',dx>0);h.classList.toggle('l',dxstyle>0);h.classList.toggle('go',Math.abs(dx)>90)}blHi(overBl(x,y));return}
+        if(h){h.classList.toggle('r',dx>0);h.classList.toggle('l',dx<0);h.classList.toggle('go',Math.abs(dx)>90)}blHi(overBl(x,y));return}
       if(isMouse&&Math.abs(dy)>6&&Math.abs(dy)>Math.abs(dx)){clearTimeout(holdT);drag={li:active,from:+active.dataset.i,y0:sy};active.classList.add('drag')}
       else{if(Math.abs(dy)>8||Math.abs(dx)>8)clearTimeout(holdT);return}}
     {const dx=x-sx,dy=y-drag.y0;if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy)*1.5&&!drag.li.classList.contains('done')){const li=drag.li;drag=null;li.classList.remove('drag');li.style.transform='';
       L.querySelectorAll('li.over').forEach(o=>o.classList.remove('over'));active=li;return move(x,y,ev)}}
     if(ev&&ev.cancelable)ev.preventDefault();drag.li.style.transform=`translateY(${y-drag.y0}px)`;
-    [...L.querySelectorAll('li')].forEach(o=>{if(o===drag.li)return;const r=o.getBoundingClientRect();o.classList.toggle('over',y>r.top&&ystyle>r.bottom)})};
+    [...L.querySelectorAll('li')].forEach(o=>{if(o===drag.li)return;const r=o.getBoundingClientRect();o.classList.toggle('over',y>r.top&&y<r.bottom)})};
   const end=cancel=>{clearTimeout(holdT);active=null;
-    if(sw){const dx=lastX-sx,i=sw.i;const ob=overBl(lastX,lastY);blHi(false);swClear();if(!cancel&&ob){toBacklog(i);return}if(!cancel){if(dx>90)sendTo(i,shiftDay(planDay,1));else if(dxstyle>-90)toBacklog(i)}return}
+    if(sw){const dx=lastX-sx,i=sw.i;const ob=overBl(lastX,lastY);blHi(false);swClear();if(!cancel&&ob){toBacklog(i);return}if(!cancel){if(dx>90)sendTo(i,shiftDay(planDay,1));else if(dx<-90)toBacklog(i)}return}
     if(!drag)return;const d=drag;drag=null;
     L.querySelectorAll('li.over').forEach(o=>o.classList.remove('over'));
-    if(cancel||Math.abs(lastY-d.y0)style>10){d.li.classList.remove('drag');d.li.style.transform='';return}
+    if(cancel||Math.abs(lastY-d.y0)<10){d.li.classList.remove('drag');d.li.style.transform='';return}
     const items=[...L.querySelectorAll('li')].filter(o=>o!==d.li);let to=items.length;
-    for(let k=0;kstyle>items.length;k++){const r=items[k].getBoundingClientRect();if(lastY<r.top+r.height/2){to=k;break}}
-    const ref=tostyle>items.length?acts[+items[to].dataset.i]:null;const [a]=acts.splice(d.from,1);const j=ref?acts.indexOf(ref):acts.length;acts.splice(j<0?acts.length:j,0,a);store('acts',acts);render()};
+    for(let k=0;k<items.length;k++){const r=items[k].getBoundingClientRect();if(lastY<r.top+r.height/2){to=k;break}}
+    const ref=to<items.length?acts[+items[to].dataset.i]:null;const [a]=acts.splice(d.from,1);const j=ref?acts.indexOf(ref):acts.length;acts.splice(j<0?acts.length:j,0,a);store('acts',acts);render()};
   const ok=t=>{const li=t.closest&&t.closest('li');return li&&L.contains(li)&&!t.closest('button,input,.t,.tchip,.contb')?li:null};
   L.addEventListener('touchstart',e=>{isMouse=false;const li=ok(e.target);if(!li||e.touches.length>1)return;const t=e.touches[0];startHold(li,t.clientX,t.clientY)},{passive:true});
   L.addEventListener('touchmove',e=>{const t=e.touches[0];move(t.clientX,t.clientY,e)},{passive:false});
@@ -778,7 +779,7 @@ function editT(i){editAct(i,'m')}
   window.addEventListener('mousemove',e=>move(e.clientX,e.clientY,e));window.addEventListener('mouseup',()=>end(false));
   L.addEventListener('contextmenu',e=>{if(e.target.closest('li'))e.preventDefault()});
 })();
-function mv(i,d){const j=i+d;if(jstyle>0)return;[acts[i],acts[j]]=[acts[j],acts[i]];store('acts',acts);render()}
+function mv(i,d){const j=i+d;if(j<0)return;[acts[i],acts[j]]=[acts[j],acts[i]];store('acts',acts);render()}
 ['aName','aMin','aTime'].forEach(x=>$(x).addEventListener('keydown',e=>{if(e.key==='Enter')add()}));
 let hideDone=(()=>{try{return localStorage.getItem('hideDone')==='1'}catch(e){return false}})();
 function toggleHideDone(){hideDone=!hideDone;try{localStorage.setItem('hideDone',hideDone?'1':'0')}catch(e){}render()}
@@ -787,14 +788,14 @@ function toggleHideDone(){hideDone=!hideDone;try{localStorage.setItem('hideDone'
 let inOver=false,overStart=0,inMini=false,miniSaved=null,inBreak=false,brk=(()=>{const v=load('brk',10);return v>=0?v:10})(),warned=false,queue=[],idx=0,total=0,remain=0,running=false,last=0,timer=null,wake=null,cur=null;
 function setBrk(v){v=parseFloat(v);brk=v>=0?v:10;$('brkMin').value=brk;store('brk',brk)}
 function startList(){busyStop();if(!acts.length)return;const pend=acts.filter(a=>!a.done);
-  if(!pend.length){modal(`style>h1>¡Todo hecho! 🎉</h1><div class="muted">Ya terminaste todas las actividades de este plan.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
+  if(!pend.length){modal(`<h1>¡Todo hecho! 🎉</h1><div class="muted">Ya terminaste todas las actividades de este plan.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
   const runq=pend.filter(a=>!a.quick||a.prog);if(!runq.length){toast('Solo te quedan tareas rápidas ⚡: márcalas con el círculo');return}unlockAudio();queue=runq.map(a=>({...a}));go(0)}
 function startRest(){busyStop();unlockAudio();queue=[{n:'Me merezco un descanso',m:10}];idx=0;inBreak=false;inMini=false;
   cur={n:'Me merezco un descanso',plan:10,start:Date.now(),elapsed:0,ext:[],mb:0,rest:true,segs:[]};segOpen();begin(600)}
 function restDone(sound){running=false;clearInterval(timer);inOver=false;remain=Math.max(0,remain);
   if(sound){startAlarm();say('Se acabó tu descanso')}
   const el=cur.elapsed;if(el>=30)save(true);quit();
-  modal(`style>h1>☕ Descanso ${sound?'terminado':'registrado'}</h1><div class="muted">${el>=30?`Quedó en tu registro: ${fmtMin(el/60)}.`:'Fue muy corto, no se registró.'}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
+  modal(`<h1>☕ Descanso ${sound?'terminado':'registrado'}</h1><div class="muted">${el>=30?`Quedó en tu registro: ${fmtMin(el/60)}.`:'Fue muy corto, no se registró.'}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
 function startExercise(){busyStop();unlockAudio();queue=[{n:'Ejercicio',m:25}];go(0)}
 function startSingle(){busyStop();unlockAudio();const m=parseFloat($('tMin').value)||20;queue=[{n:$('tName').value.trim()||'Temporizador',m}];go(0)}
 /* ---- Sesiones de trabajo (de qué hora a qué hora) ---- */
@@ -829,7 +830,7 @@ function begin(secs,rem){
   inOver=false;total=secs;remain=rem!=null?rem:secs;warned=false;stopAlarm();
   $('run').classList.add('on');$('run').classList.toggle('brk',!!(cur&&cur.rest));$('clock').textContent='';requestAnimationFrame(fit);$('label').textContent=cur.n;subText();if(cur&&cur.rest)$('sub').textContent='☕ Disfrútalo, te lo ganaste';
   running=true;last=Date.now();setPP(true);clearInterval(timer);timer=setInterval(tick,200);lock();setTimeout(runTopUpd,0);
-  if(remainstyle>=0){timeUp(-remain);return}
+  if(remain<=0){timeUp(-remain);return}
   draw();saveRun();
 }
 function timeUp(ov){if($('run').classList.contains('mini'))restoreRunView();if(cur&&cur.rest)return restDone(true);inOver=true;overStart=Date.now()-ov*1000;remain=0;running=true;drawOver();saveRun();startAlarm();ask()}
@@ -847,11 +848,11 @@ function tick(){
   checkSched();if($('run').classList.contains('mini'))brkUpd();
   if(inOver){drawOver();const n=Date.now();if(n-lastSave>2000){lastSave=n;saveRun()}return}
   if(!running)return;const now=Date.now(),dt=(now-last)/1000;last=now;if(now-lastSave>2000){lastSave=now;saveRun()}
-  remain-=dt;if(inMini){if(remainstyle>=0){remain=0;draw();endMini(true)}else draw();return}
-  if(inBreak){if(remainstyle>=0){remain=0;draw();endBreak(true)}else draw();return}
+  remain-=dt;if(inMini){if(remain<=0){remain=0;draw();endMini(true)}else draw();return}
+  if(inBreak){if(remain<=0){remain=0;draw();endBreak(true)}else draw();return}
   cur.elapsed+=dt;
-  if(!warned&&total>1800&&remainstyle>=900&&remain>0){warned=true;say('Te faltan 15 minutos')}
-  if(remainstyle>=0){cur.elapsed+=remain;timeUp(-remain);return}
+  if(!warned&&total>1800&&remain<=900&&remain>0){warned=true;say('Te faltan 15 minutos')}
+  if(remain<=0){cur.elapsed+=remain;timeUp(-remain);return}
   draw();
 }
 function draw(){p5Upd();brkUpd();runTopUpd();const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
@@ -859,10 +860,10 @@ function draw(){p5Upd();brkUpd();runTopUpd();const s=Math.ceil(remain),h=Math.fl
   const mm=document.querySelector('.mid');if(mm.clientWidth&&$('clock').scrollWidth>mm.clientWidth+2)fit();$('clock').style.color=(inBreak||inMini||(cur&&cur.rest))?'#fff':color(total?remain/total:0)}
 function color(r){
   if(r>0.3)return'rgb(52,199,89)';
-  if(rstyle>=0.1)return'rgb(255,59,48)';
+  if(r<=0.1)return'rgb(255,59,48)';
   const t=(0.3-r)/0.2,g=[52,199,89],y=[255,214,10];
   return`rgb(${g.map((v,k)=>Math.round(v+(y[k]-v)*t)).join(',')})`}
-const PAUSE='style>svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',PLAY='<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>';
+const PAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',PLAY='<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>';
 function setPP(r){$('clock').style.opacity=r?1:.45}
 function pause(){if(!inBreak&&!inMini&&!inOver)segClose();running=false;setPP(false);saveRun()}
 function play(){if(!running&&remain>0){if(!inBreak&&!inMini)segOpen();running=true;last=Date.now();setPP(true);saveRun()}}
@@ -881,11 +882,11 @@ function brkUpd(){const lb=$('label');if(lb)lb.classList.toggle('long',lb.textCo
   if(!r.classList.contains('on')){if(r.classList.contains('mini'))restoreRunView();return}
   if(!r.classList.contains('mini')){bar.style.display='none';return}
   if(!isRest()){bar.classList.add('act');let t;if(inOver){const o=Math.floor(overSecs());t='+'+pad(Math.floor(o/60))+':'+pad(o%60)}else{const s2=Math.max(0,Math.ceil(remain)),h2=Math.floor(s2/3600);t=(h2?h2+':'+pad(Math.floor(s2%3600/60)):pad(Math.floor(s2/60)))+':'+pad(s2%60)}
-    const nt=`style>span class="bt">${running?'▶':'⏸'}</span><span class="bn">${esc(cur?cur.n:'')}</span><b>${t}</b><span class="bo">Abrir ›</span>`;if(bar._k!==nt){bar._k=nt;bar.innerHTML=nt}bar.style.display='flex';return}
+    const nt=`<span class="bt">${running?'▶':'⏸'}</span><span class="bn">${esc(cur?cur.n:'')}</span><b>${t}</b><span class="bo">Abrir ›</span>`;if(bar._k!==nt){bar._k=nt;bar.innerHTML=nt}bar.style.display='flex';return}
   bar.classList.remove('act');
   const s=Math.max(0,Math.ceil(remain)),t=pad(Math.floor(s/60))+':'+pad(s%60);
   const nx=(cur&&cur.rest&&!inBreak)?'':inMini?(cur&&cur.n):(queue[idx+1]&&queue[idx+1].n);
-  bar.style.display='flex';bar.innerHTML=`style>span class="bt">${inMini?'Mini descanso':'☕ Descanso'}</span><b>${t}</b><span class="bn">${nx?'Sigue: '+esc(nx):''}</span><span class="bo">Abrir ›</span>`;
+  bar.style.display='flex';bar.innerHTML=`<span class="bt">${inMini?'Mini descanso':'☕ Descanso'}</span><b>${t}</b><span class="bn">${nx?'Sigue: '+esc(nx):''}</span><span class="bo">Abrir ›</span>`;
 }
 function p5Upd(){const b=$('p5');if(!b)return;const hide=!cur||inBreak||inMini||!!cur.rest;b.style.visibility=hide?'hidden':'visible';b.classList.toggle('used',!!(cur&&cur.p5)||inOver)}
 function toggle(){running=!running;last=Date.now();setPP(running)}
@@ -893,20 +894,20 @@ function restart(){remain=total;last=Date.now();draw()}
 
 /* Misión cumplida */
 function ask(){
-  modal(`style>h1>¿Misión cumplida?</h1><div class="muted">${esc(cur.n)}</div><div id="otv" class="otv"></div>
-  style>div class="row"><button class="btn" style="background:#34c759" onclick="yes()">Sí ✅</button><button class="btn red" onclick="no()">No</button></div>`);
+  modal(`<h1>¿Misión cumplida?</h1><div class="muted">${esc(cur.n)}</div><div id="otv" class="otv"></div>
+  <div class="row"><button class="btn" style="background:#34c759" onclick="yes()">Sí ✅</button><button class="btn red" onclick="no()">No</button></div>`);
 }
 function no(){stopAlarm();
-  modal(`style>h1>¿Qué faltó?</h1><div class="muted">${esc(cur.n)}</div><div id="otv" class="otv"></div>
-  style>label>¿Cuánto te faltó? (%)</label><input id="pct" type="number" inputmode="numeric" placeholder="ej. 30">
-  style>label>¿Cuánto tiempo extra necesitas? (min)</label><input id="xmin" type="number" inputmode="numeric" placeholder="ej. 10">
-  style>label>Notas</label><textarea id="xnote" rows="3" placeholder="Qué faltó, qué aprendiste…"></textarea>
-  style>div class="row"><button class="btn gray" onclick="ask()">Atrás</button><button class="btn" onclick="extend()">Continuar ▶</button></div>`);
+  modal(`<h1>¿Qué faltó?</h1><div class="muted">${esc(cur.n)}</div><div id="otv" class="otv"></div>
+  <label>¿Cuánto te faltó? (%)</label><input id="pct" type="number" inputmode="numeric" placeholder="ej. 30">
+  <label>¿Cuánto tiempo extra necesitas? (min)</label><input id="xmin" type="number" inputmode="numeric" placeholder="ej. 10">
+  <label>Notas</label><textarea id="xnote" rows="3" placeholder="Qué faltó, qué aprendiste…"></textarea>
+  <div class="row"><button class="btn gray" onclick="ask()">Atrás</button><button class="btn" onclick="extend()">Continuar ▶</button></div>`);
   let typed=false;$('xmin').addEventListener('input',()=>typed=true);
   $('pct').addEventListener('input',()=>{const v=sugExtra(parseFloat($('pct').value));if(v!=null&&!typed)$('xmin').value=v});
   setTimeout(()=>{const e=$('pct');if(e)e.focus()},50);
 }
-function sugExtra(p){const el=cur.elapsed;if(!(p>0&&pstyle>100)||!(el>0))return null;const m=el/60*p/(100-p)-(inOver?overSecs()/60:0);if(m<=0)return 5;return Math.max(1,Math.round(m/5)*5||Math.ceil(m))}
+function sugExtra(p){const el=cur.elapsed;if(!(p>0&&p<100)||!(el>0))return null;const m=el/60*p/(100-p)-(inOver?overSecs()/60:0);if(m<=0)return 5;return Math.max(1,Math.round(m/5)*5||Math.ceil(m))}
 function extend(){
   const p=parseFloat($('pct').value),x=parseFloat($('xmin').value);
   if(!(x>0)){$('xmin').style.borderColor='#ff3b30';return}
@@ -916,7 +917,7 @@ function extend(){
 function yes(){if(inOver)segClose(overStart);inOver=false;running=false;clearInterval(timer);closeModal();save(true);advance()}
 function finish(){if(inMini)return endMini(false);if(inBreak)return endBreak(false);running=false;clearInterval(timer);save(true);beep(true);advance()}
 function skip(){running=false;clearInterval(timer);if(cur.elapsed>=60)save(false);advance()}
-function advance(){if(idx+1style>queue.length){if(brk>0)startBreak();else go(idx+1)}else{done()}}
+function advance(){if(idx+1<queue.length){if(brk>0)startBreak();else go(idx+1)}else{done()}}
 function startBreak(){
   inBreak=true;cur=null;stopAlarm();total=brk*60;remain=total;
   const r=$('run');r.classList.add('on','brk');$('clock').textContent='';
@@ -924,18 +925,18 @@ function startBreak(){
   running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();saveRun();
 }
 function brkSub(){const nx=queue[idx+1];
-  $('sub').innerHTML=`Sigue: style>b>${esc(nx.n)}</b> (${nx.m} min)`+(queue.length-idx-1>1?` <button class="chg" onclick="pickNext()">Cambiar ▾</button>`:'');}
+  $('sub').innerHTML=`Sigue: <b>${esc(nx.n)}</b> (${nx.m} min)`+(queue.length-idx-1>1?` <button class="chg" onclick="pickNext()">Cambiar ▾</button>`:'');}
 function pickNext(){
   const rest=queue.slice(idx+1);
-  modal(`style>h1>¿Qué sigue?</h1><div class="muted">Elige la siguiente actividad</div><div class="picklist">${rest.map((a,k)=>`<button class="${k?'':'on'}" onclick="setNext(${idx+1+k})"><span>${esc(a.n)}</span><span class="muted">${a.quick?'⚡ <5 min':a.m+' min'}</span></button>`).join('')}</div>
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`);
+  modal(`<h1>¿Qué sigue?</h1><div class="muted">Elige la siguiente actividad</div><div class="picklist">${rest.map((a,k)=>`<button class="${k?'':'on'}" onclick="setNext(${idx+1+k})"><span>${esc(a.n)}</span><span class="muted">${a.quick?'⚡ <5 min':a.m+' min'}</span></button>`).join('')}</div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`);
 }
 function setNext(j){const [a]=queue.splice(j,1);queue.splice(idx+1,0,a);closeModal();brkSub();saveRun()}
 function endBreak(sound){running=false;clearInterval(timer);if(sound){beep();say('Se acabó el descanso')}go(idx+1)}
 function done(){
   $('run').classList.remove('mini');document.body.classList.remove('hasbar');$('brkBar').style.display='none';
   $('run').classList.remove('on');release();clearRun();
-  modal(`style>h1>¡Listo! 🎉</h1><div class="muted">Todo quedó guardado en el Registro.</div><div class="row"><button class="btn" onclick="closeModal();tab(2)">Ver registro</button><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`);
+  modal(`<h1>¡Listo! 🎉</h1><div class="muted">Todo quedó guardado en el Registro.</div><div class="row"><button class="btn" onclick="closeModal();tab(2)">Ver registro</button><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`);
 }
 function save(ok){
   segClose();const st=new Date(cur.start);
@@ -954,8 +955,8 @@ function clearRun(){try{localStorage.removeItem('run')}catch(e){}}
 function checkRun(){if($('run').classList.contains('on'))return;
   const r=load('run',null);if(!r||!r.queue||Date.now()-r.at>24*3600e3){clearRun();return}
   const nm=r.inBreak?'Descanso':r.inMini?'Mini descanso · '+(r.cur&&r.cur.n):(r.cur&&r.cur.n);
-  modal(`style>h1>Tienes algo en curso</h1><div class="muted">${esc(nm||'')} — la app se cerró mientras corría.</div>
-  style>div class="row"><button class="btn gray" onclick="closeModal();clearRun()">Descartar</button><button class="btn" onclick="closeModal();restoreRun()">▶ Continuar</button></div>`);
+  modal(`<h1>Tienes algo en curso</h1><div class="muted">${esc(nm||'')} — la app se cerró mientras corría.</div>
+  <div class="row"><button class="btn gray" onclick="closeModal();clearRun()">Descartar</button><button class="btn" onclick="closeModal();restoreRun()">▶ Continuar</button></div>`);
 }
 function restoreRun(){
   const r=load('run',null);if(!r)return;
@@ -965,18 +966,18 @@ function restoreRun(){
   if(r.inMini&&r.miniSaved){miniSaved=r.miniSaved;const left=remain-gone;
     if(left>0){$('run').classList.remove('brk');begin(miniSaved.total,miniSaved.remain);running=false;clearInterval(timer);startMiniAt(left);return}
     const over=-left;total=miniSaved.total;remain=miniSaved.remain-over;cur.elapsed+=over;miniSaved=null;inMini=false;inBreak=false;
-    $('run').classList.remove('brk');if(remainstyle>=0)cur.elapsed+=remain;begin(total,remain);return}
+    $('run').classList.remove('brk');if(remain<=0)cur.elapsed+=remain;begin(total,remain);return}
   remain-=gone;if(cur&&!inBreak)cur.elapsed+=gone;
-  if(inBreak){if(remainstyle>=0)return go(idx+1);startBreakAt(total,remain);return}
+  if(inBreak){if(remain<=0)return go(idx+1);startBreakAt(total,remain);return}
   $('run').classList.remove('brk');
-  if(remainstyle>=0){cur.elapsed+=remain;begin(total,remain);return}
+  if(remain<=0){cur.elapsed+=remain;begin(total,remain);return}
   begin(total,remain);if(!r.running)pause();
 }
 /* ---- Mini descanso de 5 min ---- */
 function miniLeft(){if(!cur||inBreak||inMini)return 0;const allot=cur.plan+(cur.ext||[]).reduce((a,x)=>a+x.min,0);return Math.floor(allot/60)-(cur.mb||0)}
 function miniBtnUpd(){const b=$('miniBtn');if(!b)return;const n=miniLeft();
   if(n>0&&remain>0){b.style.display='inline-block';b.textContent=`☕ Mini descanso 5 min${n>1?` (${n} disponibles)`:''}`}else b.style.display='none'}
-function startMini(){if(miniLeft()style>=0)return;segClose();cur.mb=(cur.mb||0)+1;miniSaved={total,remain,warned};startMiniAt(300)}
+function startMini(){if(miniLeft()<=0)return;segClose();cur.mb=(cur.mb||0)+1;miniSaved={total,remain,warned};startMiniAt(300)}
 function startMiniAt(rem){inMini=true;stopAlarm();total=300;remain=rem;
   const el=$('run');el.classList.add('on','brk');$('clock').textContent='';$('label').textContent='Mini descanso';
   $('sub').textContent=`Luego sigues con: ${cur.n} (te quedan ${fmtMin(miniSaved.remain/60)})`;$('miniBtn').style.display='none';
@@ -992,17 +993,17 @@ function startBreakAt(t,rem){inBreak=true;stopAlarm();total=t;remain=rem;const e
 function recoverForm(){
   setPlanDay(dkey(new Date()));render();
   const pend=acts.filter(a=>!a.done);
-  const opts=[...new Set(log.map(e=>e.n).concat(acts.map(a=>a.n)))].map(n=>`style>option value="${esc(n)}">`).join('');
-  const sel=`style>select id="rSel" class="selx">${pend.length?'<option value="">Elige una actividad…</option>':''}${pend.map((a,i)=>`<option value="${i}">${esc(a.n)} · ${a.m} min</option>`).join('')}<option value="__otra">Otra actividad (escribir)…</option></select>`;
-  modal(`style>h1>¿Se borró tu actividad?</h1><div class="muted">Dime cómo iba y la retomo donde te quedaste.</div>
-  style>label>Actividad</label>${sel}<input id="rN" list="rList" placeholder="Escribe la actividad" style="display:none;width:100%;margin-top:8px"><datalist id="rList">${opts}</datalist>
-  style>label>Tiempo estimado original (min)</label><input id="rP" type="number" inputmode="numeric" placeholder="ej. 40">
-  style>div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora en que empezaste</label><input id="rS" type="time"></div>
-  style>div style="flex:1"><label>…o hora en que se acabó el estimado</label><input id="rE" type="time"></div></div>
-  style>label>Tiempo extra que agregaste (min)</label><input id="rX" type="number" inputmode="numeric" placeholder="0">
-  style>div id="rPrev" class="muted" style="margin-top:12px;min-height:20px"></div>
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" style="background:#2c2c2e" onclick="recover(false)">Ya la terminé</button></div>
-  style>div class="row" style="margin-top:8px"><button class="btn" style="background:#34c759" onclick="recover(true)">▶ Continuar donde me quedé</button></div>`);
+  const opts=[...new Set(log.map(e=>e.n).concat(acts.map(a=>a.n)))].map(n=>`<option value="${esc(n)}">`).join('');
+  const sel=`<select id="rSel" class="selx">${pend.length?'<option value="">Elige una actividad…</option>':''}${pend.map((a,i)=>`<option value="${i}">${esc(a.n)} · ${a.m} min</option>`).join('')}<option value="__otra">Otra actividad (escribir)…</option></select>`;
+  modal(`<h1>¿Se borró tu actividad?</h1><div class="muted">Dime cómo iba y la retomo donde te quedaste.</div>
+  <label>Actividad</label>${sel}<input id="rN" list="rList" placeholder="Escribe la actividad" style="display:none;width:100%;margin-top:8px"><datalist id="rList">${opts}</datalist>
+  <label>Tiempo estimado original (min)</label><input id="rP" type="number" inputmode="numeric" placeholder="ej. 40">
+  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora en que empezaste</label><input id="rS" type="time"></div>
+  <div style="flex:1"><label>…o hora en que se acabó el estimado</label><input id="rE" type="time"></div></div>
+  <label>Tiempo extra que agregaste (min)</label><input id="rX" type="number" inputmode="numeric" placeholder="0">
+  <div id="rPrev" class="muted" style="margin-top:12px;min-height:20px"></div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" style="background:#2c2c2e" onclick="recover(false)">Ya la terminé</button></div>
+  <div class="row" style="margin-top:8px"><button class="btn" style="background:#34c759" onclick="recover(true)">▶ Continuar donde me quedé</button></div>`);
   ['rN','rP','rS','rE','rX'].forEach(id=>$(id).addEventListener('input',recPrev));
   $('rSel').addEventListener('change',()=>{const v=$('rSel').value;$('rSel').style.borderColor='';
     if(v==='__otra'){$('rN').style.display='block';$('rN').value='';$('rN').focus()}
@@ -1022,18 +1023,18 @@ function recCalc(){
 }
 function recPrev(){const c=recCalc();if(!c){$('rPrev').textContent='';return}
   const st=new Date(c.S),en=new Date(c.end),f=x=>pad(x.getHours())+':'+pad(x.getMinutes());
-  $('rPrev').innerHTML=`Empezaste a las style>b style="color:#fff">${f(st)}</b> · llevas <b style="color:#fff">${fmtMin(c.el/60)}</b><br>`+
-   (c.left>0?`Tu tiempo termina a las style>b style="color:#fff">${f(en)}</b> · te quedan <b style="color:#34c759">${fmtMin(c.left/60)}</b>`:`Tu tiempo se acabó a las <b style="color:#fff">${f(en)}</b>`)}
+  $('rPrev').innerHTML=`Empezaste a las <b style="color:#fff">${f(st)}</b> · llevas <b style="color:#fff">${fmtMin(c.el/60)}</b><br>`+
+   (c.left>0?`Tu tiempo termina a las <b style="color:#fff">${f(en)}</b> · te quedan <b style="color:#34c759">${fmtMin(c.left/60)}</b>`:`Tu tiempo se acabó a las <b style="color:#fff">${f(en)}</b>`)}
 function recover(cont){
   const c=recCalc();if(!c){if(!$('rN').value)$('rSel').style.borderColor='#ff3b30';['rN','rP'].forEach(id=>{if(!$(id).value)$(id).style.borderColor='#ff3b30'});if(!$('rS').value&&!$('rE').value){$('rS').style.borderColor='#ff3b30';$('rE').style.borderColor='#ff3b30'}return}
   const ma=acts.find(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());cur={n:c.n,plan:c.P,start:c.S,elapsed:c.el,ext:c.X>0?[{pct:null,min:c.X}]:[],id:ma&&ma.id,segs:[{s:c.S,e:null}]};
   closeModal();unlockAudio();
-  if(!cont){save(true);renderLog();modal(`style>h1>Guardado ✅</h1><div class="muted">${esc(c.n)} · ${fmtMin(c.el/60)} reales</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
+  if(!cont){save(true);renderLog();modal(`<h1>Guardado ✅</h1><div class="muted">${esc(c.n)} · ${fmtMin(c.el/60)} reales</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);return}
   const k=acts.findIndex(a=>!a.done&&a.n.toLowerCase()===c.n.toLowerCase());
   queue=k>=0?acts.slice(k).filter(a=>!a.done).map(a=>({...a})):[{n:c.n,m:c.P}];idx=0;queue[0]={n:c.n,m:c.P,id:cur.id};
   inBreak=false;$('run').classList.remove('brk');
   const seg=(c.X>0?c.X:c.P)*60;
-  if(c.leftstyle>=0)cur.elapsed+=c.left;begin(seg,c.left);
+  if(c.left<=0)cur.elapsed+=c.left;begin(seg,c.left);
 }
 function modal(h){$('mCard').innerHTML=h;$('modal').classList.add('on')}
 function closeModal(){stopAlarm();$('modal').classList.remove('on')}
@@ -1072,13 +1073,13 @@ try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthe
 /* ===================== ACTIVIDADES RECURRENTES ===================== */
 const WD=['L','M','M','J','V','S','D'],WDN=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'],NTH={1:'Primer',2:'Segundo',3:'Tercer',4:'Cuarto','-1':'Último'};
 function kDate(k){const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)}
-function occurs(r,k){if(kstyle>r.from||k>r.until)return false;const d=kDate(k),dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),wd=(d.getDay()+6)%7;
+function occurs(r,k){if(k<r.from||k>r.until)return false;const d=kDate(k),dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),wd=(d.getDay()+6)%7;
   if(r.type==='week')return(r.days||[]).includes(wd);
   if(r.type==='monthday')return d.getDate()===Math.min(r.md,dim);
   if(r.type==='nth')return wd===r.wd&&(r.nth>0?Math.ceil(d.getDate()/7)===r.nth:d.getDate()+7>dim);
   return false}
-function recDur(r){if(r.start&&r.end){const [a,b]=r.start.split(':').map(Number),[c,e]=r.end.split(':').map(Number);let m=c*60+e-(a*60+b);if(mstyle>=0)m+=1440;return m}return r.dur||30}
-function materialize(k){if(!k||!recs.length||kstyle>dkey(new Date()))return;let add=false;const l=plans[k]=plans[k]||[];
+function recDur(r){if(r.start&&r.end){const [a,b]=r.start.split(':').map(Number),[c,e]=r.end.split(':').map(Number);let m=c*60+e-(a*60+b);if(m<=0)m+=1440;return m}return r.dur||30}
+function materialize(k){if(!k||!recs.length||k<dkey(new Date()))return;let add=false;const l=plans[k]=plans[k]||[];
   recs.forEach(r=>{if(!occurs(r,k)||(r.skip||[]).includes(k)||l.some(a=>a.rid===r.id&&(a.rk||k)===k))return;
     l.push({n:r.n,m:recDur(r),id:uid(),rid:r.id,rk:k,...(r.start?{t:r.start}:{})});add=true});
   if(add){if(k===planDay)acts=l;try{localStorage.setItem('plans',JSON.stringify(plans))}catch(e){}queueSync()}else if(!l.length)delete plans[k]}
@@ -1086,42 +1087,42 @@ function recSkip(id,k){const r=recs.find(x=>x.id===id);if(!r)return;r.skip=(r.sk
 function recTxt(r){let t=r.type==='week'?((r.days||[]).length===7?'Todos los días':(r.days||[]).length===5&&!r.days.includes(5)&&!r.days.includes(6)?'Lunes a viernes':'Cada '+(r.days||[]).map(i=>WDN[i]).join(', ')):r.type==='monthday'?`Día ${r.md} de cada mes`:`${NTH[r.nth]} ${WDN[r.wd]} de cada mes`;
   return t+(r.start?` · ${fmt12(r.start)}${r.end?'–'+fmt12(r.end):''}`:'')+` · ${fmtMin(recDur(r))}`}
 function recList(){
-  modal(`style>div class="detail"><h1 style="font-size:24px">🔁 Actividades recurrentes</h1>
-  ${recs.length?recs.map(r=>`style>div class="recrow"><div><b>${esc(r.n)}</b><div class="meta">${recTxt(r)}</div><div class="meta">Hasta ${kDate(r.until).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}</div></div><button onclick="recForm('${r.id}')">Editar</button></div>`).join(''):'<div class="muted" style="margin:14px 0">Aún no tienes actividades recurrentes. Por ejemplo: una junta cada lunes a las 9:00.</div>'}
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="recForm()">＋ Nueva</button></div></div>`)}
+  modal(`<div class="detail"><h1 style="font-size:24px">🔁 Actividades recurrentes</h1>
+  ${recs.length?recs.map(r=>`<div class="recrow"><div><b>${esc(r.n)}</b><div class="meta">${recTxt(r)}</div><div class="meta">Hasta ${kDate(r.until).toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}</div></div><button onclick="recForm('${r.id}')">Editar</button></div>`).join(''):'<div class="muted" style="margin:14px 0">Aún no tienes actividades recurrentes. Por ejemplo: una junta cada lunes a las 9:00.</div>'}
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="recForm()">＋ Nueva</button></div></div>`)}
 let rf=null;
 function recForm(id){const r=id?recs.find(x=>x.id===id):null,t=dkey(new Date());
   rf=r?JSON.parse(JSON.stringify(r)):{id:uid(),n:'',type:'week',days:[(new Date().getDay()+6)%7],md:new Date().getDate(),nth:1,wd:(new Date().getDay()+6)%7,start:'',end:'',dur:'',from:t,until:new Date().getFullYear()+'-12-31'};
-  modal(`style>div class="detail"><h1 style="font-size:24px">${r?'Editar':'Nueva'} actividad recurrente</h1>
-  style>label>Actividad</label><input id="rfN" value="${esc(rf.n)}" placeholder="ej. Junta de equipo">
-  style>label>Se repite</label><div class="seg sm" id="rfT"></div><div id="rfOpt"></div>
-  style>div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora de inicio</label><input id="rfS" type="time" value="${rf.start||''}"></div><div style="flex:1"><label>Hora de fin</label><input id="rfE" type="time" value="${rf.end||''}"></div></div>
-  style>label>…o duración (min)</label><input id="rfD" type="number" inputmode="numeric" value="${rf.start&&rf.end?recDur(rf):(rf.dur||'')}" placeholder="ej. 60" style="width:100%">
-  style>div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px"><div><label>Desde</label><input id="rfF" type="date" style="width:100%;min-width:0;box-sizing:border-box" value="${rf.from}"></div><div><label>Hasta</label><input id="rfU" type="date" style="width:100%;min-width:0;box-sizing:border-box" value="${rf.until}"></div></div>
-  style>div class="muted" style="font-size:13px;margin-top:6px">Si no cambias "Hasta", se repite hasta el 31 de diciembre.</div>
-  style>div id="rfPrev" class="ccnote"></div>
-  style>div class="row"><button class="btn gray" onclick="recList()">Cancelar</button><button class="btn" onclick="recSave(${r?'true':'false'})">✓ Guardar</button></div>
-  ${r?`style>button class="linkbtn" style="color:#ff453a;padding:10px 0 0" onclick="recDel('${r.id}')">Eliminar esta actividad recurrente</button>`:''}</div>`);
+  modal(`<div class="detail"><h1 style="font-size:24px">${r?'Editar':'Nueva'} actividad recurrente</h1>
+  <label>Actividad</label><input id="rfN" value="${esc(rf.n)}" placeholder="ej. Junta de equipo">
+  <label>Se repite</label><div class="seg sm" id="rfT"></div><div id="rfOpt"></div>
+  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Hora de inicio</label><input id="rfS" type="time" value="${rf.start||''}"></div><div style="flex:1"><label>Hora de fin</label><input id="rfE" type="time" value="${rf.end||''}"></div></div>
+  <label>…o duración (min)</label><input id="rfD" type="number" inputmode="numeric" value="${rf.start&&rf.end?recDur(rf):(rf.dur||'')}" placeholder="ej. 60" style="width:100%">
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px"><div><label>Desde</label><input id="rfF" type="date" style="width:100%;min-width:0;box-sizing:border-box" value="${rf.from}"></div><div><label>Hasta</label><input id="rfU" type="date" style="width:100%;min-width:0;box-sizing:border-box" value="${rf.until}"></div></div>
+  <div class="muted" style="font-size:13px;margin-top:6px">Si no cambias "Hasta", se repite hasta el 31 de diciembre.</div>
+  <div id="rfPrev" class="ccnote"></div>
+  <div class="row"><button class="btn gray" onclick="recList()">Cancelar</button><button class="btn" onclick="recSave(${r?'true':'false'})">✓ Guardar</button></div>
+  ${r?`<button class="linkbtn" style="color:#ff453a;padding:10px 0 0" onclick="recDel('${r.id}')">Eliminar esta actividad recurrente</button>`:''}</div>`);
   ['rfS','rfE'].forEach(x=>$(x).addEventListener('input',()=>{const s_=$('rfS').value,e_=$('rfE').value;if(s_&&e_)$('rfD').value=recDur({start:s_,end:e_});rfPrev()}));
   $('rfD').addEventListener('input',()=>{const s_=$('rfS').value,d=parseFloat($('rfD').value);if(s_&&d>0){const [a,b]=s_.split(':').map(Number),m=(a*60+b+d)%1440;$('rfE').value=pad(Math.floor(m/60))+':'+pad(m%60)}rfPrev()});
   rfDraw()}
-function rfDraw(){$('rfT').innerHTML=[['week','Días de la semana'],['monthday','Día del mes'],['nth','1er/2º/último…']].map(([k,l])=>`style>button class="${rf.type===k?'on':''}" onclick="rf.type='${k}';rfDraw()">${l}</button>`).join('');
+function rfDraw(){$('rfT').innerHTML=[['week','Días de la semana'],['monthday','Día del mes'],['nth','1er/2º/último…']].map(([k,l])=>`<button class="${rf.type===k?'on':''}" onclick="rf.type='${k}';rfDraw()">${l}</button>`).join('');
   let o='';
-  if(rf.type==='week')o=`style>div class="wdays">${WD.map((d,i)=>`<button class="${rf.days.includes(i)?'on':''}" onclick="rf.days=rf.days.includes(${i})?rf.days.filter(x=>x!==${i}):rf.days.concat(${i}).sort();rfDraw()">${d}</button>`).join('')}</div>`;
-  if(rf.type==='monthday')o=`style>div class="inl">El día <input id="rfMD" type="number" min="1" max="31" value="${rf.md}" oninput="rf.md=+this.value;rfPrev()"> de cada mes</div>`;
-  if(rf.type==='nth')o=`style>div class="inl">El <select class="selx" onchange="rf.nth=+this.value;rfPrev()">${[1,2,3,4,-1].map(n=>`<option value="${n}" ${rf.nth===n?'selected':''}>${NTH[n].toLowerCase()}</option>`).join('')}</select><select class="selx" onchange="rf.wd=+this.value;rfPrev()">${WDN.map((n,i)=>`<option value="${i}" ${rf.wd===i?'selected':''}>${n}</option>`).join('')}</select> de cada mes</div>`;
+  if(rf.type==='week')o=`<div class="wdays">${WD.map((d,i)=>`<button class="${rf.days.includes(i)?'on':''}" onclick="rf.days=rf.days.includes(${i})?rf.days.filter(x=>x!==${i}):rf.days.concat(${i}).sort();rfDraw()">${d}</button>`).join('')}</div>`;
+  if(rf.type==='monthday')o=`<div class="inl">El día <input id="rfMD" type="number" min="1" max="31" value="${rf.md}" oninput="rf.md=+this.value;rfPrev()"> de cada mes</div>`;
+  if(rf.type==='nth')o=`<div class="inl">El <select class="selx" onchange="rf.nth=+this.value;rfPrev()">${[1,2,3,4,-1].map(n=>`<option value="${n}" ${rf.nth===n?'selected':''}>${NTH[n].toLowerCase()}</option>`).join('')}</select><select class="selx" onchange="rf.wd=+this.value;rfPrev()">${WDN.map((n,i)=>`<option value="${i}" ${rf.wd===i?'selected':''}>${n}</option>`).join('')}</select> de cada mes</div>`;
   $('rfOpt').innerHTML=o;rfPrev()}
 function rfRead(){rf.n=$('rfN').value.trim();rf.start=$('rfS').value;rf.end=$('rfE').value;rf.dur=parseFloat($('rfD').value)||0;rf.from=$('rfF').value||dkey(new Date());rf.until=$('rfU').value||(new Date().getFullYear()+'-12-31')}
-function rfPrev(){if(!$('rfPrev'))return;rfRead();const nx=[];let k=rf.from>dkey(new Date())?rf.from:dkey(new Date());for(let i=0;istyle>400&&nx.length<4;i++){if(occurs(rf,k))nx.push(k);k=shiftDay(k,1)}
-  $('rfPrev').innerHTML=nx.length?'Próximas: '+nx.map(k=>`style>b>${kDate(k).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})}</b>`).join(', '):'⚠️ Con estas opciones no cae ningún día.'}
+function rfPrev(){if(!$('rfPrev'))return;rfRead();const nx=[];let k=rf.from>dkey(new Date())?rf.from:dkey(new Date());for(let i=0;i<400&&nx.length<4;i++){if(occurs(rf,k))nx.push(k);k=shiftDay(k,1)}
+  $('rfPrev').innerHTML=nx.length?'Próximas: '+nx.map(k=>`<b>${kDate(k).toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})}</b>`).join(', '):'⚠️ Con estas opciones no cae ningún día.'}
 function recSave(isEdit){rfRead();if(!rf.n){$('rfN').style.borderColor='#ff3b30';return}
   if(rf.type==='week'&&!rf.days.length)return rfPrev();
   if(!(rf.start&&rf.end)&&!(rf.dur>0)){$('rfD').style.borderColor='#ff3b30';return}
   if(rf.start&&rf.end)rf.dur=recDur(rf);
   if(isEdit){recClean(rf.id);recs=recs.map(x=>x.id===rf.id?rf:x)}else recs.push(rf);
   store('recs',recs);setPlanDay(planDay);render();recList();if(rf.start)toast(`🔁 ${esc(rf.n)} guardada. 📅 ¿La agrego a tu Calendario?`,'Sí, agregar',`recCal('${rf.id}')`,10000);else toast(`🔁 ${esc(rf.n)} guardada`)}
-function recClean(id){const t=dkey(new Date());Object.keys(plans).forEach(k=>{if(kstyle>t)return;plans[k]=plans[k].filter(a=>!(a.rid===id&&!a.done&&!a.prog))});cleanPlans();store('plans',plans);setPlanDay(planDay)}
-function recDel(id){modal(`style>h1>¿Eliminar?</h1><div class="muted">Se quitan sus próximas apariciones de tus planes. Lo que ya registraste se queda.</div><div class="row"><button class="btn gray" onclick="recForm('${id}')">Cancelar</button><button class="btn red" onclick="recClean('${id}');recs=recs.filter(x=>x.id!=='${id}');store('recs',recs);render();recList()">Eliminar</button></div>`)}
+function recClean(id){const t=dkey(new Date());Object.keys(plans).forEach(k=>{if(k<t)return;plans[k]=plans[k].filter(a=>!(a.rid===id&&!a.done&&!a.prog))});cleanPlans();store('plans',plans);setPlanDay(planDay)}
+function recDel(id){modal(`<h1>¿Eliminar?</h1><div class="muted">Se quitan sus próximas apariciones de tus planes. Lo que ya registraste se queda.</div><div class="row"><button class="btn gray" onclick="recForm('${id}')">Cancelar</button><button class="btn red" onclick="recClean('${id}');recs=recs.filter(x=>x.id!=='${id}');store('recs',recs);render();recList()">Eliminar</button></div>`)}
 
 
 /* ===== Vista de computadora: tu día proyectado ===== */
@@ -1130,7 +1131,7 @@ function renderPrev(){const box=$('dayPrev');if(!box||!isDesk())return;
   const today=dkey(new Date()),isToday=planDay===today,now=new Date();now.setSeconds(0,0);
   let t0=isToday?now.getTime():(()=>{const d=kDate(planDay);d.setHours(5,0,0,0);return d.getTime()})();
   const live=isToday&&$('run').classList.contains('on'),blocks=[];let t=t0;
-  const push=(n,min,cls,a)=>{if(minstyle>=0&&cls==='brk')return;const st=t;t+=Math.max(min,0)*60000;blocks.push({n,st,en:t,cls,a})};
+  const push=(n,min,cls,a)=>{if(min<=0&&cls==='brk')return;const st=t;t+=Math.max(min,0)*60000;blocks.push({n,st,en:t,cls,a})};
   let skip=null;
   if(live){
     if(inMini){push('Mini descanso',remain/60,'brk');if(cur){skip=cur.id;push(cur.n,(miniSaved?miniSaved.remain:0)/60,'cur',acts.find(x=>x.id===cur.id))}}
@@ -1144,66 +1145,66 @@ function renderPrev(){const box=$('dayPrev');if(!box||!isDesk())return;
   pend.forEach(a=>{const fs=fixAt(a);if(fs!=null){fixed.push({n:a.n,st:fs,en:fs+a.m*60000,cls:'fix',a});return}
     if(blocks.length&&blocks[blocks.length-1].cls!=='brk')push('Descanso',brk,'brk');push(a.n,a.prog?Math.max(0,a.prog.rem)/60:a.m,a.prog?'pau':'',a)});
   const flowEnd=t;fixed.forEach(f=>{blocks.push(f);if(f.en>t)t=f.en});
-  const clash=[];fixed.forEach(f=>blocks.forEach(b=>{if(b!==f&&b.cls!=='brk'&&b.ststyle>f.en&&b.en>f.st)clash.push([f.n,b.n])}));
+  const clash=[];fixed.forEach(f=>blocks.forEach(b=>{if(b!==f&&b.cls!=='brk'&&b.st<f.en&&b.en>f.st)clash.push([f.n,b.n])}));
   const mid=kDate(planDay);mid.setDate(mid.getDate()+1);mid.setHours(0,0,0,0);const midT=mid.getTime();
   const tEnd=Math.max(t,midT),span=(tEnd-t0)/60000;
   const avail=Math.max(300,innerHeight-300),ppm=Math.max(0.6,Math.min(3,avail/Math.max(span,60)));
   const y=ts=>(ts-t0)/60000*ppm;
   let h='';
   for(let k=new Date(t0);;){k.setMinutes(0,0,0);k.setHours(k.getHours()+1);if(k.getTime()>tEnd)break;const kt=k.getTime(),isMid=kt===midT;
-    h+=`style>div class="dph${isMid?' mid':''}" style="top:${y(kt)}px"><span>${isMid?'12 am':fmt12(pad(k.getHours())+':00').replace(':00','')}</span></div>`}
-  if(t>midT)h+=`style>div class="dpnight" style="top:${y(midT)}px;height:${y(t)-y(midT)}px"></div>`;
+    h+=`<div class="dph${isMid?' mid':''}" style="top:${y(kt)}px"><span>${isMid?'12 am':fmt12(pad(k.getHours())+':00').replace(':00','')}</span></div>`}
+  if(t>midT)h+=`<div class="dpnight" style="top:${y(midT)}px;height:${y(t)-y(midT)}px"></div>`;
   // acomodo en columnas cuando se enciman (como en un calendario)
   const vis=blocks.filter(b=>b.cls!=='brk').map(b=>{const top=Math.max(0,y(b.st));b.top=top;b.ht=Math.max(18,y(b.en)-top-2);return b}).sort((a,b)=>a.top-b.top||b.ht-a.ht);
   vis.sort((a,b)=>a.st-b.st||b.en-a.en);
-  let grp=[],gEnd=-1;const flush=()=>{const cols=[];grp.forEach(b=>{let c=cols.findIndex(e=>estyle>=b.st);if(c<0){c=cols.length;cols.push(0)}cols[c]=b.en;b.col=c});grp.forEach(b=>b.ncol=cols.length);grp=[]};
+  let grp=[],gEnd=-1;const flush=()=>{const cols=[];grp.forEach(b=>{let c=cols.findIndex(e=>e<=b.st);if(c<0){c=cols.length;cols.push(0)}cols[c]=b.en;b.col=c});grp.forEach(b=>b.ncol=cols.length);grp=[]};
   vis.forEach(b=>{if(grp.length&&b.st>=gEnd){flush();gEnd=-1}grp.push(b);gEnd=Math.max(gEnd,b.en)});flush();
   // que los bloques cortos no tapen al siguiente de su misma columna
   vis.forEach(b=>{const nx=vis.filter(o=>o!==b&&o.top>b.top&&o.st>=b.en&&(o.ncol>1||b.ncol>1?o.col===b.col:true)).reduce((m,o)=>Math.min(m,o.top),1e9);if(b.top+b.ht+2>nx)b.ht=Math.max(8,nx-b.top-2)});
   blocks.forEach(b=>{const top=b.cls==='brk'?y(b.st):b.top,ht=b.cls==='brk'?Math.max(3,y(b.en)-top):b.ht;
     const pos=b.cls==='brk'||!(b.ncol>1)?'':`left:calc(4px + (100% - 4px) * ${b.col} / ${b.ncol});right:auto;width:calc((100% - 4px) / ${b.ncol} - 3px);`;
     const hhmm=ts=>{const d=new Date(ts);return fmt12(pad(d.getHours())+':'+pad(d.getMinutes()))};
-    if(b.cls==='brk'){h+=`style>div class="dpb brk" style="top:${top}px;height:${ht}px" title="${b.n} ${hhmm(b.st)}–${hhmm(b.en)}">${ht>=14?'☕ '+fmtMin((b.en-b.st)/60000):''}</div>`;return}
+    if(b.cls==='brk'){h+=`<div class="dpb brk" style="top:${top}px;height:${ht}px" title="${b.n} ${hhmm(b.st)}–${hhmm(b.en)}">${ht>=14?'☕ '+fmtMin((b.en-b.st)/60000):''}</div>`;return}
     let late='';if(b.cls==='fix')late='';else if(b.a&&b.a.t){const [hh,mm]=b.a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const diff=Math.round((b.st-d.getTime())/60000);
-      late=diff>5?` style>span class="late">⏰ ${fmt12(b.a.t)} · llegarías ${fmtMin(diff)} tarde</span>`:diff<-5?` <span class="early">⏰ es a las ${fmt12(b.a.t)} · aquí irías ${fmtMin(-diff)} antes</span>`:` <span class="tm">⏰ ${fmt12(b.a.t)}</span>`}
-    const tiny=htstyle>34,min=(b.en-b.st)/60000;
-    h+=`style>div class="dpb ${b.cls}${tiny?' tiny':''}${b.ncol>1?' narrow':''}" style="top:${top}px;height:${ht}px;${pos}" title="${esc(b.n)} · ${hhmm(b.st)}–${hhmm(b.en)}">${tiny?`<b>${esc(b.n)}</b><span class="tm">${hhmm(b.st)}</span>${late}`:`<div class="tm">${hhmm(b.st)}–${hhmm(b.en)} · ${b.cls==='cur'?(inOver?'en tiempo extra':'en curso'):fmtMin(min)}</div><b>${b.a&&b.a.rid?'🔁 ':''}${esc(b.n)}</b>${late?'<div>'+late+'</div>':''}`}</div>`});
+      late=diff>5?` <span class="late">⏰ ${fmt12(b.a.t)} · llegarías ${fmtMin(diff)} tarde</span>`:diff<-5?` <span class="early">⏰ es a las ${fmt12(b.a.t)} · aquí irías ${fmtMin(-diff)} antes</span>`:` <span class="tm">⏰ ${fmt12(b.a.t)}</span>`}
+    const tiny=ht<34,min=(b.en-b.st)/60000;
+    h+=`<div class="dpb ${b.cls}${tiny?' tiny':''}${b.ncol>1?' narrow':''}" style="top:${top}px;height:${ht}px;${pos}" title="${esc(b.n)} · ${hhmm(b.st)}–${hhmm(b.en)}">${tiny?`<b>${esc(b.n)}</b><span class="tm">${hhmm(b.st)}</span>${late}`:`<div class="tm">${hhmm(b.st)}–${hhmm(b.en)} · ${b.cls==='cur'?(inOver?'en tiempo extra':'en curso'):fmtMin(min)}</div><b>${b.a&&b.a.rid?'🔁 ':''}${esc(b.n)}</b>${late?'<div>'+late+'</div>':''}`}</div>`});
   const endD=new Date(t),endTxt=fmt12(pad(endD.getHours())+':'+pad(endD.getMinutes()));
-  const clTxt=clash.length?`style>div class="late" style="color:#ff6961;font-size:13px;margin-top:4px">⚠️ Se te cruza${clash.length>1?'n':''}: ${clash.slice(0,3).map(c=>esc(c[1])+' con '+esc(c[0])).join('; ')}${clash.length>3?'…':''}</div>`:'';
-  const foot=(!blocks.length?'style>div class="muted">No hay actividades pendientes.</div>':
-    t>midT?`Terminarías style>b>${endD.getHours()<5?'en la madrugada':'el día siguiente'}</b> a las <b>${endTxt}</b><div class="muted">Te pasas ${fmtMin((t-midT)/60000)} de la medianoche.</div>`:
-    `Terminarías a las style>b>${endTxt}</b><div class="muted">Te quedan ${fmtMin((midT-t)/60000)} libres antes de la medianoche.</div>`)+clTxt;
+  const clTxt=clash.length?`<div class="late" style="color:#ff6961;font-size:13px;margin-top:4px">⚠️ Se te cruza${clash.length>1?'n':''}: ${clash.slice(0,3).map(c=>esc(c[1])+' con '+esc(c[0])).join('; ')}${clash.length>3?'…':''}</div>`:'';
+  const foot=(!blocks.length?'<div class="muted">No hay actividades pendientes.</div>':
+    t>midT?`Terminarías <b>${endD.getHours()<5?'en la madrugada':'el día siguiente'}</b> a las <b>${endTxt}</b><div class="muted">Te pasas ${fmtMin((t-midT)/60000)} de la medianoche.</div>`:
+    `Terminarías a las <b>${endTxt}</b><div class="muted">Te quedan ${fmtMin((midT-t)/60000)} libres antes de la medianoche.</div>`)+clTxt;
   const sc=box.querySelector('.dpscroll'),st=sc?sc.scrollTop:0;
   const qk=acts.map((a,i)=>({a,i})).filter(o=>o.a.quick&&!o.a.prog&&!o.a.done);
-  box.innerHTML=`style>h3>🕒 Minuto a minuto</h3>${qk.length?`<div class="dpq">${qk.map(o=>`<div class="dpqc" title="${esc(o.a.n)}"><button onclick="toggleDone(${o.i})" title="Marcar como hecha"></button><span>⚡ ${esc(o.a.n)}</span></div>`).join('')}</div>`:'<div style="height:8px"></div>'}
-    style>div class="dpscroll"><div class="dptl" style="height:${y(tEnd)+12}px">${isToday?'<div class="dpnow"><span>Ahora</span></div>':''}${h}</div></div><div class="dpfoot">${foot}</div>`;
+  box.innerHTML=`<h3>🕒 Minuto a minuto</h3>${qk.length?`<div class="dpq">${qk.map(o=>`<div class="dpqc" title="${esc(o.a.n)}"><button onclick="toggleDone(${o.i})" title="Marcar como hecha"></button><span>⚡ ${esc(o.a.n)}</span></div>`).join('')}</div>`:'<div style="height:8px"></div>'}
+    <div class="dpscroll"><div class="dptl" style="height:${y(tEnd)+12}px">${isToday?'<div class="dpnow"><span>Ahora</span></div>':''}${h}</div></div><div class="dpfoot">${foot}</div>`;
   const sc2=box.querySelector('.dpscroll');if(sc2)sc2.scrollTop=st}
 setInterval(()=>{if($('s1').classList.contains('on'))renderPrev()},20000);
 window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))renderPrev()});
 
 /* ===== Backlog (solo computadora) ===== */
 let blDrag=null;
-function overBl(x,y){const b=$('blBox');if(!b||!isDesk())return false;const r=b.getBoundingClientRect();return r.width>0&&x>=r.left-10&&xstyle>=r.right+10}
+function overBl(x,y){const b=$('blBox');if(!b||!isDesk())return false;const r=b.getBoundingClientRect();return r.width>0&&x>=r.left-10&&x<=r.right+10}
 function blHi(on){const b=$('blBox');if(b)b.classList.toggle('dropok',!!on)}
 function renderBl(){renderBlM();const box=$('blBox');if(!box||!isDesk())return;
   if(!box.dataset.init){box.dataset.init=1;
-    box.innerHTML=`style>div class="blhead"><h3>📥 Backlog</h3><a class="picum" href="https://airtable.com/appOfREf0mVgyWXXO/tblZVWZynzvKPNAHg/viwFGlnNqaotDFN3z?blocks=hide" target="_blank" rel="noopener" title="Pendientes de PICUM en Airtable"><img src="picum.png" alt="PICUM"></a></div>
-    style>div class="blin"><input class="n" id="blN" placeholder="Nueva tarea"><input class="m" id="blM" type="number" placeholder="--"><button class="btn" onclick="blAdd()">+</button></div>
-    style>ul id="blList"></ul><div class="blfoot" id="blFoot"></div><div class="wkz" id="wkZone"></div>`;
+    box.innerHTML=`<div class="blhead"><h3>📥 Backlog</h3><a class="picum" href="https://airtable.com/appOfREf0mVgyWXXO/tblZVWZynzvKPNAHg/viwFGlnNqaotDFN3z?blocks=hide" target="_blank" rel="noopener" title="Pendientes de PICUM en Airtable"><img src="picum.png" alt="PICUM"></a></div>
+    <div class="blin"><input class="n" id="blN" placeholder="Nueva tarea"><input class="m" id="blM" type="number" placeholder="--"><button class="btn" onclick="blAdd()">+</button></div>
+    <ul id="blList"></ul><div class="blfoot" id="blFoot"></div><div class="wkz" id="wkZone"></div>`;
     ['blN','blM'].forEach(x=>$(x).addEventListener('keydown',e=>{if(e.key==='Enter')blAdd()}));
   }
-  const now=Date.now(),main=bl.filter(b=>!b.wk),wkl=bl.filter(b=>b.wk).sort((a,b)=>a.wk.kstyle>b.wk.k?-1:a.wk.k>b.wk.k?1:0);
+  const now=Date.now(),main=bl.filter(b=>!b.wk),wkl=bl.filter(b=>b.wk).sort((a,b)=>a.wk.k<b.wk.k?-1:a.wk.k>b.wk.k?1:0);
   const row=(b,inWk)=>{const age=Math.floor((now-(b.c||now))/86400000);
-    return `style>li data-id="${b.id}"><span class="n">${esc(b.n)}${inWk?`<br><span class="wkd">${cap(wkLbl(b.wk.k))}</span>`:age>=7?`<br><span class="age">hace ${age} días</span>`:''}</span><span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')" title="Editar">${b.quick?'⚡ <5 min':b.m+' min'}</span><button class="go" onclick="blToDay('${b.id}')" title="Agregar al final del plan">→</button><button onclick="${inWk?'wkDel':'blDel'}('${b.id}')" title="${inWk?'Quitar del fin de semana':'Borrar'}">✕</button></li>`};
+    return `<li data-id="${b.id}"><span class="n">${esc(b.n)}${inWk?`<br><span class="wkd">${cap(wkLbl(b.wk.k))}</span>`:age>=7?`<br><span class="age">hace ${age} días</span>`:''}</span><span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')" title="Editar">${b.quick?'⚡ <5 min':b.m+' min'}</span><button class="go" onclick="blToDay('${b.id}')" title="Agregar al final del plan">→</button><button onclick="${inWk?'wkDel':'blDel'}('${b.id}')" title="${inWk?'Quitar del fin de semana':'Borrar'}">✕</button></li>`};
   $('blList').innerHTML=main.length?main.map(b=>row(b,false)).join('')
-    :'style>div class="blempty">Vacío. Escribe arriba las tareas que quieras tener a la mano esta semana.</div>';
+    :'<div class="blempty">Vacío. Escribe arriba las tareas que quieras tener a la mano esta semana.</div>';
   const tot=main.reduce((s,b)=>s+(b.quick?5:(+b.m||0)),0);
   $('blFoot').textContent=main.length?`${main.length} tarea${main.length>1?'s':''} · ${fmtMin(tot)}`:'';
-  const [sa,su]=wkDays();const full=wkCount(sa)>=WK_MAX&&wkCount(su)>=WK_MAX;$('wkZone').classList.toggle('full',full);$('wkZone').innerHTML=`style>b>🏖️ Fin de semana</b><div class="wks">${cap(wkLbl(sa))}: ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))}: ${wkCount(su)}/${WK_MAX}${full?' · <span class="fullt">¡Lleno!</span>':''}</div>`+
-    (wkl.length?`style>ul id="wkList">${wkl.map(b=>row(b,true)).join('')}</ul>`:`<div class="wks" style="margin-top:6px">Arrastra aquí para mandarla al ${wkLbl(sa)} o ${wkLbl(su)} · ${WK_MAX} por día</div><ul id="wkList"></ul>`)}
-function dropIdx(y){const lis=[...$('list').querySelectorAll('li')];for(let k=0;kstyle>lis.length;k++){const r=lis[k].getBoundingClientRect();if(y<r.top+r.height/2)return k}return lis.length}
+  const [sa,su]=wkDays();const full=wkCount(sa)>=WK_MAX&&wkCount(su)>=WK_MAX;$('wkZone').classList.toggle('full',full);$('wkZone').innerHTML=`<b>🏖️ Fin de semana</b><div class="wks">${cap(wkLbl(sa))}: ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))}: ${wkCount(su)}/${WK_MAX}${full?' · <span class="fullt">¡Lleno!</span>':''}</div>`+
+    (wkl.length?`<ul id="wkList">${wkl.map(b=>row(b,true)).join('')}</ul>`:`<div class="wks" style="margin-top:6px">Arrastra aquí para mandarla al ${wkLbl(sa)} o ${wkLbl(su)} · ${WK_MAX} por día</div><ul id="wkList"></ul>`)}
+function dropIdx(y){const lis=[...$('list').querySelectorAll('li')];for(let k=0;k<lis.length;k++){const r=lis[k].getBoundingClientRect();if(y<r.top+r.height/2)return k}return lis.length}
 function dropMark(y){const L=$('list'),ix=dropIdx(y),lis=[...L.querySelectorAll('li')];let d=L.querySelector('.dropline');if(!d){d=document.createElement('div');d.className='dropline';L.appendChild(d)}
-  d.style.top=(lis.length?(ixstyle>lis.length?lis[ix].offsetTop-5:lis[lis.length-1].offsetTop+lis[lis.length-1].offsetHeight+2):0)+'px'}
+  d.style.top=(lis.length?(ix<lis.length?lis[ix].offsetTop-5:lis[lis.length-1].offsetTop+lis[lis.length-1].offsetHeight+2):0)+'px'}
 function dropClear(){const d=$('list').querySelector('.dropline');if(d)d.remove();const M=document.querySelector('.s1main');if(M)M.classList.remove('dropzone')}
 function blAdd(){const n=$('blN').value.trim(),m=parseFloat($('blM').value);if(!n)return;const q=!(m>0);
   bl.push({id:uid(),n,m:q?5:m,...(q?{quick:true}:{}),c:Date.now()});$('blN').value='';$('blM').value='';$('blN').focus();store('bl',bl);renderBl()}
@@ -1221,8 +1222,8 @@ function blDel(id){const b=bl.find(x=>x.id===id);if(!b)return;bl=bl.filter(x=>x.
 let lastBlDel=null;
 function wkDel(id){const b=bl.find(x=>x.id===id);if(!b)return;const sn=snap();wkUnlink(b);bl=bl.filter(x=>x.id!==id);store('bl',bl);render();lastSnap=sn;toast(`Quitada del fin de semana: ${esc(b.n)}`,'Deshacer','undoSnap()')}
 function blEdit(id){const b=bl.find(x=>x.id===id);if(!b)return;
-  modal(`style>h1>Editar tarea</h1><label>Tarea</label><input id="beN" value="${esc(b.n)}" style="width:100%"><label>Minutos <small class="muted">(vacío = tarea rápida ⚡)</small></label><input id="beM" type="number" value="${b.quick?'':b.m}" placeholder="--" style="width:100%">
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="blSaveEd('${id}')">Aceptar</button></div>`);setTimeout(()=>$('beN').focus(),50)}
+  modal(`<h1>Editar tarea</h1><label>Tarea</label><input id="beN" value="${esc(b.n)}" style="width:100%"><label>Minutos <small class="muted">(vacío = tarea rápida ⚡)</small></label><input id="beM" type="number" value="${b.quick?'':b.m}" placeholder="--" style="width:100%">
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="blSaveEd('${id}')">Aceptar</button></div>`);setTimeout(()=>$('beN').focus(),50)}
 function blSaveEd(id){const b=bl.find(x=>x.id===id);if(!b)return;const n=$('beN').value.trim(),m=parseFloat($('beM').value);if(!n)return;b.n=n;if(m>0){b.m=m;delete b.quick}else{b.m=5;b.quick=true}store('bl',bl);closeModal();renderBl()}
 window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))renderBl()});
 
@@ -1231,20 +1232,20 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
   let st=null;
   const skip=t=>t.closest('button,input,select,.t,.tchip,.contb,a');
   const itemsOf=(box,ex)=>[...box.querySelectorAll(':scope > li')].filter(x=>x!==ex);
-  const idxAt=(its,y)=>{for(let k=0;kstyle>its.length;k++){const r=its[k].getBoundingClientRect();if(y<r.top+r.height/2)return k}return its.length};
+  const idxAt=(its,y)=>{for(let k=0;k<its.length;k++){const r=its[k].getBoundingClientRect();if(y<r.top+r.height/2)return k}return its.length};
   const line=(box,its,ix)=>{box.querySelectorAll('.dropline').forEach(d=>d.remove());const d=document.createElement('div');d.className='dropline';
-    d.style.top=(its.length?(ixstyle>its.length?its[ix].offsetTop-5:its[its.length-1].offsetTop+its[its.length-1].offsetHeight+1):0)+'px';box.appendChild(d)};
+    d.style.top=(its.length?(ix<its.length?its[ix].offsetTop-5:its[its.length-1].offsetTop+its[its.length-1].offsetHeight+1):0)+'px';box.appendChild(d)};
   const clear=()=>{document.querySelectorAll('.dropline').forEach(d=>d.remove());blHi(false);const W=$('wkZone');if(W)W.classList.remove('over');const P=$('dayPrev');if(P)P.classList.remove('dropnext');const m=document.querySelector('.s1main');if(m)m.classList.remove('dropzone')};
-  const target=(x,y)=>{const W=$('wkZone');if(W){const r=W.getBoundingClientRect();if(r.width&&x>=r.left-6&&xstyle>=r.right+6&&y>=r.top-6&&y<=r.bottom+6)return 'wk'}const B=$('blBox');if(B){const r=B.getBoundingClientRect();if(x<r.right+14)return 'bl'}const M=document.querySelector('.s1main');if(M){const r=M.getBoundingClientRect();if(x>=r.left-14&&x<=r.right+14)return 'plan';if(x>r.right+14)return 'next'}return null};
+  const target=(x,y)=>{const W=$('wkZone');if(W){const r=W.getBoundingClientRect();if(r.width&&x>=r.left-6&&x<=r.right+6&&y>=r.top-6&&y<=r.bottom+6)return 'wk'}const B=$('blBox');if(B){const r=B.getBoundingClientRect();if(x<r.right+14)return 'bl'}const M=document.querySelector('.s1main');if(M){const r=M.getBoundingClientRect();if(x>=r.left-14&&x<=r.right+14)return 'plan';if(x>r.right+14)return 'next'}return null};
   document.addEventListener('mousedown',e=>{if(e.button!==0||!isDesk()||!$('s1').classList.contains('on'))return;
     const li=e.target.closest('#list > li, #blList > li, #wkList > li');if(!li||skip(e.target))return;
     if(li.classList.contains('done')&&li.closest('#list'))return;
     e.preventDefault();const src=li.closest('#list')?'plan':'bl';
     st={li,src,i:src==='plan'?+li.dataset.i:null,id:src==='bl'?li.dataset.id:null,x0:e.clientX,y0:e.clientY,mode:null,ghost:null,tgt:null,ix:0}});
   window.addEventListener('mousemove',e=>{if(!st)return;const dx=e.clientX-st.x0,dy=e.clientY-st.y0;
-    if(!st.mode){if(Math.hypot(dx,dy)style>6)return;
+    if(!st.mode){if(Math.hypot(dx,dy)<6)return;
       if(false){st.mode='swipe';const h=document.createElement('div');h.className='swh r';h.style.top=st.li.offsetTop+'px';h.style.height=st.li.offsetHeight+'px';
-        h.innerHTML=`style>span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span></span>`;$('list').appendChild(h);st.h=h;st.li.classList.add('swiping')}
+        h.innerHTML=`<span class="swr">📅 ${planDay===dkey(new Date())?'Mañana':'Día siguiente'} ›</span><span></span>`;$('list').appendChild(h);st.h=h;st.li.classList.add('swiping')}
       else{st.mode='drag';const r=st.li.getBoundingClientRect();const g=st.li.cloneNode(true);g.classList.add('dghost');g.style.width=r.width+'px';g.style.left=r.left+'px';g.style.top=r.top+'px';
         document.body.appendChild(g);st.ghost=g;st.ox=st.x0-r.left;st.oy=st.y0-r.top;st.li.classList.add('dsrc');document.body.classList.add('dragging')}}
     if(st.mode==='swipe'){const d=Math.max(0,dx);st.li.style.transform=`translateX(${d}px)`;st.h.classList.toggle('go',d>90);return}
@@ -1260,32 +1261,32 @@ window.addEventListener('resize',()=>{if($('s1').classList.contains('on'))render
     s0.ghost.remove();s0.li.classList.remove('dsrc');document.body.classList.remove('dragging');clear();
     const sup=ev=>{ev.stopPropagation();ev.preventDefault()};window.addEventListener('click',sup,{capture:true,once:true});setTimeout(()=>window.removeEventListener('click',sup,{capture:true}),50);
     const t=s0.tgt,ix=s0.ix;if(!t)return;
-    if(s0.src==='plan'&&t==='plan'){const [a]=acts.splice(s0.i,1);const j=s0.ref?acts.indexOf(s0.ref):acts.length;acts.splice(jstyle>0?acts.length:j,0,a);store('acts',acts);render()}
+    if(s0.src==='plan'&&t==='plan'){const [a]=acts.splice(s0.i,1);const j=s0.ref?acts.indexOf(s0.ref):acts.length;acts.splice(j<0?acts.length:j,0,a);store('acts',acts);render()}
     else if(s0.src==='plan'&&t==='bl'){const j=s0.bef?bl.findIndex(x=>x.id===s0.bef):-1;toBacklog(s0.i,j>=0?j:bl.length)}
-    else if(s0.src==='bl'&&t==='plan'){const j=s0.ref?acts.indexOf(s0.ref):acts.length;blToDay(s0.id,jstyle>0?acts.length:j)}
+    else if(s0.src==='bl'&&t==='plan'){const j=s0.ref?acts.indexOf(s0.ref):acts.length;blToDay(s0.id,j<0?acts.length:j)}
     else if(t==='wk'){if(s0.src==='plan')toWeekendPlan(s0.i);else{const b=bl.find(x=>x.id===s0.id);if(b&&!b.wk)toWeekendBl(s0.id)}}
     else if(s0.src==='plan'&&t==='next'){sendTo(s0.i,shiftDay(planDay,1))}
     else if(s0.src==='bl'&&t==='next'){blToDate(s0.id,shiftDay(planDay,1))}
-    else if(s0.src==='bl'&&t==='bl'){const from=bl.findIndex(x=>x.id===s0.id);if(fromstyle>0)return;const sn=snap(),[b]=bl.splice(from,1),was=!!b.wk;if(was){wkUnlink(b);delete b.wk}const j=s0.bef?bl.findIndex(x=>x.id===s0.bef):-1;bl.splice(j>=0?j:bl.length,0,b);store('bl',bl);render();if(was){lastSnap=sn;toast(`${esc(b.n)} regresó al backlog`,'Deshacer','undoSnap()')}}});
+    else if(s0.src==='bl'&&t==='bl'){const from=bl.findIndex(x=>x.id===s0.id);if(from<0)return;const sn=snap(),[b]=bl.splice(from,1),was=!!b.wk;if(was){wkUnlink(b);delete b.wk}const j=s0.bef?bl.findIndex(x=>x.id===s0.bef):-1;bl.splice(j>=0?j:bl.length,0,b);store('bl',bl);render();if(was){lastSnap=sn;toast(`${esc(b.n)} regresó al backlog`,'Deshacer','undoSnap()')}}});
 })();
 
 /* ===== Fin de semana (cuadro amarillo del backlog) ===== */
 const WK_MAX=5;let lastSnap=null;
 function snap(){return JSON.stringify({plans,bl})}
 function undoSnap(){if(!lastSnap)return;const o=JSON.parse(lastSnap);lastSnap=null;plans=o.plans;bl=o.bl;store('plans',plans);store('bl',bl);setPlanDay(planDay);render();hideToast()}
-function wkDays(n){const out=[],d=new Date();d.setHours(12,0,0,0);for(let i=0;istyle>70&&out.length<(n||2);i++){d.setDate(d.getDate()+1);const w=d.getDay();if(w===6||w===0)out.push(dkey(d))}return out}
+function wkDays(n){const out=[],d=new Date();d.setHours(12,0,0,0);for(let i=0;i<70&&out.length<(n||2);i++){d.setDate(d.getDate()+1);const w=d.getDay();if(w===6||w===0)out.push(dkey(d))}return out}
 const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
 function wkLbl(k){const d=kDate(k);return (d.getDay()===6?'sábado ':'domingo ')+d.getDate()}
 function wkCount(k){return (plans[k]||[]).filter(a=>!a.quick).length}
 let wkForce=false,wkPend=null;
-function wkPick(force){const ds=wkDays(force?8:2),k=ds.find(k=>wkCount(k)style>WK_MAX);return k||(force?ds[ds.length-1]:null)}
+function wkPick(force){const ds=wkDays(force?8:2),k=ds.find(k=>wkCount(k)<WK_MAX);return k||(force?ds[ds.length-1]:null)}
 function wkFull(p){wkPend=p;const [sa,su]=wkDays();
-  modal(`style>h1>🏖️ Fin de semana lleno</h1><div class="muted" style="margin:6px 0 4px">Ya tienes ${WK_MAX*2} actividades: ${cap(wkLbl(sa))} ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))} ${wkCount(su)}/${WK_MAX}.</div><div class="muted">¿La mando al siguiente fin de semana?</div>
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="wkNext()">Siguiente fin</button></div>`)}
+  modal(`<h1>🏖️ Fin de semana lleno</h1><div class="muted" style="margin:6px 0 4px">Ya tienes ${WK_MAX*2} actividades: ${cap(wkLbl(sa))} ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))} ${wkCount(su)}/${WK_MAX}.</div><div class="muted">¿La mando al siguiente fin de semana?</div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="wkNext()">Siguiente fin</button></div>`)}
 function wkNext(){closeModal();const p=wkPend;wkPend=null;if(!p)return;wkForce=true;try{if(p.src==='plan'){const i=acts.findIndex(x=>x.id===p.id);if(i>=0)toWeekendPlan(i)}else toWeekendBl(p.id)}finally{wkForce=false}}
 function wkUnlink(b){if(!b||!b.wk)return;const l=plans[b.wk.k];if(l){const j=l.findIndex(x=>x.id===b.wk.pid);if(j>=0&&!l[j].done)l.splice(j,1)}store('plans',plans)}
 function wkClean(){const td=dkey(new Date());let ch=false;
-  bl=bl.filter(b=>{if(!b.wk)return true;if(b.wk.kstyle>=td){ch=true;return false}
+  bl=bl.filter(b=>{if(!b.wk)return true;if(b.wk.k<=td){ch=true;return false}
     if(!(plans[b.wk.k]||[]).some(x=>x.id===b.wk.pid)){delete b.wk;ch=true}return true});
   if(ch)store('bl',bl)}
 function toWeekendPlan(i){const a=acts[i];if(!a||a.done)return;if(!wkForce&&!wkPick())return wkFull({src:'plan',id:a.id});const sn=snap();if(a.rid&&(a.rk||planDay)===planDay)recSkip(a.rid,planDay);
@@ -1302,12 +1303,12 @@ let ntAct='';
 function notesOpen(i){const a=acts[i];if(!a)return;notesOpenName(a.n)}
 function runNote(){const n=(cur&&!cur.rest&&cur.n)||(queue[idx+1]&&queue[idx+1].n)||(queue[idx]&&queue[idx].n);if(n)notesOpenName(n)}
 function notesOpenName(nm){const a={n:nm};ntAct=nm;
-  modal(`style>h1>📝 Notas</h1><div class="muted" style="margin-bottom:8px">${esc(a.n)}</div>
-  style>textarea id="ntTxt" placeholder="¿Qué sientes, qué piensas, qué te está frenando?"></textarea>
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="noteSave()">Guardar</button></div>
-  style>div class="ntl" id="ntList"></div>`);notesDraw();setTimeout(()=>$('ntTxt').focus(),60)}
+  modal(`<h1>📝 Notas</h1><div class="muted" style="margin-bottom:8px">${esc(a.n)}</div>
+  <textarea id="ntTxt" placeholder="¿Qué sientes, qué piensas, qué te está frenando?"></textarea>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="noteSave()">Guardar</button></div>
+  <div class="ntl" id="ntList"></div>`);notesDraw();setTimeout(()=>$('ntTxt').focus(),60)}
 function notesDraw(){const L=$('ntList');if(!L)return;const ns=notes.filter(n=>!n.del&&n.act===ntAct).sort((a,b)=>b.ts-a.ts);
-  L.innerHTML=ns.length?ns.map(n=>{const d=new Date(n.ts);return `style>div class="nti"><div class="nh"><span>${dayName(dkey(d))} · ${hm(n.ts)}</span><button onclick="noteDel('${n.id}')" title="Borrar">✕</button></div><div class="nb">${esc(n.txt)}</div></div>`}).join(''):'<div class="muted" style="font-size:13px">Aún no hay notas de esta actividad.</div>'}
+  L.innerHTML=ns.length?ns.map(n=>{const d=new Date(n.ts);return `<div class="nti"><div class="nh"><span>${dayName(dkey(d))} · ${hm(n.ts)}</span><button onclick="noteDel('${n.id}')" title="Borrar">✕</button></div><div class="nb">${esc(n.txt)}</div></div>`}).join(''):'<div class="muted" style="font-size:13px">Aún no hay notas de esta actividad.</div>'}
 function noteSave(){const t=$('ntTxt').value.trim();if(!t){$('ntTxt').focus();return}
   notes.unshift({id:uid(),ts:Date.now(),txt:t,act:ntAct});store('notes',notes);$('ntTxt').value='';notesDraw();render();toast('📝 Nota guardada')}
 let lastNote=null;
@@ -1323,37 +1324,37 @@ function wvSet(m){wvMode=m;$('wvW').classList.toggle('on',m==='sem');$('wvM').cl
 function wvMove(n){const d=kDate(wvRef);if(wvMode==='sem')d.setDate(d.getDate()+7*n);else{d.setDate(1);d.setMonth(d.getMonth()+n)}wvRef=dkey(d);renderWeek()}
 function wvToday(){wvRef=dkey(new Date());renderWeek()}
 function wvItems(k){materialize(k);const l=plans[k]||[];return wvHide?l.filter(a=>!a.done):l}
-function wvHourH(){return innerWidthstyle>700?40:48}
+function wvHourH(){return innerWidth<700?40:48}
 function renderWeek(){const hb=$('wvHide');if(hb)hb.checked=wvHide;if(wvMode==='mes')return renderMonth();
   const H=wvHourH(),mon=wvMon(wvRef),days=[...Array(7)].map((_,i)=>shiftDay(mon,i)),td=dkey(new Date());
   const d0=kDate(days[0]),d6=kDate(days[6]);
   $('wvLabel').textContent=d0.getMonth()===d6.getMonth()?`${d0.getDate()} – ${d6.getDate()} de ${MES[d6.getMonth()]}`:`${d0.getDate()} ${MES[d0.getMonth()].slice(0,3)} – ${d6.getDate()} ${MES[d6.getMonth()].slice(0,3)}`;
   $('wvHint').textContent='Pica un espacio vacío para crear una actividad de 30 min a esa hora. Pica una actividad para editarla.'+(wvHide?'':' En gris: lo que registraste.');
   const totH=(WV_H1-WV_H0)*H,y=(h,m)=>((h-WV_H0)*60+m)/60*H;
-  let head='style>div class="wkh corner"></div>',all='<div class="wkall lab">sin<br>hora</div>',axis='',cols='';
-  for(let h=WV_H0+1;hstyle>WV_H1;h++)axis+=`<span style="top:${y(h,0)}px">${fmt12(pad(h)+':00').replace(':00','')}</span>`;
-  let lines='';for(let h=WV_H0;hstyle>WV_H1;h++){lines+=`<div class="wkline" style="top:${y(h,0)}px"></div><div class="wkline half" style="top:${y(h,30)}px"></div>`}
+  let head='<div class="wkh corner"></div>',all='<div class="wkall lab">sin<br>hora</div>',axis='',cols='';
+  for(let h=WV_H0+1;h<WV_H1;h++)axis+=`<span style="top:${y(h,0)}px">${fmt12(pad(h)+':00').replace(':00','')}</span>`;
+  let lines='';for(let h=WV_H0;h<WV_H1;h++){lines+=`<div class="wkline" style="top:${y(h,0)}px"></div><div class="wkline half" style="top:${y(h,30)}px"></div>`}
   let planned=0,cnt=0;
   days.forEach((k,di)=>{const d=kDate(k),isT=k===td,items=wvItems(k);
-    head+=`style>div class="wkh${isT?' today':''}">${WD_S[di]}<b>${d.getDate()}</b></div>`;
+    head+=`<div class="wkh${isT?' today':''}">${WD_S[di]}<b>${d.getDate()}</b></div>`;
     const untimed=items.map((a,i)=>({a,i})).filter(o=>!o.a.t);
-    all+=`style>div class="wkall" data-k="${k}">${untimed.map(o=>`<div class="wkchip${o.a.done?' done':''}${o.a.quick?' q':''}" onclick="event.stopPropagation();wvEdit('${k}','${o.a.id}')" title="${esc(o.a.n)}">${o.a.quick?'⚡ ':''}${esc(o.a.n)}</div>`).join('')}</div>`;
+    all+=`<div class="wkall" data-k="${k}">${untimed.map(o=>`<div class="wkchip${o.a.done?' done':''}${o.a.quick?' q':''}" onclick="event.stopPropagation();wvEdit('${k}','${o.a.id}')" title="${esc(o.a.n)}">${o.a.quick?'⚡ ':''}${esc(o.a.n)}</div>`).join('')}</div>`;
     items.forEach(a=>{if(!a.quick){planned+=+a.m||0;cnt++}});
     // registro (gris)
     let lg='';if(!wvHide)log.filter(e=>e.d===k||(e.segs||[]).some(sg=>dkey(new Date(sg.s))===k)).forEach(e=>(e.segs||[]).forEach(sg=>{if(sg.e==null)return;const s0=new Date(sg.s);if(dkey(s0)!==k)return;
       const top=Math.max(0,y(s0.getHours(),s0.getMinutes()+s0.getSeconds()/60)),ht=Math.max(6,(sg.e-sg.s)/60000/60*H);if(top>totH)return;
-      lg+=`style>div class="wklog" style="top:${top}px;height:${Math.min(ht,totH-top)}px">${ht>=16?esc(e.n):''}</div>`}));
+      lg+=`<div class="wklog" style="top:${top}px;height:${Math.min(ht,totH-top)}px">${ht>=16?esc(e.n):''}</div>`}));
     // actividades con hora, en columnas si se enciman
     const ev=items.filter(a=>a.t).map(a=>{const [hh,mm]=a.t.split(':').map(Number),st=hh*60+mm,en=st+(+a.m||30);return {a,st,en,top:Math.max(0,y(hh,mm)),ht:Math.max(18,(+a.m||30)/60*H-2)}}).sort((p,q)=>p.st-q.st||q.en-p.en);
-    let grp=[],gEnd=-1;const flush=()=>{const c=[];grp.forEach(b=>{let j=c.findIndex(e=>estyle>=b.st);if(j<0){j=c.length;c.push(0)}c[j]=b.en;b.col=j});grp.forEach(b=>b.n=c.length);grp=[]};
+    let grp=[],gEnd=-1;const flush=()=>{const c=[];grp.forEach(b=>{let j=c.findIndex(e=>e<=b.st);if(j<0){j=c.length;c.push(0)}c[j]=b.en;b.col=j});grp.forEach(b=>b.n=c.length);grp=[]};
     ev.forEach(b=>{if(grp.length&&b.st>=gEnd){flush();gEnd=-1}grp.push(b);gEnd=Math.max(gEnd,b.en)});flush();
-    const evh=ev.map(b=>{const w=100/b.n;const tiny=b.htstyle>30;
-      return `style>div class="wkev${b.a.done?' done':''}${b.a.rid?' rec':''}" style="top:${b.top}px;height:${b.ht}px;left:calc(${w*b.col}% + 2px);width:calc(${w}% - 4px)" onclick="event.stopPropagation();wvEdit('${k}','${b.a.id}')" title="${esc(b.a.n)} · ${fmt12(b.a.t)} · ${b.a.m} min">${tiny?`<b>${esc(b.a.n)}</b> <span class="tm">${fmt12(b.a.t)}</span>`:`<div class="tm">${fmt12(b.a.t)} · ${b.a.m} min</div><b>${b.a.rid?'🔁 ':''}${esc(b.a.n)}</b>`}</div>`}).join('');
-    let now='';if(isT){const n=new Date(),hy=y(n.getHours(),n.getMinutes());if(hy>=0&&hystyle>=totH)now=`<div class="wknow" style="top:${hy}px"></div>`}
-    cols+=`style>div class="wkcol${isT?' today':''}" data-k="${k}" style="height:${totH}px">${lines}${lg}${evh}${now}<div class="wkghost"></div></div>`});
+    const evh=ev.map(b=>{const w=100/b.n;const tiny=b.ht<30;
+      return `<div class="wkev${b.a.done?' done':''}${b.a.rid?' rec':''}" style="top:${b.top}px;height:${b.ht}px;left:calc(${w*b.col}% + 2px);width:calc(${w}% - 4px)" onclick="event.stopPropagation();wvEdit('${k}','${b.a.id}')" title="${esc(b.a.n)} · ${fmt12(b.a.t)} · ${b.a.m} min">${tiny?`<b>${esc(b.a.n)}</b> <span class="tm">${fmt12(b.a.t)}</span>`:`<div class="tm">${fmt12(b.a.t)} · ${b.a.m} min</div><b>${b.a.rid?'🔁 ':''}${esc(b.a.n)}</b>`}</div>`}).join('');
+    let now='';if(isT){const n=new Date(),hy=y(n.getHours(),n.getMinutes());if(hy>=0&&hy<=totH)now=`<div class="wknow" style="top:${hy}px"></div>`}
+    cols+=`<div class="wkcol${isT?' today':''}" data-k="${k}" style="height:${totH}px">${lines}${lg}${evh}${now}<div class="wkghost"></div></div>`});
   const sc=document.querySelector('#wvBody .wkscroll'),keep=sc?sc.scrollTop:null;
-  $('wvBody').innerHTML=`style>div class="wkscroll"><div class="wk">${head}${all}<div class="wkaxis" style="height:${totH}px">${axis}</div>${cols}</div></div>
-    style>div class="wvsum"><span>${cnt} actividades planeadas</span><span>${fmtMin(planned)} planeado en la semana</span></div>`;
+  $('wvBody').innerHTML=`<div class="wkscroll"><div class="wk">${head}${all}<div class="wkaxis" style="height:${totH}px">${axis}</div>${cols}</div></div>
+    <div class="wvsum"><span>${cnt} actividades planeadas</span><span>${fmtMin(planned)} planeado en la semana</span></div>`;
   const sc2=document.querySelector('#wvBody .wkscroll');
   if(keep!=null)sc2.scrollTop=keep;else{const n=new Date();sc2.scrollTop=Math.max(0,y(Math.max(WV_H0,n.getHours()-2),0))}
   document.querySelectorAll('#wvBody .wkcol').forEach(c=>{const g=c.querySelector('.wkghost');
@@ -1365,50 +1366,50 @@ function renderWeek(){const hb=$('wvHide');if(hb)hb.checked=wvHide;if(wvMode==='
 function renderMonth(){const r=kDate(wvRef);r.setDate(1);const m=r.getMonth(),start=wvMon(dkey(r)),td=dkey(new Date());
   $('wvLabel').textContent=MES[m].charAt(0).toUpperCase()+MES[m].slice(1)+' '+r.getFullYear();
   $('wvHint').textContent='Pica un espacio vacío de un día para crear una actividad de 30 min. Pica el número del día para ver esa semana.';
-  let h=WD_S.map(w=>`style>div class="moh">${w}</div>`).join(''),planned=0,cnt=0;const last=new Date(r.getFullYear(),m+1,0);
+  let h=WD_S.map(w=>`<div class="moh">${w}</div>`).join(''),planned=0,cnt=0;const last=new Date(r.getFullYear(),m+1,0);
   const weeks=Math.ceil((((r.getDay()+6)%7)+last.getDate())/7);
-  for(let i=0;istyle>weeks*7;i++){const k=shiftDay(start,i),d=kDate(k),out=d.getMonth()!==m,items=(out?(plans[k]||[]).filter(a=>!wvHide||!a.done):wvItems(k)).slice().sort((a,b)=>(a.t||'99')<(b.t||'99')?-1:1);
+  for(let i=0;i<weeks*7;i++){const k=shiftDay(start,i),d=kDate(k),out=d.getMonth()!==m,items=(out?(plans[k]||[]).filter(a=>!wvHide||!a.done):wvItems(k)).slice().sort((a,b)=>(a.t||'99')<(b.t||'99')?-1:1);
     if(!out)items.forEach(a=>{if(!a.quick){planned+=+a.m||0;cnt++}});
     const show=items.slice(0,4);
-    h+=`style>div class="mocell${out?' out':''}${k===td?' today':''}" data-k="${k}"><span class="mon" onclick="event.stopPropagation();wvRef='${k}';wvSet('sem')">${d.getDate()}</span>${show.map(a=>`<div class="wkchip${a.done?' done':''}${a.quick?' q':''}" onclick="event.stopPropagation();wvEdit('${k}','${a.id}')" title="${esc(a.n)}">${a.t?`<span style="color:#8fb8e8">${fmt12(a.t).replace(' ','')}</span> `:''}${a.quick?'⚡ ':''}${esc(a.n)}</div>`).join('')}${items.length>4?`<div class="momore">+${items.length-4} más</div>`:''}</div>`}
-  $('wvBody').innerHTML=`style>div class="mo">${h}</div><div class="wvsum"><span>${cnt} actividades planeadas</span><span>${fmtMin(planned)} planeado en el mes</span></div>`;
+    h+=`<div class="mocell${out?' out':''}${k===td?' today':''}" data-k="${k}"><span class="mon" onclick="event.stopPropagation();wvRef='${k}';wvSet('sem')">${d.getDate()}</span>${show.map(a=>`<div class="wkchip${a.done?' done':''}${a.quick?' q':''}" onclick="event.stopPropagation();wvEdit('${k}','${a.id}')" title="${esc(a.n)}">${a.t?`<span style="color:#8fb8e8">${fmt12(a.t).replace(' ','')}</span> `:''}${a.quick?'⚡ ':''}${esc(a.n)}</div>`).join('')}${items.length>4?`<div class="momore">+${items.length-4} más</div>`:''}</div>`}
+  $('wvBody').innerHTML=`<div class="mo">${h}</div><div class="wvsum"><span>${cnt} actividades planeadas</span><span>${fmtMin(planned)} planeado en el mes</span></div>`;
   document.querySelectorAll('#wvBody .mocell').forEach(c=>c.addEventListener('click',e=>{if(e.target.closest('.wkchip,.mon,.momore'))return;wvCreate(c.dataset.k,null)}))}
 function wvCreate(k,t){const it={n:'Nueva actividad',m:30,id:uid(),...(t?{t}:{})};plans[k]=plans[k]||[];plans[k].push(it);store('plans',plans);setPlanDay(planDay);renderWeek();wvEdit(k,it.id,true)}
 function wvEdit(k,id,isNew){const a=(plans[k]||[]).find(x=>x.id===id);if(!a)return;
-  modal(`style>h1>${isNew?'Nueva actividad':'Editar actividad'}</h1><div class="muted" style="margin-bottom:6px">${cap(dayName(k))}${isNew?' · ya quedó guardada':''}</div>
-  style>label>Actividad</label><input id="wvN" value="${esc(a.n)}" style="width:100%">
-  style>div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label>Minutos</label><input id="wvMin" type="number" value="${a.quick?'':a.m}" placeholder="--" style="width:100%;box-sizing:border-box"></div>
-  style>div><label>Hora <small class="muted">(opcional)</small></label><input id="wvT" type="time" value="${a.t||''}" style="width:100%;box-sizing:border-box"></div></div>
-  style>div class="row"><button class="btn gray" style="color:#ff453a" onclick="wvDel('${k}','${id}')">Borrar</button><button class="btn" onclick="wvSave('${k}','${id}')">Aceptar</button></div>`);
+  modal(`<h1>${isNew?'Nueva actividad':'Editar actividad'}</h1><div class="muted" style="margin-bottom:6px">${cap(dayName(k))}${isNew?' · ya quedó guardada':''}</div>
+  <label>Actividad</label><input id="wvN" value="${esc(a.n)}" style="width:100%">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label>Minutos</label><input id="wvMin" type="number" value="${a.quick?'':a.m}" placeholder="--" style="width:100%;box-sizing:border-box"></div>
+  <div><label>Hora <small class="muted">(opcional)</small></label><input id="wvT" type="time" value="${a.t||''}" style="width:100%;box-sizing:border-box"></div></div>
+  <div class="row"><button class="btn gray" style="color:#ff453a" onclick="wvDel('${k}','${id}')">Borrar</button><button class="btn" onclick="wvSave('${k}','${id}')">Aceptar</button></div>`);
   setTimeout(()=>{const n=$('wvN');n.focus();if(isNew)n.select();[n,$('wvMin')].forEach(x=>x.addEventListener('keydown',e=>{if(e.key==='Enter')wvSave(k,id)}))},60)}
 function wvSave(k,id){const a=(plans[k]||[]).find(x=>x.id===id);if(!a)return closeModal();const n=$('wvN').value.trim()||a.n,m=parseFloat($('wvMin').value),t=$('wvT').value;
   a.n=n;if(m>0){a.m=m;delete a.quick}else{a.m=5;a.quick=true}if(t)a.t=t;else delete a.t;delete a.warned30;store('plans',plans);setPlanDay(planDay);closeModal();renderWeek()}
-function wvDel(k,id){const l=plans[k]||[],j=l.findIndex(x=>x.id===id);if(jstyle>0)return closeModal();const sn=snap(),a=l[j];if(a.rid)recSkip(a.rid,a.rk||k);l.splice(j,1);store('plans',plans);setPlanDay(planDay);closeModal();renderWeek();
+function wvDel(k,id){const l=plans[k]||[],j=l.findIndex(x=>x.id===id);if(j<0)return closeModal();const sn=snap(),a=l[j];if(a.rid)recSkip(a.rid,a.rk||k);l.splice(j,1);store('plans',plans);setPlanDay(planDay);closeModal();renderWeek();
   lastSnap=sn;toast(`Borrada: ${esc(a.n)}`,'Deshacer','undoSnap();renderWeek()')}
 setInterval(()=>{if($('s4').classList.contains('on')&&wvMode==='sem'&&!$('modal').classList.contains('on'))renderWeek()},60000);
 
 /* ===== Mini calendario + "Nueva actividad" estilo iPhone ===== */
 function drawMcal(){const b=$('mcal');if(!b)return;const n=new Date(),y=n.getFullYear(),m=n.getMonth(),first=(new Date(y,m,1).getDay()+6)%7,dim=new Date(y,m+1,0).getDate();
-  let g=['L','M','M','J','V','S','D'].map(x=>`style>span class="w">${x}</span>`).join('');for(let i=0;i<first;i++)g+='<span class="o">.</span>';
-  for(let d=1;dstyle>=dim;d++)g+=`<span${d===n.getDate()?' class="t"':''}>${d}</span>`;
-  b.innerHTML=`style>div class="mh">${MES[m]}<i>＋</i></div><div class="mg">${g}</div><div class="mi"><span class="wd">${WD_S[(n.getDay()+6)%7]}</span><span class="d">${n.getDate()}</span></div>`}
+  let g=['L','M','M','J','V','S','D'].map(x=>`<span class="w">${x}</span>`).join('');for(let i=0;i<first;i++)g+='<span class="o">.</span>';
+  for(let d=1;d<=dim;d++)g+=`<span${d===n.getDate()?' class="t"':''}>${d}</span>`;
+  b.innerHTML=`<div class="mh">${MES[m]}<i>＋</i></div><div class="mg">${g}</div><div class="mi"><span class="wd">${WD_S[(n.getDay()+6)%7]}</span><span class="d">${n.getDate()}</span></div>`}
 function newEvent(){const td=dkey(new Date()),def=planDay>td?planDay:td,n=new Date();n.setMinutes(0,0,0);n.setHours(n.getHours()+1);const st=pad(n.getHours())+':00',en=pad(n.getHours())+':30';
-  modal(`style>div class="ev"><div class="evtop"><button onclick="closeModal()">Cancelar</button><b>Nueva actividad</b><button class="add" id="evAdd" onclick="evSave()" disabled>Agregar</button></div>
-  style>div class="evg"><div class="evr"><input class="full" id="evN" placeholder="Título" list="known" autocomplete="off"></div></div>
-  style>div class="evg">
-    style>div class="evr"><span>Sin hora</span><label class="sw"><input type="checkbox" id="evAll" onchange="evUpd()"><span></span></label></div>
-    style>div class="evr"><span>Fecha</span><input type="date" id="evD" value="${def}"></div>
-    style>div class="evr evt"><span>Empieza</span><input type="time" id="evS" value="${st}" oninput="evLink('s')"></div>
-    style>div class="evr evt"><span>Termina</span><input type="time" id="evE" value="${en}" oninput="evLink('e')"></div>
-    style>div class="evr"><span>Duración</span><span><input class="dur" type="number" id="evM" value="30" min="1" oninput="evLink('m')"> min</span></div>
-    style>div class="evr evq">${[30,40,60,120,180].map(v=>`<button type="button" data-v="${v}" class="${v===30?'on':''}" onclick="evQuick(${v})">${v<60?v+' min':v/60+' h'}</button>`).join('')}</div>
-  style>/div>
-  style>div class="evg">
-    style>div class="evr"><span>Repetir</span><select id="evR" onchange="evUpd()"><option value="no">Nunca</option><option value="day">Cada día</option><option value="wkday">Entre semana (L–V)</option><option value="week">Cada semana</option><option value="month">Cada mes</option><option value="custom">Personalizar…</option></select></div>
-    style>div class="evr hide" id="evUr"><span>Termina la repetición</span><input type="date" id="evU" placeholder="fin de año"></div>
-  style>/div>
-  style>div class="evg"><div class="evr"><textarea id="evNote" placeholder="Notas"></textarea></div></div>
-  style>button type="button" class="evbl" onclick="evToBacklog()">📥 Agregar a Backlog</button></div>`);
+  modal(`<div class="ev"><div class="evtop"><button onclick="closeModal()">Cancelar</button><b>Nueva actividad</b><button class="add" id="evAdd" onclick="evSave()" disabled>Agregar</button></div>
+  <div class="evg"><div class="evr"><input class="full" id="evN" placeholder="Título" list="known" autocomplete="off"></div></div>
+  <div class="evg">
+    <div class="evr"><span>Sin hora</span><label class="sw"><input type="checkbox" id="evAll" onchange="evUpd()"><span></span></label></div>
+    <div class="evr"><span>Fecha</span><input type="date" id="evD" value="${def}"></div>
+    <div class="evr evt"><span>Empieza</span><input type="time" id="evS" value="${st}" oninput="evLink('s')"></div>
+    <div class="evr evt"><span>Termina</span><input type="time" id="evE" value="${en}" oninput="evLink('e')"></div>
+    <div class="evr"><span>Duración</span><span><input class="dur" type="number" id="evM" value="30" min="1" oninput="evLink('m')"> min</span></div>
+    <div class="evr evq">${[30,40,60,120,180].map(v=>`<button type="button" data-v="${v}" class="${v===30?'on':''}" onclick="evQuick(${v})">${v<60?v+' min':v/60+' h'}</button>`).join('')}</div>
+  </div>
+  <div class="evg">
+    <div class="evr"><span>Repetir</span><select id="evR" onchange="evUpd()"><option value="no">Nunca</option><option value="day">Cada día</option><option value="wkday">Entre semana (L–V)</option><option value="week">Cada semana</option><option value="month">Cada mes</option><option value="custom">Personalizar…</option></select></div>
+    <div class="evr hide" id="evUr"><span>Termina la repetición</span><input type="date" id="evU" placeholder="fin de año"></div>
+  </div>
+  <div class="evg"><div class="evr"><textarea id="evNote" placeholder="Notas"></textarea></div></div>
+  <button type="button" class="evbl" onclick="evToBacklog()">📥 Agregar a Backlog</button></div>`);
   $('evN').addEventListener('input',()=>{$('evAdd').disabled=!$('evN').value.trim()});$('evN').addEventListener('keydown',e=>{if(e.key==='Enter'&&$('evN').value.trim())evSave()});
   setTimeout(()=>$('evN').focus(),60)}
 function evHi(){const v=parseFloat($('evM')&&$('evM').value);document.querySelectorAll('.evq button').forEach(b=>b.classList.toggle('on',+b.dataset.v===v))}
@@ -1421,7 +1422,7 @@ function evUpd(){const all=$('evAll').checked;document.querySelectorAll('.evt').
   $('evUr').classList.toggle('hide',r==='no')}
 function evLink(w){setTimeout(evHi,0);const s=$('evS').value,e=$('evE').value,m=parseFloat($('evM').value);const tm=x=>{const [h,mm]=x.split(':').map(Number);return h*60+mm},ft=v=>{v=((v%1440)+1440)%1440;return pad(Math.floor(v/60))+':'+pad(v%60)};
   if((w==='s'||w==='m')&&s&&m>0)$('evE').value=ft(tm(s)+m);
-  else if(w==='e'&&s&&e){let d=tm(e)-tm(s);if(dstyle>=0)d+=1440;$('evM').value=d}}
+  else if(w==='e'&&s&&e){let d=tm(e)-tm(s);if(d<=0)d+=1440;$('evM').value=d}}
 function evSave(){const n=$('evN').value.trim();if(!n){$('evN').focus();return}const k=$('evD').value||dkey(new Date()),all=$('evAll').checked,s=all?'':$('evS').value,e=all?'':$('evE').value,m=Math.max(1,parseFloat($('evM').value)||30),r=$('evR').value,note=$('evNote').value.trim();
   let msg;
   let askId=null,askRec=null;if(r==='no'){const it={n,m,id:uid(),...(s?{t:s}:{})};plans[k]=plans[k]||[];plans[k].push(it);store('plans',plans);msg=`Agregada a ${dayName(k)}${s?' a las '+fmt12(s):''}`;if(s)askId=it.id}
@@ -1446,22 +1447,22 @@ function dnInput(){const k=dnDay||selDay,v=$('dnTxt').value;$('dnSt').textConten
 ['bmN','bmM'].forEach(x=>{const e=$(x);if(e)e.addEventListener('keydown',ev=>{if(ev.key==='Enter')bmAdd()})});
 function bmAdd(){const n=$('bmN').value.trim(),m=parseFloat($('bmM').value);if(!n)return;const q=!(m>0);
   bl.push({id:uid(),n,m:q?5:m,...(q?{quick:true}:{}),c:Date.now()});$('bmN').value='';$('bmM').value='';store('bl',bl);renderBlM();$('bmN').focus()}
-function renderBlM(){const L=$('bmList');if(!L)return;const now=Date.now(),main=bl.filter(b=>!b.wk),wkl=bl.filter(b=>b.wk).sort((a,b)=>a.wk.kstyle>b.wk.k?-1:1);
-  const pill=b=>`style>span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')">${b.quick?'⚡ <5 min':b.m+' min'}</span>`;
+function renderBlM(){const L=$('bmList');if(!L)return;const now=Date.now(),main=bl.filter(b=>!b.wk),wkl=bl.filter(b=>b.wk).sort((a,b)=>a.wk.k<b.wk.k?-1:1);
+  const pill=b=>`<span class="t${b.quick?' quick':''}" onclick="blEdit('${b.id}')">${b.quick?'⚡ <5 min':b.m+' min'}</span>`;
   const dn=planDay===dkey(new Date())?'hoy':dayName(planDay);
   L.innerHTML=main.length?main.map(b=>{const age=Math.floor((now-(b.c||now))/86400000);
-    return `style>li><span class="n">${esc(b.n)}${age>=7?`<br><span class="age" style="font-size:12px;color:#ffb340">hace ${age} días</span>`:''}</span>${pill(b)}<button class="bmb wkb" onclick="toWeekendBl('${b.id}')" title="Al fin de semana">🏖️</button><button class="bmb go" onclick="blToDay('${b.id}')" title="Pasar a ${dn}">→</button><button class="bmb x" onclick="blDel('${b.id}')">✕</button></li>`}).join('')
-    :'style>div class="blempty">Vacío. Escribe arriba las tareas que quieras tener a la mano esta semana.</div>';
+    return `<li><span class="n">${esc(b.n)}${age>=7?`<br><span class="age" style="font-size:12px;color:#ffb340">hace ${age} días</span>`:''}</span>${pill(b)}<button class="bmb wkb" onclick="toWeekendBl('${b.id}')" title="Al fin de semana">🏖️</button><button class="bmb go" onclick="blToDay('${b.id}')" title="Pasar a ${dn}">→</button><button class="bmb x" onclick="blDel('${b.id}')">✕</button></li>`}).join('')
+    :'<div class="blempty">Vacío. Escribe arriba las tareas que quieras tener a la mano esta semana.</div>';
   const tot=main.reduce((s,b)=>s+(b.quick?5:(+b.m||0)),0);$('bmFoot').textContent=main.length?`${main.length} tarea${main.length>1?'s':''} · ${fmtMin(tot)} · → las pasa a ${dn}`:'';
   const [sa,su]=wkDays(),full=wkCount(sa)>=WK_MAX&&wkCount(su)>=WK_MAX;const W=$('bmWk');W.classList.toggle('full',full);
-  W.innerHTML=`style>b>🏖️ Fin de semana</b><div class="wks">${cap(wkLbl(sa))}: ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))}: ${wkCount(su)}/${WK_MAX}${full?' · <span class="fullt">¡Lleno!</span>':''}</div>`+
-    (wkl.length?`style>ul id="bmWkL">${wkl.map(b=>`<li><span class="n">${esc(b.n)}<br><span class="wkd">${cap(wkLbl(b.wk.k))}</span></span>${pill(b)}<button class="bmb go" onclick="blToDay('${b.id}')">→</button><button class="bmb x" onclick="wkDel('${b.id}')">✕</button></li>`).join('')}</ul>`:`<div class="wks" style="margin-top:6px">Pícale 🏖️ a una tarea para mandarla al ${wkLbl(sa)} o ${wkLbl(su)}.</div>`)}
+  W.innerHTML=`<b>🏖️ Fin de semana</b><div class="wks">${cap(wkLbl(sa))}: ${wkCount(sa)}/${WK_MAX} · ${cap(wkLbl(su))}: ${wkCount(su)}/${WK_MAX}${full?' · <span class="fullt">¡Lleno!</span>':''}</div>`+
+    (wkl.length?`<ul id="bmWkL">${wkl.map(b=>`<li><span class="n">${esc(b.n)}<br><span class="wkd">${cap(wkLbl(b.wk.k))}</span></span>${pill(b)}<button class="bmb go" onclick="blToDay('${b.id}')">→</button><button class="bmb x" onclick="wkDel('${b.id}')">✕</button></li>`).join('')}</ul>`:`<div class="wks" style="margin-top:6px">Pícale 🏖️ a una tarea para mandarla al ${wkLbl(sa)} o ${wkLbl(su)}.</div>`)}
 
 /* ===== Reset: borra el último bloque de una actividad pausada ===== */
 function resetLast(i){const a=acts[i];if(!a||!a.prog)return;const sn=snap(),p=a.prog;const segs=normSegs(p.segs||[]).filter(x=>x.e!=null);let msg;
   if(segs.length){const l=segs.pop(),d=(l.e-l.s)/1000;p.el=Math.max(0,(p.el||0)-d);p.rem=(p.rem||0)+d;p.segs=segs;msg=`↺ Borrado el bloque ${hm(l.s)}–${hm(l.e)} de ${esc(a.n)}`}
   else{p.el=0;msg=`↺ ${esc(a.n)} regresó a cero`}
-  if(!p.segs||!p.segs.length||p.elstyle>1){delete a.prog;msg+=segs.length?'':' · quedó sin empezar'}
+  if(!p.segs||!p.segs.length||p.el<1){delete a.prog;msg+=segs.length?'':' · quedó sin empezar'}
   store('acts',acts);render();if($('s2').classList.contains('on'))renderLog();lastSnap=sn;toast(msg,'Deshacer','undoSnap()',8000)}
 
 /* ===== Barra superior del temporizador: fecha + bloques, inicio editable ===== */
@@ -1469,33 +1470,33 @@ function runTopUpd(){const el=$('runTop');if(!el)return;
   if(!cur||cur.rest||inBreak||inMini||!$('run').classList.contains('on')){if(el._k!==''){el._k='';el.innerHTML='';el.style.display='none'}return}
   const sg=normSegs(cur.segs||[]);if(!sg.length){el.style.display='none';return}el.style.display='';
   const last=sg[sg.length-1],d=new Date(last.s);
-  const prev=sg.slice(0,-1).map((b,k)=>`style>button class="rtb" onclick="editBlock(${k})" title="Editar este bloque">${hm(b.s)}–${hm(b.e)} <i>✎</i></button>`).join('');
-  const html=`style>span class="rtd">${cap(dayName(dkey(d)))} · ${d.getDate()} ${MES[d.getMonth()].slice(0,3)}</span>${prev}<button class="rtb cur" onclick="editBlockStart()" title="Corregir la hora de inicio de este bloque">▶ ${hm(last.s)}${last.e!=null?'–'+hm(last.e):' · en curso'} <i>✎</i></button>`;if(el._k!==html){el._k=html;el.innerHTML=html}}
+  const prev=sg.slice(0,-1).map((b,k)=>`<button class="rtb" onclick="editBlock(${k})" title="Editar este bloque">${hm(b.s)}–${hm(b.e)} <i>✎</i></button>`).join('');
+  const html=`<span class="rtd">${cap(dayName(dkey(d)))} · ${d.getDate()} ${MES[d.getMonth()].slice(0,3)}</span>${prev}<button class="rtb cur" onclick="editBlockStart()" title="Corregir la hora de inicio de este bloque">▶ ${hm(last.s)}${last.e!=null?'–'+hm(last.e):' · en curso'} <i>✎</i></button>`;if(el._k!==html){el._k=html;el.innerHTML=html}}
 function editBlockStart(){const sg=normSegs(cur&&cur.segs||[]);if(!sg.length)return;const l=sg[sg.length-1],d=new Date(l.s);
-  modal(`style>h1>Inicio de este bloque</h1><div class="muted" style="margin-bottom:8px">${esc(cur.n)} · ${cap(dayName(dkey(d)))}</div>
-  style>input type="time" id="ebT" value="${pad(d.getHours())}:${pad(d.getMinutes())}" style="width:100%;font-size:28px;text-align:center">
-  style>div class="muted" id="ebMsg" style="margin-top:8px;font-size:14px;min-height:18px"></div>
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="saveBlockStart()">Guardar</button></div>`);
+  modal(`<h1>Inicio de este bloque</h1><div class="muted" style="margin-bottom:8px">${esc(cur.n)} · ${cap(dayName(dkey(d)))}</div>
+  <input type="time" id="ebT" value="${pad(d.getHours())}:${pad(d.getMinutes())}" style="width:100%;font-size:28px;text-align:center">
+  <div class="muted" id="ebMsg" style="margin-top:8px;font-size:14px;min-height:18px"></div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="saveBlockStart()">Guardar</button></div>`);
   setTimeout(()=>$('ebT').focus(),60)}
 function editBlock(k){const sg=normSegs(cur&&cur.segs||[]),b=sg[k];if(!b||b.e==null)return;const ds=new Date(b.s),de=new Date(b.e);const f=d=>pad(d.getHours())+':'+pad(d.getMinutes());
-  modal(`style>h1>Editar bloque</h1><div class="muted" style="margin-bottom:8px">${esc(cur.n)} · ${cap(dayName(dkey(ds)))}</div>
-  style>div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label>Inicio</label><input type="time" id="bkS" value="${f(ds)}" style="width:100%;box-sizing:border-box;font-size:22px;text-align:center"></div>
-  style>div><label>Fin</label><input type="time" id="bkE" value="${f(de)}" style="width:100%;box-sizing:border-box;font-size:22px;text-align:center"></div></div>
-  style>div class="muted" id="bkMsg" style="margin-top:8px;font-size:14px;min-height:18px"></div>
-  style>div class="row"><button class="btn gray" style="color:#ff453a" onclick="delBlock(${k})">Borrar bloque</button><button class="btn" onclick="saveBlock(${k})">Guardar</button></div>
-  style>div style="text-align:center"><button class="linkbtn" onclick="closeModal()">Cancelar</button></div>`)}
+  modal(`<h1>Editar bloque</h1><div class="muted" style="margin-bottom:8px">${esc(cur.n)} · ${cap(dayName(dkey(ds)))}</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label>Inicio</label><input type="time" id="bkS" value="${f(ds)}" style="width:100%;box-sizing:border-box;font-size:22px;text-align:center"></div>
+  <div><label>Fin</label><input type="time" id="bkE" value="${f(de)}" style="width:100%;box-sizing:border-box;font-size:22px;text-align:center"></div></div>
+  <div class="muted" id="bkMsg" style="margin-top:8px;font-size:14px;min-height:18px"></div>
+  <div class="row"><button class="btn gray" style="color:#ff453a" onclick="delBlock(${k})">Borrar bloque</button><button class="btn" onclick="saveBlock(${k})">Guardar</button></div>
+  <div style="text-align:center"><button class="linkbtn" onclick="closeModal()">Cancelar</button></div>`)}
 function blockApply(delta){cur.elapsed=Math.max(0,cur.elapsed+delta);if(!inOver)remain-=delta;cur.segs=normSegs(cur.segs);if(cur.segs.length)cur.start=cur.segs[0].s;saveRun();closeModal();draw&&draw();runTopUpd()}
 function saveBlock(k){cur.segs=normSegs(cur.segs);const sg=cur.segs,b=sg[k];if(!b)return;const mk=(v,base)=>{const d=new Date(base);const [h,m]=v.split(':').map(Number);d.setHours(h,m,0,0);return d.getTime()};
-  const sv=$('bkS').value,ev=$('bkE').value;if(!sv||!ev)return;let ns=mk(sv,b.s),ne=mk(ev,b.e);if(nestyle>=ns&&new Date(b.e).getDate()!==new Date(b.s).getDate())ne+=0;
-  const msg=t=>{$('bkMsg').innerHTML='style>span style="color:#ff453a">'+t+'</span>'};
-  if(nestyle>=ns)return msg('El fin tiene que ser después del inicio.');
-  const pv=sg[k-1],nx=sg[k+1];if(pv&&nsstyle>pv.e)return msg('Se encima con el bloque anterior ('+hm(pv.s)+'–'+hm(pv.e)+').');if(nx&&ne>nx.s)return msg('Se encima con el bloque siguiente ('+hm(nx.s)+(nx.e!=null?'–'+hm(nx.e):'')+').');
+  const sv=$('bkS').value,ev=$('bkE').value;if(!sv||!ev)return;const ns=mk(sv,b.s),ne=mk(ev,b.e);
+  const msg=t=>{$('bkMsg').innerHTML='<span style="color:#ff453a">'+t+'</span>'};
+  if(ne<=ns)return msg('El fin tiene que ser después del inicio.');
+  const pv=sg[k-1],nx=sg[k+1];if(pv&&ns<pv.e)return msg('Se encima con el bloque anterior ('+hm(pv.s)+'–'+hm(pv.e)+').');if(nx&&ne>nx.s)return msg('Se encima con el bloque siguiente ('+hm(nx.s)+(nx.e!=null?'–'+hm(nx.e):'')+').');
   const delta=((ne-ns)-(b.e-b.s))/1000;b.s=ns;b.e=ne;blockApply(delta);toast(`Bloque ajustado: ${hm(ns)}–${hm(ne)} (${delta>=0?'+':''}${Math.round(delta/60)} min)`)}
 function delBlock(k){cur.segs=normSegs(cur.segs);const b=cur.segs[k];if(!b)return;const d=(b.e-b.s)/1000;cur.segs.splice(k,1);blockApply(-d);toast(`Bloque ${hm(b.s)}–${hm(b.e)} borrado (−${Math.round(d/60)} min)`)}
 function saveBlockStart(){const v=$('ebT').value;if(!v)return;cur.segs=normSegs(cur.segs);const sg=cur.segs,l=sg[sg.length-1],d=new Date(l.s);const [h,m]=v.split(':').map(Number);d.setHours(h,m,0,0);let ns=d.getTime();
   const lim=l.e!=null?l.e:Date.now(),prevEnd=sg.length>1?sg[sg.length-2].e:-Infinity;
-  if(ns>lim){$('ebMsg').innerHTML='style>span style="color:#ff453a">No puede ser después de '+(l.e!=null?'que terminó el bloque':'ahora')+'.</span>';return}
-  if(nsstyle>prevEnd){$('ebMsg').innerHTML='<span style="color:#ff453a">Se encima con el bloque anterior ('+hm(sg[sg.length-2].s)+'–'+hm(prevEnd)+').</span>';return}
+  if(ns>lim){$('ebMsg').innerHTML='<span style="color:#ff453a">No puede ser después de '+(l.e!=null?'que terminó el bloque':'ahora')+'.</span>';return}
+  if(ns<prevEnd){$('ebMsg').innerHTML='<span style="color:#ff453a">Se encima con el bloque anterior ('+hm(sg[sg.length-2].s)+'–'+hm(prevEnd)+').</span>';return}
   const delta=(l.s-ns)/1000;l.s=ns;cur.elapsed=Math.max(0,cur.elapsed+delta);if(!inOver)remain-=delta;if(sg.length===1)cur.start=ns;else cur.start=Math.min(cur.start,sg[0].s);
   saveRun();closeModal();draw&&draw();runTopUpd();toast(`Inicio corregido a ${hm(ns)} (${delta>=0?'+':''}${Math.round(delta/60)} min)`)}
 /* ===================== REPORTES ===================== */
@@ -1507,14 +1508,14 @@ function rpRange(){const t=new Date();t.setHours(0,0,0,0);
   if(rpMode==='sem'){const dow=(t.getDay()+6)%7;const a=new Date(t.getFullYear(),t.getMonth(),t.getDate()-dow+7*rpOff);const b=new Date(a.getFullYear(),a.getMonth(),a.getDate()+7);return{a:a.getTime(),b:b.getTime(),days:7}}
   const a=new Date(t.getFullYear(),t.getMonth()+rpOff,1),b=new Date(a.getFullYear(),a.getMonth()+1,1);return{a:a.getTime(),b:b.getTime(),days:Math.round((b-a)/864e5)}}
 const isRestN=n=>/^me merezco un descanso$/i.test(n);
-function union(iv){iv=iv.filter(x=>x.e>x.s).sort((p,q)=>p.s-q.s);const out=[];iv.forEach(x=>{const l=out[out.length-1];if(l&&x.sstyle>=l.e)l.e=Math.max(l.e,x.e);else out.push({...x})});return out}
+function union(iv){iv=iv.filter(x=>x.e>x.s).sort((p,q)=>p.s-q.s);const out=[];iv.forEach(x=>{const l=out[out.length-1];if(l&&x.s<=l.e)l.e=Math.max(l.e,x.e);else out.push({...x})});return out}
 function clip(iv,a,b){return iv.map(x=>({s:Math.max(x.s,a),e:Math.min(x.e,b)})).filter(x=>x.e>x.s)}
 function sumMin(iv){return iv.reduce((p,x)=>p+(x.e-x.s),0)/60000}
-function minus(A,B){const out=[];A.forEach(a=>{let segs=[{...a}];B.forEach(b=>{segs=segs.flatMap(x=>{if(b.estyle>=x.s||b.s>=x.e)return[x];const r=[];if(b.s>x.s)r.push({s:x.s,e:b.s});if(b.e<x.e)r.push({s:b.e,e:x.e});return r})});out.push(...segs)});return out}
+function minus(A,B){const out=[];A.forEach(a=>{let segs=[{...a}];B.forEach(b=>{segs=segs.flatMap(x=>{if(b.e<=x.s||b.s>=x.e)return[x];const r=[];if(b.s>x.s)r.push({s:x.s,e:b.s});if(b.e<x.e)r.push({s:b.e,e:x.e});return r})});out.push(...segs)});return out}
 function renderRep(){
   const R=rpRange(),a0=new Date(R.a),b1=new Date(R.b-1);
   $('rpLabel').textContent=rpMode==='sem'?`${a0.getDate()} ${a0.toLocaleDateString('es-MX',{month:'short'})} – ${b1.getDate()} ${b1.toLocaleDateString('es-MX',{month:'short'})}`:a0.toLocaleDateString('es-MX',{month:'long',year:'numeric'});
-  const ent=log.map((e,i)=>({...e,i,sg:segsOf(e)})).filter(e=>e.sg.length&&e.sg[0].s>=R.a&&e.sg[0].sstyle>R.b);
+  const ent=log.map((e,i)=>({...e,i,sg:segsOf(e)})).filter(e=>e.sg.length&&e.sg[0].s>=R.a&&e.sg[0].s<R.b);
   const actIv=[],restIv=[];
   log.forEach(e=>segsOf(e).forEach(x=>(isRestN(e.n)?restIv:actIv).push(x)));
   openWork().forEach(w=>w.segs.forEach(x=>(isRestN(w.n)?restIv:actIv).push(x)));
@@ -1522,77 +1523,77 @@ function renderRep(){
   // ---- resumen
   const actU=union(clip(actIv,R.a,R.b)),totAct=sumMin(actU);
   const done=act.filter(e=>e.ok),wp=done.filter(e=>e.plan>0);
-  const devs=wp.map(e=>(e.real-e.plan)/e.plan*100),within=devs.filter(d=>Math.abs(d)style>=10).length;
+  const devs=wp.map(e=>(e.real-e.plan)/e.plan*100),within=devs.filter(d=>Math.abs(d)<=10).length;
   const avgDev=devs.length?devs.reduce((p,q)=>p+q,0)/devs.length:null;
   const byN={};act.forEach(e=>{const k=e.n.trim();byN[k]=(byN[k]||0)+e.real});
   const top=Object.entries(byN).sort((p,q)=>q[1]-p[1]).slice(0,6),topMax=top.length?top[0][1]:1;
-  let h=`style>div class="tiles">
-    style>div class="tile"><span>Tiempo en actividades</span><b>${fmtMin(totAct)}</b></div>
-    style>div class="tile"><span>Terminadas</span><b>${done.length}</b></div>
-    style>div class="tile"><span>Dentro de ±10% de lo estimado</span><b>${devs.length?Math.round(within/devs.length*100)+'%':'—'}</b></div>
-    style>div class="tile"><span>Desviación promedio</span><b class="${avgDev>10?'over':avgDev<-10?'under':''}">${avgDev==null?'—':(avgDev>0?'+':'')+Math.round(avgDev)+'%'}</b></div></div>`;
-  if(top.length)h+=`style>h3>Dónde se fue tu tiempo</h3><div class="hbars">${top.map(([n,v])=>`<div class="hb"><span class="hn">${esc(n)}</span><div class="ht"><i style="width:${Math.max(2,v/topMax*100)}%"></i></div><span class="hv">${fmtMin(v)}</span></div>`).join('')}</div>`;
+  let h=`<div class="tiles">
+    <div class="tile"><span>Tiempo en actividades</span><b>${fmtMin(totAct)}</b></div>
+    <div class="tile"><span>Terminadas</span><b>${done.length}</b></div>
+    <div class="tile"><span>Dentro de ±10% de lo estimado</span><b>${devs.length?Math.round(within/devs.length*100)+'%':'—'}</b></div>
+    <div class="tile"><span>Desviación promedio</span><b class="${avgDev>10?'over':avgDev<-10?'under':''}">${avgDev==null?'—':(avgDev>0?'+':'')+Math.round(avgDev)+'%'}</b></div></div>`;
+  if(top.length)h+=`<h3>Dónde se fue tu tiempo</h3><div class="hbars">${top.map(([n,v])=>`<div class="hb"><span class="hn">${esc(n)}</span><div class="ht"><i style="width:${Math.max(2,v/topMax*100)}%"></i></div><span class="hv">${fmtMin(v)}</span></div>`).join('')}</div>`;
   // ---- gráfica de control
-  h+=`style>h3>📈 Gráfica de control: estimado vs. real</h3>
-  style>div class="seg sm"><button class="${ccUnit==='pct'?'on':''}" onclick="ccUnit='pct';renderRep()">% de desviación</button><button class="${ccUnit==='min'?'on':''}" onclick="ccUnit='min';renderRep()">Minutos</button></div>
-  style>div id="ccBox">${ccChart(wp.sort((p,q)=>p.sg[0].s-q.sg[0].s))}</div><div id="ccInfo" class="ccinfo"></div>`;
+  h+=`<h3>📈 Gráfica de control: estimado vs. real</h3>
+  <div class="seg sm"><button class="${ccUnit==='pct'?'on':''}" onclick="ccUnit='pct';renderRep()">% de desviación</button><button class="${ccUnit==='min'?'on':''}" onclick="ccUnit='min';renderRep()">Minutos</button></div>
+  <div id="ccBox">${ccChart(wp.sort((p,q)=>p.sg[0].s-q.sg[0].s))}</div><div id="ccInfo" class="ccinfo"></div>`;
   // ---- uso del día
-  h+=`style>h3>⏳ Uso de tu día hábil <small>(5:00 am – 11:59 pm)</small></h3>`+dayUse(R,actIv,restIv);
+  h+=`<h3>⏳ Uso de tu día hábil <small>(5:00 am – 11:59 pm)</small></h3>`+dayUse(R,actIv,restIv);
   $('rpBody').innerHTML=h;
 }
 let ccPts=[];
 function ccChart(pts){
-  if(pts.lengthstyle>3)return`<div class="empty">Necesito al menos 3 actividades terminadas con tiempo estimado en este periodo para dibujar la gráfica.</div>`;
+  if(pts.length<3)return`<div class="empty">Necesito al menos 3 actividades terminadas con tiempo estimado en este periodo para dibujar la gráfica.</div>`;
   const xs=pts.map(e=>ccUnit==='pct'?(e.real-e.plan)/e.plan*100:e.real-e.plan);
-  const mean=xs.reduce((p,q)=>p+q,0)/xs.length;let mr=0;for(let k=1;kstyle>xs.length;k++)mr+=Math.abs(xs[k]-xs[k-1]);mr/=(xs.length-1);
+  const mean=xs.reduce((p,q)=>p+q,0)/xs.length;let mr=0;for(let k=1;k<xs.length;k++)mr+=Math.abs(xs[k]-xs[k-1]);mr/=(xs.length-1);
   const ucl=mean+2.66*mr,lcl=mean-2.66*mr,u=ccUnit==='pct'?'%':' min';
   const W=640,H=280,L=52,Rr=14,T=16,B=34;let lo=Math.min(lcl,...xs,0),hi=Math.max(ucl,...xs,0);const pad_=(hi-lo)*.08||5;lo-=pad_;hi+=pad_;
   const X=k=>L+(xs.length===1?0:(W-L-Rr)*k/(xs.length-1)),Y=v=>T+(H-T-B)*(1-(v-lo)/(hi-lo));
-  ccPts=pts.map((e,k)=>({e,v:xs[k],out:xs[k]>ucl||xs[k]style>lcl}));
+  ccPts=pts.map((e,k)=>({e,v:xs[k],out:xs[k]>ucl||xs[k]<lcl}));
   const fmt=v=>(v>0?'+':'')+Math.round(v)+u;
-  const hl=(v,c,dash,lab)=>`style>line x1="${L}" x2="${W-Rr}" y1="${Y(v)}" y2="${Y(v)}" stroke="${c}" stroke-width="${dash?1.5:2}" ${dash?'stroke-dasharray="5 4"':''}/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" class="ax">${lab}</text>`;
-  let svg=`style>svg viewBox="0 0 ${W} ${H}" class="cc" role="img" aria-label="Gráfica de control de la diferencia entre tiempo real y estimado">`;
-  svg+=`style>rect x="${L}" y="${T}" width="${W-L-Rr}" height="${H-T-B}" fill="none"/>`;
-  if(lostyle>0&&hi>0)svg+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(0)}" y2="${Y(0)}" stroke="#3a3a3c" stroke-width="1"/>`;
+  const hl=(v,c,dash,lab)=>`<line x1="${L}" x2="${W-Rr}" y1="${Y(v)}" y2="${Y(v)}" stroke="${c}" stroke-width="${dash?1.5:2}" ${dash?'stroke-dasharray="5 4"':''}/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" class="ax">${lab}</text>`;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" class="cc" role="img" aria-label="Gráfica de control de la diferencia entre tiempo real y estimado">`;
+  svg+=`<rect x="${L}" y="${T}" width="${W-L-Rr}" height="${H-T-B}" fill="none"/>`;
+  if(lo<0&&hi>0)svg+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(0)}" y2="${Y(0)}" stroke="#3a3a3c" stroke-width="1"/>`;
   svg+=hl(ucl,'#8e8e93',1,'LSC')+hl(lcl,'#8e8e93',1,'LIC')+hl(mean,'#d1d1d6',0,'Media');
-  svg+=`style>polyline fill="none" stroke="${C_REST}" stroke-width="2" points="${xs.map((v,k)=>X(k)+','+Y(v)).join(' ')}"/>`;
+  svg+=`<polyline fill="none" stroke="${C_REST}" stroke-width="2" points="${xs.map((v,k)=>X(k)+','+Y(v)).join(' ')}"/>`;
   const step=Math.max(1,Math.ceil(xs.length/8));
-  pts.forEach((e,k)=>{if(k%step===0||k===xs.length-1){const d=new Date(e.sg[0].s);svg+=`style>text x="${X(k)}" y="${H-12}" text-anchor="middle" class="ax">${d.getDate()}/${d.getMonth()+1}</text>`}});
-  ccPts.forEach((p,k)=>{svg+=`style>circle cx="${X(k)}" cy="${Y(p.v)}" r="${p.out?6:5}" fill="${p.out?C_BAD:C_REST}" stroke="#000" stroke-width="2"/><circle cx="${X(k)}" cy="${Y(p.v)}" r="14" fill="transparent" class="hit" onmouseenter="ccShow(${k})" onclick="ccShow(${k})"/>`});
-  svg+='style>/svg>';
+  pts.forEach((e,k)=>{if(k%step===0||k===xs.length-1){const d=new Date(e.sg[0].s);svg+=`<text x="${X(k)}" y="${H-12}" text-anchor="middle" class="ax">${d.getDate()}/${d.getMonth()+1}</text>`}});
+  ccPts.forEach((p,k)=>{svg+=`<circle cx="${X(k)}" cy="${Y(p.v)}" r="${p.out?6:5}" fill="${p.out?C_BAD:C_REST}" stroke="#000" stroke-width="2"/><circle cx="${X(k)}" cy="${Y(p.v)}" r="14" fill="transparent" class="hit" onmouseenter="ccShow(${k})" onclick="ccShow(${k})"/>`});
+  svg+='</svg>';
   const outN=ccPts.filter(p=>p.out).length;
-  return svg+`style>div class="ccleg"><span><i style="background:${C_REST}"></i>Actividad</span><span><i style="background:${C_BAD}"></i>Fuera de control</span><span><i class="ln"></i>Media ${fmt(mean)}</span><span><i class="ln dash"></i>Límites ${fmt(lcl)} a ${fmt(ucl)}</span></div>
-  style>div class="ccnote">${mean>5?`En promedio te tardas <b>${fmt(mean)}</b> de lo que estimas.`:mean<-5?`En promedio terminas <b>${fmt(-mean).replace('+','')}</b> antes de lo estimado.`:'En promedio estimas bien tus tiempos.'} ${outN?`⚠️ <b>${outN}</b> actividad${outN>1?'es':''} fuera de los límites: tócala${outN>1?'s':''} para ver cuál${outN>1?'es':''}.`:'✓ Todas dentro de los límites: tu proceso de estimación es estable.'}</div>`;
+  return svg+`<div class="ccleg"><span><i style="background:${C_REST}"></i>Actividad</span><span><i style="background:${C_BAD}"></i>Fuera de control</span><span><i class="ln"></i>Media ${fmt(mean)}</span><span><i class="ln dash"></i>Límites ${fmt(lcl)} a ${fmt(ucl)}</span></div>
+  <div class="ccnote">${mean>5?`En promedio te tardas <b>${fmt(mean)}</b> de lo que estimas.`:mean<-5?`En promedio terminas <b>${fmt(-mean).replace('+','')}</b> antes de lo estimado.`:'En promedio estimas bien tus tiempos.'} ${outN?`⚠️ <b>${outN}</b> actividad${outN>1?'es':''} fuera de los límites: tócala${outN>1?'s':''} para ver cuál${outN>1?'es':''}.`:'✓ Todas dentro de los límites: tu proceso de estimación es estable.'}</div>`;
 }
 function ccShow(k){const p=ccPts[k];if(!p)return;const e=p.e,d=new Date(e.sg[0].s);
-  $('ccInfo').innerHTML=`style>b>${esc(e.n)}</b> · ${d.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})}<br>Estimado ${fmtMin(e.plan)} · Real ${fmtMin(e.real)} · <span class="${p.v>0?'over':'under'}">${(p.v>0?'+':'')+Math.round(p.v)}${ccUnit==='pct'?'%':' min'}</span>${p.out?' · <span style="color:#ff453a">⚠️ fuera de control</span>':''}`}
+  $('ccInfo').innerHTML=`<b>${esc(e.n)}</b> · ${d.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})}<br>Estimado ${fmtMin(e.plan)} · Real ${fmtMin(e.real)} · <span class="${p.v>0?'over':'under'}">${(p.v>0?'+':'')+Math.round(p.v)}${ccUnit==='pct'?'%':' min'}</span>${p.out?' · <span style="color:#ff453a">⚠️ fuera de control</span>':''}`}
 function dayUse(R,actIv,restIv){
   const WIN=1139,now=Date.now();let tA=0,tR=0,tW=0,cols=[];
-  for(let k=0;kstyle>R.days;k++){const d=new Date(R.a);d.setDate(d.getDate()+k);const ws=new Date(d.getFullYear(),d.getMonth(),d.getDate(),5,0).getTime(),we=new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59).getTime();
+  for(let k=0;k<R.days;k++){const d=new Date(R.a);d.setDate(d.getDate()+k);const ws=new Date(d.getFullYear(),d.getMonth(),d.getDate(),5,0).getTime(),we=new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59).getTime();
     if(ws>now){cols.push({d,fut:true});continue}
     const end=Math.min(we,now),win=(end-ws)/60000;
     const A=union(clip(actIv,ws,end)),Rs=minus(union(clip(restIv,ws,end)),A);
-    const a=sumMin(A),r=sumMin(Rs);if(a+rstyle>1){cols.push({d,empty:true});continue}const g=Math.max(0,win-a-r);tA+=a;tR+=r;tW+=win;cols.push({d,a,r,g,win,today:end<we})}
-  if(!tW)return'style>div class="empty">No hay registros en este periodo.</div>';
+    const a=sumMin(A),r=sumMin(Rs);if(a+r<1){cols.push({d,empty:true});continue}const g=Math.max(0,win-a-r);tA+=a;tR+=r;tW+=win;cols.push({d,a,r,g,win,today:end<we})}
+  if(!tW)return'<div class="empty">No hay registros en este periodo.</div>';
   const nD=cols.filter(c=>c.a!=null).length;
-  const pc=v=>{const x=v/tW*100;return x>0&&xstyle>1?x.toFixed(1):Math.round(x)};
+  const pc=v=>{const x=v/tW*100;return x>0&&x<1?x.toFixed(1):Math.round(x)};
   const W=640,H=200,L=8,T=8,B=26,cw=(W-L*2)/R.days,bw=Math.max(4,cw-2);
-  let svg=`style>svg viewBox="0 0 ${W} ${H}" class="cc" role="img" aria-label="Uso del día hábil por día">`;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" class="cc" role="img" aria-label="Uso del día hábil por día">`;
   cols.forEach((c,k)=>{const x=L+k*cw+(cw-bw)/2,ph=H-T-B;
-    if(c.fut||c.empty){svg+=`style>rect x="${x}" y="${T}" width="${bw}" height="${ph}" rx="3" fill="#1c1c1e"/>`}else{
+    if(c.fut||c.empty){svg+=`<rect x="${x}" y="${T}" width="${bw}" height="${ph}" rx="3" fill="#1c1c1e"/>`}else{
       const fr=v=>v/WIN*ph;let y=T+ph;
-      [[c.a,C_ACT],[c.r,C_REST],[c.g,C_GRAY]].forEach(([v,col])=>{if(vstyle>=0)return;const hh=fr(v);y-=hh;svg+=`<rect x="${x}" y="${y+1}" width="${bw}" height="${Math.max(0,hh-2)}" rx="3" fill="${col}"/>`});
-      svg+=`style>rect x="${x-1}" y="${T}" width="${bw+2}" height="${ph}" fill="transparent" class="hit" onmouseenter="duShow(${k})" onclick="duShow(${k})"/>`}
-    if(R.daysstyle>=7||k%5===0||k===R.days-1)svg+=`<text x="${x+bw/2}" y="${H-8}" text-anchor="middle" class="ax">${R.days<=7?c.d.toLocaleDateString('es-MX',{weekday:'short'}).slice(0,3):c.d.getDate()}</text>`});
-  svg+='style>/svg>';window._du=cols;
-  return`style>div class="tiles three"><div class="tile"><span><i class="dot" style="background:${C_ACT}"></i>En actividades</span><b>${pc(tA)}%</b><small>${fmtMin(tA)}</small></div>
-  style>div class="tile"><span><i class="dot" style="background:${C_REST}"></i>Descanso</span><b>${pc(tR)}%</b><small>${fmtMin(tR)}</small></div>
-  style>div class="tile"><span><i class="dot" style="background:${C_GRAY}"></i>Sin rastrear</span><b>${pc(tW-tA-tR)}%</b><small>${fmtMin(tW-tA-tR)}</small></div></div>
-  ${svg}style>div id="duInfo" class="ccinfo"></div>
-  style>div class="ccnote">Calculado sobre ${nD} día${nD>1?'s':''} con registros (los días vacíos no cuentan). "Sin rastrear" es el tiempo de tu día hábil que no quedó en ninguna actividad: traslados, comidas, pendientes chicos o tiempo perdido. Mientras más chico, más claro tienes en qué se te va el día.</div>`;
+      [[c.a,C_ACT],[c.r,C_REST],[c.g,C_GRAY]].forEach(([v,col])=>{if(v<=0)return;const hh=fr(v);y-=hh;svg+=`<rect x="${x}" y="${y+1}" width="${bw}" height="${Math.max(0,hh-2)}" rx="3" fill="${col}"/>`});
+      svg+=`<rect x="${x-1}" y="${T}" width="${bw+2}" height="${ph}" fill="transparent" class="hit" onmouseenter="duShow(${k})" onclick="duShow(${k})"/>`}
+    if(R.days<=7||k%5===0||k===R.days-1)svg+=`<text x="${x+bw/2}" y="${H-8}" text-anchor="middle" class="ax">${R.days<=7?c.d.toLocaleDateString('es-MX',{weekday:'short'}).slice(0,3):c.d.getDate()}</text>`});
+  svg+='</svg>';window._du=cols;
+  return`<div class="tiles three"><div class="tile"><span><i class="dot" style="background:${C_ACT}"></i>En actividades</span><b>${pc(tA)}%</b><small>${fmtMin(tA)}</small></div>
+  <div class="tile"><span><i class="dot" style="background:${C_REST}"></i>Descanso</span><b>${pc(tR)}%</b><small>${fmtMin(tR)}</small></div>
+  <div class="tile"><span><i class="dot" style="background:${C_GRAY}"></i>Sin rastrear</span><b>${pc(tW-tA-tR)}%</b><small>${fmtMin(tW-tA-tR)}</small></div></div>
+  ${svg}<div id="duInfo" class="ccinfo"></div>
+  <div class="ccnote">Calculado sobre ${nD} día${nD>1?'s':''} con registros (los días vacíos no cuentan). "Sin rastrear" es el tiempo de tu día hábil que no quedó en ninguna actividad: traslados, comidas, pendientes chicos o tiempo perdido. Mientras más chico, más claro tienes en qué se te va el día.</div>`;
 }
 function duShow(k){const c=(window._du||[])[k];if(!c||c.fut||c.empty)return;
-  $('duInfo').innerHTML=`style>b style="text-transform:capitalize">${c.d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'short'})}</b>${c.today?' (hasta ahora)':''}<br><span style="color:${C_ACT}">■</span> Actividades ${fmtMin(c.a)} · <span style="color:${C_REST}">■</span> Descanso ${fmtMin(c.r)} · <span style="color:#aaa">■</span> Sin rastrear ${fmtMin(c.g)}`}
+  $('duInfo').innerHTML=`<b style="text-transform:capitalize">${c.d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'short'})}</b>${c.today?' (hasta ahora)':''}<br><span style="color:${C_ACT}">■</span> Actividades ${fmtMin(c.a)} · <span style="color:${C_REST}">■</span> Descanso ${fmtMin(c.r)} · <span style="color:#aaa">■</span> Sin rastrear ${fmtMin(c.g)}`}
 
 /* ---- Registro ---- */
 let cm=new Date();cm.setDate(1);let selDay=dkey(new Date());
@@ -1603,21 +1604,21 @@ function renderLog(){
   $('mLabel').textContent=cm.toLocaleDateString('es-MX',{month:'long',year:'numeric'});
   const counts={};log.forEach(e=>counts[e.d]=(counts[e.d]||0)+1);
   const first=(cm.getDay()+6)%7, days=new Date(cm.getFullYear(),cm.getMonth()+1,0).getDate(), today=dkey(new Date());
-  let h=['L','M','M','J','V','S','D'].map(x=>`style>div class="dw">${x}</div>`).join('');
-  for(let i=0;istyle>first;i++)h+='<div class="day blank"></div>';
-  for(let d=1;dstyle>=days;d++){const k=cm.getFullYear()+'-'+pad(cm.getMonth()+1)+'-'+pad(d);
-    h+=`style>div class="day${dnotes[k]&&dnotes[k].t?' nt':''}${counts[k]?' has':''}${k===today?' today':''}${k===selDay?' sel':''}" onclick="pick('${k}')">${d}${counts[k]?`<small>${counts[k]}</small>`:''}</div>`}
+  let h=['L','M','M','J','V','S','D'].map(x=>`<div class="dw">${x}</div>`).join('');
+  for(let i=0;i<first;i++)h+='<div class="day blank"></div>';
+  for(let d=1;d<=days;d++){const k=cm.getFullYear()+'-'+pad(cm.getMonth()+1)+'-'+pad(d);
+    h+=`<div class="day${dnotes[k]&&dnotes[k].t?' nt':''}${counts[k]?' has':''}${k===today?' today':''}${k===selDay?' sel':''}" onclick="pick('${k}')">${d}${counts[k]?`<small>${counts[k]}</small>`:''}</div>`}
   $('grid').innerHTML=h;
   const [y,m,dd]=selDay.split('-').map(Number);
   $('dayTitle').textContent=new Date(y,m-1,dd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   const items=log.map((e,i)=>({...e,i})).filter(e=>e.d===selDay).sort((a,b)=>a.h.localeCompare(b.h));
   renderTl();dnDraw();
   const d0=new Date(y,m-1,dd).getTime(),d1=new Date(y,m-1,dd+1).getTime();
-  const ow=openWork().map(w=>({...w,day:w.segs.filter(x=>x.e>d0&&x.sstyle>d1).map(x=>({s:Math.max(x.s,d0),e:Math.min(x.e,d1)}))})).filter(w=>w.day.length);
-  const owHtml=ow.length?`style>h3 style="font-size:16px">⏸ Sin terminar</h3>`+ow.map(w=>{const mins=w.day.reduce((a,x)=>a+(x.e-x.s),0)/60000;
-    return`style>div class="entry openw" onclick="tab(1)"><div class="top"><b>${w.kind==='curso'?'▶ ':'⏸ '}${esc(w.n)}</b><span class="over">${w.kind==='curso'?'en curso':'pausada'}</span></div>
-    style>div class="meta">Trabajado este día: ${fmtMin(mins)}${Math.abs(mins*60-w.el)>60?` · total llevas ${fmtMin(w.el/60)}`:''}</div><div class="meta">🕒 ${w.day.map(x=>hm(x.s)+'–'+hm(x.e)).join(' · ')}</div></div>`}).join(''):'';
-  $('dayList').innerHTML=(items.length?items.map(entry).join('')+`style>div class="muted" style="margin-top:6px">Total del día: ${fmtMin(items.reduce((s,e)=>s+e.real,0))}</div>`:(ow.length?'':'<div class="empty">Sin actividades este día</div>'))+owHtml;
+  const ow=openWork().map(w=>({...w,day:w.segs.filter(x=>x.e>d0&&x.s<d1).map(x=>({s:Math.max(x.s,d0),e:Math.min(x.e,d1)}))})).filter(w=>w.day.length);
+  const owHtml=ow.length?`<h3 style="font-size:16px">⏸ Sin terminar</h3>`+ow.map(w=>{const mins=w.day.reduce((a,x)=>a+(x.e-x.s),0)/60000;
+    return`<div class="entry openw" onclick="tab(1)"><div class="top"><b>${w.kind==='curso'?'▶ ':'⏸ '}${esc(w.n)}</b><span class="over">${w.kind==='curso'?'en curso':'pausada'}</span></div>
+    <div class="meta">Trabajado este día: ${fmtMin(mins)}${Math.abs(mins*60-w.el)>60?` · total llevas ${fmtMin(w.el/60)}`:''}</div><div class="meta">🕒 ${w.day.map(x=>hm(x.s)+'–'+hm(x.e)).join(' · ')}</div></div>`}).join(''):'';
+  $('dayList').innerHTML=(items.length?items.map(entry).join('')+`<div class="muted" style="margin-top:6px">Total del día: ${fmtMin(items.reduce((s,e)=>s+e.real,0))}</div>`:(ow.length?'':'<div class="empty">Sin actividades este día</div>'))+owHtml;
 }
 const TLC=['#34c759','#0a84ff','#ff9f0a','#bf5af2','#ff375f','#64d2ff','#ffd60a','#30d158','#5e5ce6','#ac8e68'];
 function tlColor(n){let h=0;for(const c of n.toLowerCase())h=(h*31+c.charCodeAt(0))>>>0;return TLC[h%TLC.length]}
@@ -1636,17 +1637,17 @@ function renderTl(){
   blocks.sort((p,q)=>p.a-q.a);
   const cmap={};blocks.forEach(x=>{if(!(x.n in cmap))cmap[x.n]=TLC[Object.keys(cmap).length%TLC.length]});const col=n=>cmap[n];
   const tot={};blocks.forEach(x=>tot[x.n]=(tot[x.n]||0)+(x.b-x.a));const sum=Object.values(tot).reduce((p,q)=>p+q,0)/60000;
-  let hrs='';for(let h=0;hstyle>24;h++)hrs+=`<div class="tlh" style="top:${h*36}px"><span>${fmt12(pad(h)+':00').replace(':00','')}</span></div>`;
+  let hrs='';for(let h=0;h<24;h++)hrs+=`<div class="tlh" style="top:${h*36}px"><span>${fmt12(pad(h)+':00').replace(':00','')}</span></div>`;
   const bl=blocks.map(x=>{const top=(x.a-d0)/864e5*H,ht=Math.max(4,(x.b-x.a)/864e5*H),c=col(x.n);
-    return`style>div class="tlb${x.open?' open':''}" onclick="${x.open?'tab(1)':`openEntry(${x.i})`}" style="top:${top}px;height:${ht}px;background:${c}${x.open?'1f':'33'};border-left:4px solid ${c};${x.open?`outline:1.5px dashed ${c};outline-offset:-1.5px;`:''}">${ht>=11?`<b${ht<16?' style="font-size:10px;line-height:1"':''}>${x.open==='pausa'?'⏸ ':x.open==='curso'?'▶ ':''}${esc(x.n)}</b>${ht>=30?`<span>${hm(x.a)}–${hm(x.b)}</span>`:''}`:''}</div>`}).join('');
-  const now=Date.now(),nl=now>d0&&nowstyle>d1?`<div class="tlnow" style="top:${(now-d0)/864e5*H}px"></div>`:'';
-  const leg=Object.entries(tot).sort((p,q)=>q[1]-p[1]).map(([n,v])=>`style>div class="tll"><i style="background:${col(n)}"></i><span>${esc(n)}</span><b>${fmtMin(v/60000)}</b></div>`).join('');
-  $('dayTl').innerHTML=`style>h3>🕒 Tu día en 24 horas</h3>
-  style>div class="tlsum">En actividades: <b>${fmtMin(sum)}</b> · <span>${Math.round(sum/14.4)}% del día</span></div>
-  style>div class="tlstrip">${blocks.map(x=>`<i style="left:${(x.a-d0)/864e5*100}%;width:${Math.max(.4,(x.b-x.a)/864e5*100)}%;background:${col(x.n)}"></i>`).join('')}</div>
-  style>div class="tlax"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>12am</span></div>
-  style>div class="tlwrap" id="tlWrap"><div class="tl" style="height:${H}px">${hrs}${bl}${nl}</div></div>
-  style>div class="tlleg">${leg}</div>`;
+    return`<div class="tlb${x.open?' open':''}" onclick="${x.open?'tab(1)':`openEntry(${x.i})`}" style="top:${top}px;height:${ht}px;background:${c}${x.open?'1f':'33'};border-left:4px solid ${c};${x.open?`outline:1.5px dashed ${c};outline-offset:-1.5px;`:''}">${ht>=11?`<b${ht<16?' style="font-size:10px;line-height:1"':''}>${x.open==='pausa'?'⏸ ':x.open==='curso'?'▶ ':''}${esc(x.n)}</b>${ht>=30?`<span>${hm(x.a)}–${hm(x.b)}</span>`:''}`:''}</div>`}).join('');
+  const now=Date.now(),nl=now>d0&&now<d1?`<div class="tlnow" style="top:${(now-d0)/864e5*H}px"></div>`:'';
+  const leg=Object.entries(tot).sort((p,q)=>q[1]-p[1]).map(([n,v])=>`<div class="tll"><i style="background:${col(n)}"></i><span>${esc(n)}</span><b>${fmtMin(v/60000)}</b></div>`).join('');
+  $('dayTl').innerHTML=`<h3>🕒 Tu día en 24 horas</h3>
+  <div class="tlsum">En actividades: <b>${fmtMin(sum)}</b> · <span>${Math.round(sum/14.4)}% del día</span></div>
+  <div class="tlstrip">${blocks.map(x=>`<i style="left:${(x.a-d0)/864e5*100}%;width:${Math.max(.4,(x.b-x.a)/864e5*100)}%;background:${col(x.n)}"></i>`).join('')}</div>
+  <div class="tlax"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>12am</span></div>
+  <div class="tlwrap" id="tlWrap"><div class="tl" style="height:${H}px">${hrs}${bl}${nl}</div></div>
+  <div class="tlleg">${leg}</div>`;
   const w=$('tlWrap');if(w)w.scrollTop=Math.max(0,(blocks[0].a-d0)/864e5*H-40);
 }
 function entry(e){
@@ -1654,30 +1655,30 @@ function entry(e){
   const sg=segsOf(e),pn=(e.post||[]).length,G=90000;
   const an=notes.filter(n=>!n.del&&n.act===e.n);
   const extN=(e.ext||[]).filter(x=>x.note);
-  const inB=n=>sg.some(b=>n.ts>=b.s-G&&n.tsstyle>=b.e+G),gen=an.filter(n=>!inB(n)&&dkey(new Date(n.ts))===e.d).sort((a,c)=>a.ts-c.ts);
-  const rows=sg.map((b,k)=>{const ns=an.filter(n=>n.ts>=b.s-G&&n.tsstyle>=b.e+G).sort((a,c)=>a.ts-c.ts).map(n=>`<div class="ebnote">📝 ${esc(n.txt).replace(/\n/g,'<br>')}</div>`);
-    if(k===sg.length-1)extN.forEach(x=>ns.push(`style>div class="ebnote">📝 <span class="muted">al pedir +${x.min} min:</span> ${esc(x.note).replace(/\n/g,'<br>')}</div>`));
-    return `style>div class="ebt">🕒 ${hm(b.s)}–${hm(b.e)} <span class="muted">· ${fmtMin((b.e-b.s)/60000)}</span></div><div class="ebn">${ns.join('')||'<span class="ebnone">—</span>'}</div>`}).join('');
-  return`style>div class="entry" onclick="openEntry(${e.i})"><div class="top etop"><div><b>${esc(e.n)}</b>${e.manual?' <span class="muted">✍︎</span>':''}${e.ok?'':' <span class="over" style="font-size:13px">sin terminar</span>'}</div>
-  style>div class="enums"><span>Planeado <b>${fmtMin(e.plan)}</b></span><span>Real <b class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</b></span><span title="Planeado + tiempo extra que pediste">Total <b>${fmtMin(total)}</b></span></div></div>
-  style>div class="ebh"><span>Bloques</span><span>Notas por bloque</span></div><div class="eb">${rows}</div>
-  ${gen.length?`style>div class="ebh" style="grid-template-columns:1fr"><span>Notas generales</span></div>${gen.map(n=>`<div class="ebnote" style="margin-top:6px">📝 <span class="muted">${hm(n.ts)}</span> ${esc(n.txt).replace(/\n/g,'<br>')}</div>`).join('')}`:''}
-  ${pn?`style>div class="note post">🗒️ ${pn} nota${pn>1?'s':''} después</div>`:''}
-  style>div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="muted" style="font-size:12px">Toca para ver y agregar notas</span><span><button class="edl" onclick="event.stopPropagation();editEntry(${e.i})">editar</button><button onclick="event.stopPropagation();rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></span></div></div>`;
+  const inB=n=>sg.some(b=>n.ts>=b.s-G&&n.ts<=b.e+G),gen=an.filter(n=>!inB(n)&&dkey(new Date(n.ts))===e.d).sort((a,c)=>a.ts-c.ts);
+  const rows=sg.map((b,k)=>{const ns=an.filter(n=>n.ts>=b.s-G&&n.ts<=b.e+G).sort((a,c)=>a.ts-c.ts).map(n=>`<div class="ebnote">📝 ${esc(n.txt).replace(/\n/g,'<br>')}</div>`);
+    if(k===sg.length-1)extN.forEach(x=>ns.push(`<div class="ebnote">📝 <span class="muted">al pedir +${x.min} min:</span> ${esc(x.note).replace(/\n/g,'<br>')}</div>`));
+    return `<div class="ebt">🕒 ${hm(b.s)}–${hm(b.e)} <span class="muted">· ${fmtMin((b.e-b.s)/60000)}</span></div><div class="ebn">${ns.join('')||'<span class="ebnone">—</span>'}</div>`}).join('');
+  return`<div class="entry" onclick="openEntry(${e.i})"><div class="top etop"><div><b>${esc(e.n)}</b>${e.manual?' <span class="muted">✍︎</span>':''}${e.ok?'':' <span class="over" style="font-size:13px">sin terminar</span>'}</div>
+  <div class="enums"><span>Planeado <b>${fmtMin(e.plan)}</b></span><span>Real <b class="${diff>0.5?'over':'under'}">${fmtMin(e.real)}</b></span><span title="Planeado + tiempo extra que pediste">Total <b>${fmtMin(total)}</b></span></div></div>
+  <div class="ebh"><span>Bloques</span><span>Notas por bloque</span></div><div class="eb">${rows}</div>
+  ${gen.length?`<div class="ebh" style="grid-template-columns:1fr"><span>Notas generales</span></div>${gen.map(n=>`<div class="ebnote" style="margin-top:6px">📝 <span class="muted">${hm(n.ts)}</span> ${esc(n.txt).replace(/\n/g,'<br>')}</div>`).join('')}`:''}
+  ${pn?`<div class="note post">🗒️ ${pn} nota${pn>1?'s':''} después</div>`:''}
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="muted" style="font-size:12px">Toca para ver y agregar notas</span><span><button class="edl" onclick="event.stopPropagation();editEntry(${e.i})">editar</button><button onclick="event.stopPropagation();rm(${e.i})" style="background:none;border:none;color:#666;font-size:13px">borrar</button></span></div></div>`;
 }
 function manualForm(){
   const now=new Date(),hh=selDay===dkey(now)?pad(now.getHours())+':'+pad(now.getMinutes()):'12:00';
-  const opts=[...new Set(log.map(e=>e.n).concat(acts.map(a=>a.n)))].map(n=>`style>option value="${esc(n)}">`).join('');
+  const opts=[...new Set(log.map(e=>e.n).concat(acts.map(a=>a.n)))].map(n=>`<option value="${esc(n)}">`).join('');
   const [y,m,d]=selDay.split('-').map(Number);
-  modal(`style>h1>Registro manual</h1><div class="muted">${new Date(y,m-1,d).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
-  style>label>Actividad</label><input id="mN" list="mList" placeholder="ej. Limpieza baño"><datalist id="mList">${opts}</datalist>
-  style>label>Hora de inicio</label><input id="mH" type="time" value="${hh}">
-  style>div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Tiempo estimado (min)</label><input id="mP" type="number" inputmode="numeric" placeholder="ej. 30"></div>
-  style>div style="flex:1"><label>Tiempo real (min)</label><input id="mR" type="number" inputmode="numeric" placeholder="ej. 45"></div></div>
-  style>button id="mNow" class="nowbtn" style="display:none" onclick="mSetNow()"></button>
-  style>label style="display:flex;align-items:center;gap:10px;color:#fff"><input id="mOk" type="checkbox" checked style="width:22px;height:22px"> La terminé</label>
-  style>div id="mHint" class="muted" style="font-size:13px;display:none">Si no la terminaste, se agrega a tu plan de hoy para continuarla.</div>
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="saveManual()">Guardar</button></div>`);
+  modal(`<h1>Registro manual</h1><div class="muted">${new Date(y,m-1,d).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
+  <label>Actividad</label><input id="mN" list="mList" placeholder="ej. Limpieza baño"><datalist id="mList">${opts}</datalist>
+  <label>Hora de inicio</label><input id="mH" type="time" value="${hh}">
+  <div class="row" style="margin:0;gap:10px"><div style="flex:1"><label>Tiempo estimado (min)</label><input id="mP" type="number" inputmode="numeric" placeholder="ej. 30"></div>
+  <div style="flex:1"><label>Tiempo real (min)</label><input id="mR" type="number" inputmode="numeric" placeholder="ej. 45"></div></div>
+  <button id="mNow" class="nowbtn" style="display:none" onclick="mSetNow()"></button>
+  <label style="display:flex;align-items:center;gap:10px;color:#fff"><input id="mOk" type="checkbox" checked style="width:22px;height:22px"> La terminé</label>
+  <div id="mHint" class="muted" style="font-size:13px;display:none">Si no la terminaste, se agrega a tu plan de hoy para continuarla.</div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="saveManual()">Guardar</button></div>`);
   mOngoing=false;['mH','mP'].forEach(id=>$(id).addEventListener('input',mNowUpd));$('mR').addEventListener('input',()=>{mOngoing=false;mNowUpd()});
   $('mOk').addEventListener('change',()=>{$('mHint').style.display=$('mOk').checked?'none':'block';if($('mOk').checked){mOngoing=false;mNowUpd()}});
   $('mN').addEventListener('input',()=>{const st=stats()[$('mN').value.trim().toLowerCase()];if(st&&!$('mP').value)$('mP').value=Math.round(st.pavg)});
@@ -1685,7 +1686,7 @@ function manualForm(){
 let mOngoing=false;
 function mStart(){const h=$('mH').value;if(!h)return null;const [yy,mm,dd]=selDay.split('-').map(Number),[hh,mi]=h.split(':').map(Number);return new Date(yy,mm-1,dd,hh,mi).getTime()}
 function mNowUpd(){const b=$('mNow');if(!b)return;const st=mStart(),pl=parseFloat($('mP').value),now=Date.now();
-  const show=st!=null&&ststyle>=now;
+  const show=st!=null&&st<=now;
   if(!show){b.style.display='none';mOngoing=false;return}
   const el=Math.max(1,Math.round((now-st)/60000));b.style.display='block';b.classList.toggle('on',mOngoing);
   b.innerHTML=mOngoing?`✓ Sigue en curso · llevas ${fmtMin(el)}`:`⏱ Sigue en curso (usar hora actual · ${fmtMin(el)})`}
@@ -1699,8 +1700,8 @@ function saveManual(){
     const P=pl>0?pl:r,elS=mOngoing?(Date.now()-st)/1000:r*60,tk=dkey(new Date()),id=uid();
     const it={n,m:P,id,prog:{el:elS,rem:Math.max(0,P*60-elS),tot:P*60,ext:[],mb:0,st,segs:[{s:st,e:st+elS*1000}]}};
     plans[tk]=[it].concat(plans[tk]||[]);store('plans',plans);closeModal();setPlanDay(tk);render();renderLog();
-    modal(`style>h1>Agregada a tu plan ✅</h1><div class="muted">${esc(n)} · llevas ${fmtMin(elS/60)}${it.prog.rem>0?` · quedan ${fmtMin(it.prog.rem/60)}`:' · ya pasó tu estimado'}</div>
-    style>div class="row"><button class="btn gray" onclick="closeModal()">Después</button><button class="btn" style="background:#ff9f0a;color:#000" onclick="closeModal();tab(1);resumeItem(acts.findIndex(a=>a.id==='${id}'))">▶ Continuar ahora</button></div>`);
+    modal(`<h1>Agregada a tu plan ✅</h1><div class="muted">${esc(n)} · llevas ${fmtMin(elS/60)}${it.prog.rem>0?` · quedan ${fmtMin(it.prog.rem/60)}`:' · ya pasó tu estimado'}</div>
+    <div class="row"><button class="btn gray" onclick="closeModal()">Después</button><button class="btn" style="background:#ff9f0a;color:#000" onclick="closeModal();tab(1);resumeItem(acts.findIndex(a=>a.id==='${id}'))">▶ Continuar ahora</button></div>`);
     return;
   }
   log.push({d:selDay,h,n,plan:pl>0?pl:r,real:r,ext:[],ok:$('mOk').checked,manual:true,segs:[{s:st,e:st+r*60000}]});
@@ -1710,35 +1711,35 @@ function openEntry(i){const e=log[i];if(!e)return;
   const [y,m,d]=e.d.split('-').map(Number),fecha=new Date(y,m-1,d).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   const dur=(e.ext||[]).filter(x=>x.note),post=e.post||[];
   const f=ts=>{const x=new Date(ts);return x.toLocaleDateString('es-MX',{day:'numeric',month:'short'})+' '+pad(x.getHours())+':'+pad(x.getMinutes())};
-  modal(`style>div class="detail"><h1 style="font-size:24px">${esc(e.n)}</h1><div class="muted" style="text-transform:capitalize">${fecha} · ${e.h}</div>
-  style>div class="meta" style="margin-top:6px">🕒 ${segsOf(e).length>1?'Sesiones: ':''}${segTxt(e)}</div><div class="meta" style="margin-top:4px">Planeado ${fmtMin(e.plan)} · Real ${fmtMin(e.real)}${e.ext&&e.ext.length?` · ${e.ext.length} extensión${e.ext.length>1?'es':''}`:''}</div>
-  style>h3>📝 Notas durante la actividad</h3>
-  ${dur.length?dur.map(x=>`style>div class="note"><div class="nh">Al pedir +${x.min} min${x.pct!=null?` · faltaba ${x.pct}%`:''}</div>${esc(x.note).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="muted" style="font-size:14px">Sin notas</div>'}
-  style>h3>🗒️ Notas después</h3>
-  ${post.length?post.map((x,k)=>`style>div class="note post"><div class="nh">${f(x.ts)}<button onclick="delPost(${i},${k})">✕</button></div>${esc(x.txt).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="muted" style="font-size:14px">Aún no hay notas</div>'}
-  style>textarea id="pNote" rows="3" placeholder="Agrega una nota o aprendizaje…" style="margin-top:10px"></textarea>
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="addPost(${i})">＋ Agregar nota</button></div>
-  style>button class="linkbtn" style="padding:12px 0 0" onclick="editEntry(${i})">✎ Editar este registro</button></div>`);
+  modal(`<div class="detail"><h1 style="font-size:24px">${esc(e.n)}</h1><div class="muted" style="text-transform:capitalize">${fecha} · ${e.h}</div>
+  <div class="meta" style="margin-top:6px">🕒 ${segsOf(e).length>1?'Sesiones: ':''}${segTxt(e)}</div><div class="meta" style="margin-top:4px">Planeado ${fmtMin(e.plan)} · Real ${fmtMin(e.real)}${e.ext&&e.ext.length?` · ${e.ext.length} extensión${e.ext.length>1?'es':''}`:''}</div>
+  <h3>📝 Notas durante la actividad</h3>
+  ${dur.length?dur.map(x=>`<div class="note"><div class="nh">Al pedir +${x.min} min${x.pct!=null?` · faltaba ${x.pct}%`:''}</div>${esc(x.note).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="muted" style="font-size:14px">Sin notas</div>'}
+  <h3>🗒️ Notas después</h3>
+  ${post.length?post.map((x,k)=>`<div class="note post"><div class="nh">${f(x.ts)}<button onclick="delPost(${i},${k})">✕</button></div>${esc(x.txt).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="muted" style="font-size:14px">Aún no hay notas</div>'}
+  <textarea id="pNote" rows="3" placeholder="Agrega una nota o aprendizaje…" style="margin-top:10px"></textarea>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="addPost(${i})">＋ Agregar nota</button></div>
+  <button class="linkbtn" style="padding:12px 0 0" onclick="editEntry(${i})">✎ Editar este registro</button></div>`);
 }
 let eeBl=[],eeDay='';
 function hhmm(ts){const x=new Date(ts);return pad(x.getHours())+':'+pad(x.getMinutes())}
 function editEntry(i){const e=log[i];if(!e)return;eeDay=e.d;
   eeBl=segsOf(e).map(x=>({s:hhmm(x.s),e:hhmm(x.e)}));
-  modal(`style>h1>Editar registro</h1>
-  style>label>Actividad</label><input id="eeN" value="${esc(e.n)}">
-  style>label>Tiempo estimado (min)</label><input id="eeP" type="number" inputmode="decimal" value="${e.plan}" style="width:100%">
-  style>label>🕒 Bloques de trabajo</label><div id="eeB"></div>
-  style>button class="addbl" onclick="eeBl.push({s:'',e:''});eeDraw()">＋ Agregar otro bloque</button>
-  style>div class="eetot" id="eeT"></div>
-  style>label style="display:flex;align-items:center;gap:10px;color:#fff"><input id="eeOk" type="checkbox" ${e.ok?'checked':''} style="width:22px;height:22px"> La terminé</label>
-  style>button class="nowbtn" onclick="entryOngoing(${i})">⏱ Sigue en curso (pasarla a mi plan con la hora actual)</button>
-  style>div class="row"><button class="btn gray" onclick="openEntry(${i})">Cancelar</button><button class="btn" onclick="saveEntry(${i})">✓ Guardar</button></div>`);
+  modal(`<h1>Editar registro</h1>
+  <label>Actividad</label><input id="eeN" value="${esc(e.n)}">
+  <label>Tiempo estimado (min)</label><input id="eeP" type="number" inputmode="decimal" value="${e.plan}" style="width:100%">
+  <label>🕒 Bloques de trabajo</label><div id="eeB"></div>
+  <button class="addbl" onclick="eeBl.push({s:'',e:''});eeDraw()">＋ Agregar otro bloque</button>
+  <div class="eetot" id="eeT"></div>
+  <label style="display:flex;align-items:center;gap:10px;color:#fff"><input id="eeOk" type="checkbox" ${e.ok?'checked':''} style="width:22px;height:22px"> La terminé</label>
+  <button class="nowbtn" onclick="entryOngoing(${i})">⏱ Sigue en curso (pasarla a mi plan con la hora actual)</button>
+  <div class="row"><button class="btn gray" onclick="openEntry(${i})">Cancelar</button><button class="btn" onclick="saveEntry(${i})">✓ Guardar</button></div>`);
   eeDraw();
 }
-function eeDraw(){$('eeB').innerHTML=eeBl.map((b,k)=>`style>div class="blrow"><input type="time" value="${b.s}" oninput="eeBl[${k}].s=this.value;eeTot()"><span>a</span><input type="time" value="${b.e}" oninput="eeBl[${k}].e=this.value;eeTot()">${eeBl.length>1?`<button onclick="eeBl.splice(${k},1);eeDraw()">✕</button>`:''}</div>`).join('');eeTot()}
+function eeDraw(){$('eeB').innerHTML=eeBl.map((b,k)=>`<div class="blrow"><input type="time" value="${b.s}" oninput="eeBl[${k}].s=this.value;eeTot()"><span>a</span><input type="time" value="${b.e}" oninput="eeBl[${k}].e=this.value;eeTot()">${eeBl.length>1?`<button onclick="eeBl.splice(${k},1);eeDraw()">✕</button>`:''}</div>`).join('');eeTot()}
 function eeSegs(){const [y,m,d]=eeDay.split('-').map(Number);return eeBl.filter(b=>b.s&&b.e).map(b=>{const [sh,sm]=b.s.split(':').map(Number),[eh,em]=b.e.split(':').map(Number);
-  const s=new Date(y,m-1,d,sh,sm).getTime();let e=new Date(y,m-1,d,eh,em).getTime();if(estyle>=s)e+=864e5;return{s,e}}).sort((a,b)=>a.s-b.s)}
-function eeTot(){const sg=eeSegs(),min=sg.reduce((a,x)=>a+(x.e-x.s),0)/60000;$('eeT').innerHTML=sg.length?`Tiempo real: style>b>${fmtMin(min)}</b>${sg.length>1?` en ${sg.length} bloques`:''}`:'Pon la hora de inicio y de fin'}
+  const s=new Date(y,m-1,d,sh,sm).getTime();let e=new Date(y,m-1,d,eh,em).getTime();if(e<=s)e+=864e5;return{s,e}}).sort((a,b)=>a.s-b.s)}
+function eeTot(){const sg=eeSegs(),min=sg.reduce((a,x)=>a+(x.e-x.s),0)/60000;$('eeT').innerHTML=sg.length?`Tiempo real: <b>${fmtMin(min)}</b>${sg.length>1?` en ${sg.length} bloques`:''}`:'Pon la hora de inicio y de fin'}
 function entryOngoing(i){const e=log[i];if(!e)return;
   const n=$('eeN').value.trim()||e.n,pl=parseFloat($('eeP').value)||e.plan;
   let sg=eeSegs();if(!sg.length)sg=segsOf(e).map(x=>({...x}));
@@ -1746,8 +1747,8 @@ function entryOngoing(i){const e=log[i];if(!e)return;
   const elS=sg.reduce((a,x)=>a+(x.e-x.s),0)/1000,tk=dkey(new Date()),id=uid();
   const it={n,m:pl,id,prog:{el:elS,rem:Math.max(0,pl*60-elS),tot:pl*60,ext:e.ext||[],mb:0,st:sg[0].s,segs:sg}};
   log.splice(i,1);plans[tk]=[it].concat(plans[tk]||[]);store('log',log);store('plans',plans);setPlanDay(tk);render();renderLog();
-  modal(`style>h1>Agregada a tu plan ✅</h1><div class="muted">${esc(n)} · llevas ${fmtMin(elS/60)}${it.prog.rem>0?` · quedan ${fmtMin(it.prog.rem/60)}`:' · ya pasó tu estimado'}</div>
-  style>div class="row"><button class="btn gray" onclick="closeModal()">Después</button><button class="btn" style="background:#ff9f0a;color:#000" onclick="closeModal();tab(1);resumeItem(acts.findIndex(a=>a.id==='${id}'))">▶ Continuar ahora</button></div>`);
+  modal(`<h1>Agregada a tu plan ✅</h1><div class="muted">${esc(n)} · llevas ${fmtMin(elS/60)}${it.prog.rem>0?` · quedan ${fmtMin(it.prog.rem/60)}`:' · ya pasó tu estimado'}</div>
+  <div class="row"><button class="btn gray" onclick="closeModal()">Después</button><button class="btn" style="background:#ff9f0a;color:#000" onclick="closeModal();tab(1);resumeItem(acts.findIndex(a=>a.id==='${id}'))">▶ Continuar ahora</button></div>`);
 }
 function saveEntry(i){const e=log[i];if(!e)return closeModal();
   const n=$('eeN').value.trim(),pl=parseFloat($('eeP').value),sg=eeSegs();
@@ -1758,15 +1759,15 @@ function saveEntry(i){const e=log[i];if(!e)return closeModal();
 function addPost(i){const t=$('pNote').value.trim();if(!t){$('pNote').style.borderColor='#ff3b30';return}
   const e=log[i];e.post=(e.post||[]).concat({ts:Date.now(),txt:t});store('log',log);renderLog();openEntry(i)}
 function delPost(i,k){const e=log[i];if(!e||!e.post)return;e.post.splice(k,1);if(!e.post.length)delete e.post;store('log',log);renderLog();openEntry(i)}
-function rm(i){const e=log[i];if(!e)return;modal(`style>h1>¿Borrar registro?</h1><div class="muted">${esc(e.n)} · ${e.h}. También se borran sus notas.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();log.splice(${i},1);store('log',log);renderLog();renderAct()">Borrar</button></div>`)}
+function rm(i){const e=log[i];if(!e)return;modal(`<h1>¿Borrar registro?</h1><div class="muted">${esc(e.n)} · ${e.h}. También se borran sus notas.</div><div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn red" onclick="closeModal();log.splice(${i},1);store('log',log);renderLog();renderAct()">Borrar</button></div>`)}
 function confirmDel(){return true}
 function stats(){const s={};log.filter(e=>e.ok).forEach(e=>{const k=e.n.toLowerCase();s[k]=s[k]||{n:e.n,c:0,sum:0,plan:0,min:1e9,max:0};const o=s[k];o.c++;o.sum+=e.real;o.plan+=e.plan;o.min=Math.min(o.min,e.real);o.max=Math.max(o.max,e.real)});
   Object.values(s).forEach(o=>{o.avg=o.sum/o.c;o.pavg=o.plan/o.c});return s}
 function renderAct(){
   const s=Object.values(stats()).sort((a,b)=>b.c-a.c);
-  $('actView').innerHTML=s.length?s.map(o=>{const r=o.avg/o.pavg;return`style>div class="entry"><div class="top"><b>${esc(o.n)}</b><span class="muted">${o.c} ${o.c>1?'veces':'vez'}</span></div>
-  style>div class="meta">Promedio real <b style="color:#fff">${fmtMin(o.avg)}</b> · planeabas ${fmtMin(o.pavg)}</div>
-  style>div class="meta">Rango ${fmtMin(o.min)} – ${fmtMin(o.max)} · <span class="${r>1.05?'over':'under'}">${r>1.05?'tardas '+Math.round((r-1)*100)+'% más de lo que estimas':r<0.95?'terminas '+Math.round((1-r)*100)+'% antes':'estimas bien'}</span></div></div>`}).join(''):'<div class="empty">Aún no hay registros</div>';
+  $('actView').innerHTML=s.length?s.map(o=>{const r=o.avg/o.pavg;return`<div class="entry"><div class="top"><b>${esc(o.n)}</b><span class="muted">${o.c} ${o.c>1?'veces':'vez'}</span></div>
+  <div class="meta">Promedio real <b style="color:#fff">${fmtMin(o.avg)}</b> · planeabas ${fmtMin(o.pavg)}</div>
+  <div class="meta">Rango ${fmtMin(o.min)} – ${fmtMin(o.max)} · <span class="${r>1.05?'over':'under'}">${r>1.05?'tardas '+Math.round((r-1)*100)+'% más de lo que estimas':r<0.95?'terminas '+Math.round((1-r)*100)+'% antes':'estimas bien'}</span></div></div>`}).join(''):'<div class="empty">Aún no hay registros</div>';
 }
 
 function exportData(){
@@ -1781,8 +1782,8 @@ function importData(inp){
     const seen=new Set(log.map(e=>e.d+e.h+e.n));let n=0;d.log.forEach(e=>{if(!seen.has(e.d+e.h+e.n)){log.push(e);n++}});
     if(d.plans&&typeof d.plans==='object')Object.keys(d.plans).forEach(k=>{if(d.plans[k]&&d.plans[k].length)plans[k]=d.plans[k]});else if(Array.isArray(d.acts)&&d.acts.length)plans[dkey(new Date())]=d.acts;
     setPlanDay(planDay);store('log',log);store('plans',plans);render();renderLog();renderAct();
-    modal(`style>h1>Importado ✅</h1><div class="muted">${n} registros nuevos y tu plan del día.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
-  catch(e){modal(`style>h1>Archivo no válido</h1><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}inp.value=''};
+    modal(`<h1>Importado ✅</h1><div class="muted">${n} registros nuevos y tu plan del día.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}
+  catch(e){modal(`<h1>Archivo no válido</h1><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}inp.value=''};
   r.readAsText(f);
 }
 
@@ -1794,10 +1795,10 @@ function mergeLogs(a,b){const m=new Map();a.concat(b).forEach(e=>m.set(keyOf(e),
 function setSync(st){syncState=st;drawSync()}
 function drawSync(){
   let h;
-  if(!fbAuth)h='style>div class="dot err"></div><span>Sin conexión a la nube</span>';
-  else if(!user)h='style>div class="dot"></div><span>Solo en este dispositivo</span><button onclick="login()">Iniciar sesión</button>';
+  if(!fbAuth)h='<div class="dot err"></div><span>Sin conexión a la nube</span>';
+  else if(!user)h='<div class="dot"></div><span>Solo en este dispositivo</span><button onclick="login()">Iniciar sesión</button>';
   else{const t={ok:'Sincronizado',busy:'Guardando…',err:'Error al sincronizar'+(lastErr?' ('+lastErr+')':'')}[syncState]||'Conectando…';
-    h=`style>div class="dot ${syncState}"></div><span>☁︎ ${t} · ${esc(user.email||'')}</span><button class="lnk" onclick="logout()">Salir</button>`}
+    h=`<div class="dot ${syncState}"></div><span>☁︎ ${t} · ${esc(user.email||'')}</span><button class="lnk" onclick="logout()">Salir</button>`}
   ['syncBar1','syncBar2'].forEach(id=>{const el=$(id);if(el)el.innerHTML=h});
 }
 function queueSync(){if(!user||applying)return;setSync('busy');clearTimeout(syncT);syncT=setTimeout(pushSync,800)}
@@ -1825,7 +1826,7 @@ async function onLogin(u){
   }catch(e){console.error(e);lastErr=e&&(e.code||e.message)||'';setSync('err')}
 }
 function login(){const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
-  fbAuth.signInWithPopup(p).catch(e=>{if(e&&e.code==='auth/popup-blocked')modal(`style>h1>Safari bloqueó la ventana</h1><div class="muted">Ve a Ajustes → Apps → Safari y apaga <b>Bloquear ventanas</b>. Luego vuelve a tocar Iniciar sesión.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);else if(e&&e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')modal(`<h1>No se pudo iniciar sesión</h1><div class="muted">${esc(e.message||e.code||'')}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)})}
+  fbAuth.signInWithPopup(p).catch(e=>{if(e&&e.code==='auth/popup-blocked')modal(`<h1>Safari bloqueó la ventana</h1><div class="muted">Ve a Ajustes → Apps → Safari y apaga <b>Bloquear ventanas</b>. Luego vuelve a tocar Iniciar sesión.</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`);else if(e&&e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')modal(`<h1>No se pudo iniciar sesión</h1><div class="muted">${esc(e.message||e.code||'')}</div><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)})}
 function logout(){fbAuth.signOut()}
 try{
   firebase.initializeApp(fbConfig);fbAuth=firebase.auth();fbDb=firebase.firestore();
@@ -1833,7 +1834,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=99;
+const APP_VER=100;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
@@ -1843,7 +1844,7 @@ document.addEventListener('DOMContentLoaded',()=>{const b=$('updBtn');if(b)b.tex
 async function checkUpdate(manual){
   const b=$('updBtn');if(manual)b.textContent='⟳ Buscando…';
   try{const v=await latestVer();
-    if(v>APP_VER){$('updBox').innerHTML=`style>div class="upd"><span>Hay una versión nueva: <b>v${v}</b></span><button onclick="doUpdate(${v})">Actualizar</button></div>`;
+    if(v>APP_VER){$('updBox').innerHTML=`<div class="upd"><span>Hay una versión nueva: <b>v${v}</b></span><button onclick="doUpdate(${v})">Actualizar</button></div>`;
       if(manual)doUpdate(v);else b.textContent=`⟳ Actualizar a la v${v}`;}
     else{$('updBox').innerHTML='';if(manual){b.textContent='✓ Ya tienes la versión más nueva (v'+APP_VER+')';setTimeout(()=>b.textContent='⟳ Buscar actualización (tienes la v'+APP_VER+')',3000)}}
   }catch(e){if(manual){b.textContent='Sin conexión, intenta de nuevo';setTimeout(()=>b.textContent='⟳ Buscar actualización (tienes la v'+APP_VER+')',3000)}}
@@ -1851,6 +1852,6 @@ async function checkUpdate(manual){
 if(/[?&](v|t)=/.test(location.search))history.replaceState(null,'',location.pathname);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate(false)});
 initPlans();fixData();render();prev();setTimeout(checkRun,300);setTimeout(()=>checkUpdate(false),1500);
-style>/script>
-style>/body>
-style>/html>
+</script>
+</body>
+</html>
