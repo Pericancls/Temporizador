@@ -415,11 +415,11 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .side .ntrun{font-size:min(7vw,30px);flex-direction:column;line-height:1;border:2px solid currentColor;border-radius:16px;padding:8px 10px;margin-top:4px}.side .ntrun small{font-size:min(3vw,13px);font-weight:600}
 .ntmid{display:none}
 @media (orientation:portrait){#run .lbl{display:flex;flex-direction:column;align-items:center}.ntmid{display:block;margin:1.4vh auto 0}#ntRun{display:none!important}}
-#calView{display:flex;flex-direction:column}.rgL,.rgM,.rgR{display:contents}.rgL>*{order:0}.rgM>*{order:1}.rgR>*{order:2}.rgL>.rgb{order:3}
+#calView{display:flex;flex-direction:column}.rgL,.rgM,.rgR{display:contents}.rgL>*{order:0}.rgM>*{order:1}.rgR>*{order:2}.rgL>.dnote{order:3}.rgL>.rgb{order:4}
 @media (min-width:1100px){#s2.on{max-width:1500px}
   #calView{display:grid;grid-template-columns:minmax(230px,.5fr) minmax(0,1.25fr) minmax(0,1.35fr);gap:24px;align-items:start}
   .rgL,.rgM,.rgR{display:block;position:sticky;top:16px;max-height:calc(100vh - 250px);overflow:auto;padding-right:4px}
-  .rgM #dayTitle{margin-top:0}.rgR .dnote{margin-top:14px}
+  .rgM #dayTitle{margin-top:0}.rgL .dnote{margin-top:14px}.rgL #dnTxt{min-height:180px}
   #dayTl{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,210px);column-gap:14px;align-items:start}#dayTl>h3,#dayTl>.tlsum,#dayTl>.tlstrip,#dayTl>.tlax{grid-column:1/-1}#dayTl>.tlwrap{grid-column:1}#dayTl>.tlleg{grid-column:2;margin-top:0;max-height:calc(100vh - 420px);overflow:auto}#dayTl .tll{font-size:13px}.rgR .tlwrap{max-height:calc(100vh - 420px);min-height:300px}
   #calView .grid .day{aspect-ratio:auto;height:30px;min-height:0;font-size:13px;border-radius:7px}#calView .grid .day small{font-size:9px;line-height:1}#calView .grid{gap:4px}
   .rgL .calhead b{font-size:15px}.rgL .calhead button{width:34px;height:32px;font-size:16px}.rgL .rgb{font-size:14px;padding:10px 8px}
@@ -453,7 +453,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v100</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v101</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -525,13 +525,13 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
     <div class="grid" id="grid"></div>
     <button class="btn gray rgb" style="width:100%;margin-top:6px" onclick="manualForm()">＋ Agregar registro manual</button>
     <button class="btn gray rgb" style="width:100%;margin-top:8px" onclick="recoverForm()">↺ ¿Se borró tu actividad? Recuperarla</button>
+    <div class="dnote"><div class="dnh"><b>📝 Notas del día</b><span id="dnSt"></span></div>
+      <textarea id="dnTxt" placeholder="¿Cómo te fue hoy? Lo que sentiste, lo que aprendiste, lo que te frenó…" oninput="dnInput()" onblur="dnFlush()"></textarea></div>
     </div><div class="rgM">
     <h3 id="dayTitle"></h3>
     <div id="dayList"></div>
     </div><div class="rgR">
     <div id="dayTl"></div>
-    <div class="dnote"><div class="dnh"><b>📝 Notas del día</b><span id="dnSt"></span></div>
-      <textarea id="dnTxt" placeholder="¿Cómo te fue hoy? Lo que sentiste, lo que aprendiste, lo que te frenó…" oninput="dnInput()" onblur="dnFlush()"></textarea></div>
   </div></div>
   <div id="actView" style="display:none"></div>
   <h3>Respaldo</h3>
@@ -549,7 +549,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v100</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v101</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -1834,7 +1834,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=100;
+const APP_VER=101;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
