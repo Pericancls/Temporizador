@@ -458,7 +458,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 .mmbtn.on{background:#0d2a4d;border-color:#0a84ff;color:#64d2ff}
 @media not all and (min-width:1100px) and (pointer:fine){.mmbtn{display:inline-block}.ptrow h2{margin-right:auto}
   #dayPrev.mmshow{display:flex;flex-direction:column;background:#141416;border:1px solid #242428;border-radius:16px;padding:14px 12px 10px;margin-bottom:12px;max-height:62vh}}
-.exbtn.app{background:#0e1f33;color:#64d2ff;border-color:#1f5f8f}.exbtn.app small{color:#9fdcff}.exbtn.bkf{background:#2a2306;color:#ffd60a;border-color:#a8890c}.exbtn.bkf small{color:#ffe27a}
+.exbtn.bano{background:#1d1d24;color:#c7c7ff;border-color:#5e5ce6}.exbtn.bano small{color:#a5a3ff}.exbtn.app{background:#0e1f33;color:#64d2ff;border-color:#1f5f8f}.exbtn.app small{color:#9fdcff}.exbtn.bkf{background:#2a2306;color:#ffd60a;border-color:#a8890c}.exbtn.bkf small{color:#ffe27a}
 .endbtn{display:block;margin:1.6vh auto 0;background:#fff;color:#0b6b2f;border:none;border-radius:16px;padding:12px 22px;font-size:min(4.6vw,19px);font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 #run:not(.brk) .endbtn{background:#34c759;color:#000}
 @media (orientation:landscape){.endbtn{padding:10px 20px;font-size:min(2.4vw,18px)}}

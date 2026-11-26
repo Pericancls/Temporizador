@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Temporizador del día</title>
-<link rel="stylesheet" href="css/app.css?v=119">
+<link rel="stylesheet" href="css/app.css?v=120">
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v119</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v120</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -28,6 +28,7 @@
   <button class="exbtn" onclick="startExercise()">🏋️ Ejercicio <small>25 min</small></button>
   <button class="exbtn bkf" onclick="startQuick('Desayuno',40)">🍳 Desayuno <small>40 min</small></button>
   <button class="exbtn app" onclick="startQuick('Mejorar la app',30)">🛠️ Mejorar la app <small>30 min</small></button>
+  <button class="exbtn bano" onclick="startQuick('Baño',10)">🚻 Baño <small>10 min</small></button>
   <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización</button>
 </section>
 
@@ -106,7 +107,7 @@
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v119</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v120</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -129,19 +130,19 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script>const APP_VER=119;</script>
-<script src="js/core.js?v=119"></script>
-<script src="js/actividades.js?v=119"></script>
-<script src="js/temporizador.js?v=119"></script>
-<script src="js/recurrentes.js?v=119"></script>
-<script src="js/minuto-a-minuto.js?v=119"></script>
-<script src="js/backlog.js?v=119"></script>
-<script src="js/notas.js?v=119"></script>
-<script src="js/panoramica.js?v=119"></script>
-<script src="js/nueva-actividad.js?v=119"></script>
-<script src="js/reportes.js?v=119"></script>
-<script src="js/registro.js?v=119"></script>
-<script src="js/sync.js?v=119"></script>
-<script src="js/arranque.js?v=119"></script>
+<script>const APP_VER=120;</script>
+<script src="js/core.js?v=120"></script>
+<script src="js/actividades.js?v=120"></script>
+<script src="js/temporizador.js?v=120"></script>
+<script src="js/recurrentes.js?v=120"></script>
+<script src="js/minuto-a-minuto.js?v=120"></script>
+<script src="js/backlog.js?v=120"></script>
+<script src="js/notas.js?v=120"></script>
+<script src="js/panoramica.js?v=120"></script>
+<script src="js/nueva-actividad.js?v=120"></script>
+<script src="js/reportes.js?v=120"></script>
+<script src="js/registro.js?v=120"></script>
+<script src="js/sync.js?v=120"></script>
+<script src="js/arranque.js?v=120"></script>
 </body>
 </html>
