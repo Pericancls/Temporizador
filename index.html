@@ -412,12 +412,13 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .picum{margin-left:auto;display:block;background:#fff;border-radius:8px;padding:4px 7px;line-height:0;flex:none;transition:transform .12s,box-shadow .12s}
 .picum img{height:30px;width:auto;display:block}.blhead.m .picum img{height:30px}
 .picum:hover{transform:scale(1.05);box-shadow:0 0 0 2px #0a84ff}
+.side .ntrun{font-size:min(7vw,30px);flex-direction:column;line-height:1;border:2px solid currentColor;border-radius:16px;padding:8px 10px;margin-top:4px}.side .ntrun small{font-size:min(3vw,13px);font-weight:600}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v85</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v86</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -511,10 +512,11 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v85</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v86</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
+    <button id="ntRun" class="ntrun" onclick="runNote()">📝<small>Nota</small></button>
     <button id="minBtn" class="minbtn" onclick="minimizeRun()" style="display:none">⌄<small>Usar app</small></button>
   </div>
   <div class="mid">
@@ -1257,7 +1259,9 @@ function wkPlace(rest,b,sn){const k=wkPick(wkForce);plans[k]=plans[k]||[];const 
 /* ===== Notas personales (qué siento / qué me frena) ===== */
 function mergeNotes(r,l){const m=new Map();(Array.isArray(r)?r:[]).concat(l||[]).forEach(n=>{if(!n||!n.id)return;const o=m.get(n.id);if(!o||(n.del&&!o.del))m.set(n.id,n)});return [...m.values()].sort((a,b)=>b.ts-a.ts)}
 let ntAct='';
-function notesOpen(i){const a=acts[i];if(!a)return;ntAct=a.n;
+function notesOpen(i){const a=acts[i];if(!a)return;notesOpenName(a.n)}
+function runNote(){const n=(cur&&!cur.rest&&cur.n)||(queue[idx+1]&&queue[idx+1].n)||(queue[idx]&&queue[idx].n);if(n)notesOpenName(n)}
+function notesOpenName(nm){const a={n:nm};ntAct=nm;
   modal(`<h1>📝 Notas</h1><div class="muted" style="margin-bottom:8px">${esc(a.n)}</div>
   <textarea id="ntTxt" placeholder="¿Qué sientes, qué piensas, qué te está frenando?"></textarea>
   <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button><button class="btn" onclick="noteSave()">Guardar</button></div>
@@ -1739,7 +1743,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=85;
+const APP_VER=86;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
