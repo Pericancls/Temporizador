@@ -468,7 +468,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 .mmbtn.on{background:#0d2a4d;border-color:#0a84ff;color:#64d2ff}
 @media not all and (min-width:1100px) and (pointer:fine){.mmbtn{display:inline-block}.ptrow h2{margin-right:auto}
   #dayPrev.mmshow{display:flex;flex-direction:column;background:#141416;border:1px solid #242428;border-radius:16px;padding:14px 12px 10px;margin-bottom:12px;max-height:62vh}}
-.exbtn.bkf{background:#2a2306;color:#ffd60a;border-color:#a8890c}.exbtn.bkf small{color:#ffe27a}
+.exbtn.app{background:#0e1f33;color:#64d2ff;border-color:#1f5f8f}.exbtn.app small{color:#9fdcff}.exbtn.bkf{background:#2a2306;color:#ffd60a;border-color:#a8890c}.exbtn.bkf small{color:#ffe27a}
 .endbtn{display:block;margin:1.6vh auto 0;background:#fff;color:#0b6b2f;border:none;border-radius:16px;padding:12px 22px;font-size:min(4.6vw,19px);font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 #run:not(.brk) .endbtn{background:#34c759;color:#000}
 @media (orientation:landscape){.endbtn{padding:10px 20px;font-size:min(2.4vw,18px)}}
@@ -477,7 +477,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v110</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v111</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -495,6 +495,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
   <button class="restbtn" onclick="startRest()">☕ Me merezco un descanso <small>10 min</small></button>
   <button class="exbtn" onclick="startExercise()">🏋️ Ejercicio <small>25 min</small></button>
   <button class="exbtn bkf" onclick="startQuick('Desayuno',40)">🍳 Desayuno <small>40 min</small></button>
+  <button class="exbtn app" onclick="startQuick('Mejorar la app',30)">🛠️ Mejorar la app <small>30 min</small></button>
   <button class="linkbtn" id="updBtn" onclick="checkUpdate(true)">⟳ Buscar actualización</button>
 </section>
 
@@ -574,7 +575,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v110</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v111</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -1936,7 +1937,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=110;
+const APP_VER=111;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
