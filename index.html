@@ -413,12 +413,14 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .picum img{height:30px;width:auto;display:block}.blhead.m .picum img{height:30px}
 .picum:hover{transform:scale(1.05);box-shadow:0 0 0 2px #0a84ff}
 .side .ntrun{font-size:min(7vw,30px);flex-direction:column;line-height:1;border:2px solid currentColor;border-radius:16px;padding:8px 10px;margin-top:4px}.side .ntrun small{font-size:min(3vw,13px);font-weight:600}
+.ntmid{display:none}
+@media (orientation:portrait){#run .lbl{display:flex;flex-direction:column;align-items:center}.ntmid{display:block;margin:1.4vh auto 0}#ntRun{display:none!important}}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v86</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v87</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -512,7 +514,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v86</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v87</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -522,7 +524,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
   <div class="mid">
     <div id="clock">00:00</div>
     <div class="lbl"><div id="label"></div>
-    <div id="sub"></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button></div>
+    <div id="sub"></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button><button class="minib ntmid" onclick="runNote()">📝 Nota</button></div>
   </div>
   <div class="side">
     <button class="txt" onclick="stop()">Salir</button>
@@ -1743,7 +1745,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=86;
+const APP_VER=87;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
