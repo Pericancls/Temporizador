@@ -441,12 +441,18 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .exits{display:flex;flex-direction:column;gap:14px;align-items:center}.side .exits .txt{font-size:min(3.6vw,17px);line-height:1.15;text-align:center;padding:6px 8px}.side .exits .ex1{color:#34c759}
 @media (orientation:portrait){.exits{flex-direction:column;gap:8px}.side .exits .txt{font-size:13px;padding:2px 4px}}
 .brkbar.act{background:#0a4fa3}.brkbar.act .bn{opacity:1;font-size:15px;font-weight:600}.brkbar.act b{font-variant-numeric:tabular-nums}
+.side .exb{position:relative;background:none;border:none;padding:6px;width:min(14vw,64px);height:min(14vw,64px);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.side .exb svg{width:100%;height:100%;fill:none!important}
+.side .exb i{position:absolute;right:-2px;bottom:0;font-style:normal;font-size:min(3.4vw,15px);font-weight:900;border-radius:50%;width:min(6vw,26px);height:min(6vw,26px);display:flex;align-items:center;justify-content:center;color:#000;letter-spacing:-2px}
+.side .exb.ex1{color:#34c759}.side .exb.ex1 i{background:#34c759;padding-left:2px}
+.side .exb.ex2 i{background:#0a84ff;color:#000;font-size:min(2.6vw,11px);letter-spacing:-1px}
+@media (orientation:portrait){.side .exb{width:46px;height:46px}.side .exb i{width:20px;height:20px;font-size:11px}.exits{gap:6px}}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v97</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v98</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -542,7 +548,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v97</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v98</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -555,7 +561,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
     <div id="sub"></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button><button class="minib ntmid" onclick="runNote()">📝 Nota</button></div>
   </div>
   <div class="side">
-    <div class="exits"><button class="txt ex1" onclick="exitKeep()">Salir y<br>continuar</button><button class="txt ex2" onclick="stop()">Salir y<br>pausar</button></div>
+    <div class="exits"><button class="exb ex1" onclick="exitKeep()" title="Salir y continuar" aria-label="Salir y continuar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>▶</i></button><button class="exb ex2" onclick="stop()" title="Salir y pausar" aria-label="Salir y pausar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>❚❚</i></button></div>
     <button onclick="play()"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
   </div>
 </div>
@@ -1812,7 +1818,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=97;
+const APP_VER=98;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
