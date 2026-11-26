@@ -477,7 +477,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v108</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v109</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -574,7 +574,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v108</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v109</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -1173,12 +1173,19 @@ function renderPrev(){placePrev();const box=$('dayPrev');if(!box||!(isDesk()||mm
     else if(cur){skip=cur.id;push(cur.n,inOver?0:remain/60,'cur',acts.find(x=>x.id===cur.id))}
   }
   const pend=acts.filter(a=>!a.done&&a.id!==skip&&!(a.quick&&!a.prog));
-  const fixAt=a=>{if(!a.t||a.prog)return null;const [hh,mm]=a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const st=d.getTime();return st+a.m*60000>t0?st:null};
-  const fixed=[];
-  pend.forEach(a=>{const fs=fixAt(a);if(fs!=null){fixed.push({n:a.n,st:fs,en:fs+a.m*60000,cls:'fix',a});return}
-    if(blocks.length&&blocks[blocks.length-1].cls!=='brk')push('Descanso',brk,'brk');push(a.n,a.prog?Math.max(0,a.prog.rem)/60:a.m,a.prog?'pau':'',a)});
+  const durOf=a=>(a.prog?Math.max(0,a.prog.rem)/60:a.m)*60000;
+  const fixAt=a=>{if(!a.t)return null;const [hh,mm]=a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const st=d.getTime();return !a.prog&&st+durOf(a)>t0?st:null};
+  const fixed=[],flex=[];
+  pend.forEach(a=>{const fs=fixAt(a);if(fs!=null)fixed.push({n:a.n,st:fs,en:fs+durOf(a),cls:'fix',a});else flex.push(a)});
+  fixed.sort((p,q)=>p.st-q.st);
+  // las flexibles se acomodan en los huecos libres y se brincan los bloques con hora fija
+  const B=brk*60000,fitAt=(s,dur)=>{for(let g=0;g<60;g++){const hit=fixed.find(f=>s<f.en&&s+dur>f.st);if(!hit)return s;s=hit.en+B}return s};
+  const addB=(n,st,en,cls,a)=>{if(en<=st&&cls==='brk')return;blocks.push({n,st,en,cls,a})};
+  flex.forEach(a=>{const dur=durOf(a),needB=blocks.length&&blocks[blocks.length-1].cls!=='brk',s0=t+(needB?B:0),s=fitAt(s0,dur);
+    if(s===s0){if(needB)addB('Descanso',t,s0,'brk')}else addB('Descanso',s-B,s,'brk');
+    addB(a.n,s,s+dur,a.prog?'pau':'',a);t=s+dur});
   const flowEnd=t;fixed.forEach(f=>{blocks.push(f);if(f.en>t)t=f.en});
-  const clash=[];fixed.forEach(f=>blocks.forEach(b=>{if(b!==f&&b.cls!=='brk'&&b.st<f.en&&b.en>f.st)clash.push([f.n,b.n])}));
+  const clash=[],seen=new Set();fixed.forEach(f=>blocks.forEach(b=>{if(b!==f&&b.cls!=='brk'&&b.st<f.en&&b.en>f.st){const k=[f.n,b.n].sort().join('|');if(!seen.has(k)){seen.add(k);clash.push([f.n,b.n])}}}));
   const mid=kDate(planDay);mid.setDate(mid.getDate()+1);mid.setHours(0,0,0,0);const midT=mid.getTime();
   const tEnd=Math.max(t,midT),span=(tEnd-t0)/60000;
   const avail=Math.max(300,innerHeight-300),ppm=Math.max(0.6,Math.min(3,avail/Math.max(span,60)));
@@ -1199,7 +1206,7 @@ function renderPrev(){placePrev();const box=$('dayPrev');if(!box||!(isDesk()||mm
     const hhmm=ts=>{const d=new Date(ts);return fmt12(pad(d.getHours())+':'+pad(d.getMinutes()))};
     if(b.cls==='brk'){h+=`<div class="dpb brk" style="top:${top}px;height:${ht}px" title="${b.n} ${hhmm(b.st)}–${hhmm(b.en)}">${ht>=14?'☕ '+fmtMin((b.en-b.st)/60000):''}</div>`;return}
     let late='';if(b.cls==='fix')late='';else if(b.a&&b.a.t){const [hh,mm]=b.a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const diff=Math.round((b.st-d.getTime())/60000);
-      late=diff>5?` <span class="late">⏰ ${fmt12(b.a.t)} · llegarías ${fmtMin(diff)} tarde</span>`:diff<-5?` <span class="early">⏰ es a las ${fmt12(b.a.t)} · aquí irías ${fmtMin(-diff)} antes</span>`:` <span class="tm">⏰ ${fmt12(b.a.t)}</span>`}
+      late=diff>5?` <span class="late">⏰ ${fmt12(b.a.t)} · llegarías ${fmtMin(diff)} tarde</span>`:diff<-5?(b.a.prog?'':` <span class="early">⏰ es a las ${fmt12(b.a.t)} · aquí irías ${fmtMin(-diff)} antes</span>`):` <span class="tm">⏰ ${fmt12(b.a.t)}</span>`}
     const tiny=ht<34,min=(b.en-b.st)/60000;
     h+=`<div class="dpb ${b.cls}${tiny?' tiny':''}${b.ncol>1?' narrow':''}" style="top:${top}px;height:${ht}px;${pos}" title="${esc(b.n)} · ${hhmm(b.st)}–${hhmm(b.en)}">${tiny?`<b>${esc(b.n)}</b><span class="tm">${hhmm(b.st)}</span>${late}`:`<div class="tm">${hhmm(b.st)}–${hhmm(b.en)} · ${b.cls==='cur'?(inOver?'en tiempo extra':'en curso'):fmtMin(min)}</div><b>${b.a&&b.a.rid?'🔁 ':''}${esc(b.n)}</b>${late?'<div>'+late+'</div>':''}`}</div>`});
   const endD=new Date(t),endTxt=fmt12(pad(endD.getHours())+':'+pad(endD.getMinutes()));
@@ -1927,7 +1934,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=108;
+const APP_VER=109;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
