@@ -461,12 +461,15 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 .livep{display:inline-flex;align-items:center;gap:4px;background:#0d2a4d;color:#64d2ff;border:1px solid #0a84ff;border-radius:8px;padding:5px 8px;font-size:14px;white-space:nowrap;cursor:pointer;flex:none}
 .livep b{font-variant-numeric:tabular-nums;font-weight:700}.livep.bg{background:#2e1846;border-color:#bf5af2;color:#e0b8ff}.livep.pz{opacity:.75}
 @media (max-width:600px){.livep{font-size:12px;padding:4px 6px}}
+.brkact{display:flex;gap:12px;justify-content:center;margin-top:2.2vh;flex-wrap:wrap}
+.brkact .ba{border:none;border-radius:16px;padding:14px 22px;font-size:min(4.5vw,20px);font-weight:700;cursor:pointer}
+.brkact .skip{background:#fff;color:#0f3a1d}.brkact .rest{background:rgba(255,255,255,.2);color:#fff;border:2px solid rgba(255,255,255,.6)}
 </style>
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v103</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v104</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -562,7 +565,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v103</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v104</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -572,7 +575,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
   <div class="mid">
     <div id="clock">00:00</div>
     <div class="lbl"><div id="label"></div>
-    <div id="sub"></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button><button class="minib ntmid" onclick="runNote()">📝 Nota</button></div>
+    <div id="sub"></div><div id="brkAct" class="brkact" style="display:none"><button class="ba skip" onclick="skipBreak()">⏭ Saltar descanso</button><button class="ba rest" onclick="restChosen()">☕ Descansar</button></div><button id="miniBtn" class="minib" onclick="startMini()" style="display:none"></button><button class="minib ntmid" onclick="runNote()">📝 Nota</button></div>
   </div>
   <div class="side">
     <div class="exits"><button class="exb ex1" onclick="exitKeep()" title="Salir y continuar" aria-label="Salir y continuar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>▶</i></button><button class="exb ex2" onclick="stop()" title="Salir y pausar" aria-label="Salir y pausar"><svg viewBox="0 0 24 24"><path d="M14 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 12h10M17.5 8.5 21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><i>❚❚</i></button></div>
@@ -840,7 +843,7 @@ function resumeItem(i){const a=acts[i];if(!a||a.done)return;if(cur2&&cur2.id===a
 function resumeItem0(id){const a=acts.find(x=>x.id===id);if(!a||a.done)return;unlockAudio();
   queue=[a].concat(acts.filter(x=>!x.done&&x!==a&&(!x.quick||x.prog)&&!(cur2&&x.id===cur2.id))).map(x=>({...x}));go(0)}
 function begin(secs,rem){
-  restoreRunView();
+  restoreRunView();{const ba=$('brkAct');if(ba)ba.style.display='none'}
   inOver=false;total=secs;remain=rem!=null?rem:secs;warned=false;stopAlarm();
   $('run').classList.add('on');$('run').classList.toggle('brk',!!(cur&&cur.rest));$('clock').textContent='';requestAnimationFrame(fit);$('label').textContent=cur.n;subText();if(cur&&cur.rest)$('sub').textContent='☕ Disfrútalo, te lo ganaste';
   running=true;last=Date.now();setPP(true);clearInterval(timer);timer=setInterval(tick,200);lock();setTimeout(runTopUpd,0);
@@ -933,12 +936,12 @@ function finish(){if(inMini)return endMini(false);if(inBreak)return endBreak(fal
 function skip(){running=false;clearInterval(timer);if(cur.elapsed>=60)save(false);advance()}
 function advance(){if(idx+1<queue.length){if(brk>0)startBreak();else go(idx+1)}else{done()}}
 function startBreak(){
-  inBreak=true;cur=null;stopAlarm();total=brk*60;remain=total;
+  brkChosen=false;inBreak=true;cur=null;stopAlarm();total=brk*60;remain=total;
   const r=$('run');r.classList.add('on','brk');$('clock').textContent='';
   $('label').textContent='Descanso';brkSub();
   running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();saveRun();
 }
-function brkSub(){const nx=queue[idx+1];
+function brkSub(){const nx=queue[idx+1];const ba=$('brkAct');if(ba)ba.style.display=inBreak&&!brkChosen?'flex':'none';
   $('sub').innerHTML=`Sigue: <b>${esc(nx.n)}</b> (${nx.m} min)`+(queue.length-idx-1>1?` <button class="chg" onclick="pickNext()">Cambiar ▾</button>`:'');}
 function pickNext(){
   const rest=queue.slice(idx+1);
@@ -946,7 +949,10 @@ function pickNext(){
   <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button></div>`);
 }
 function setNext(j){const [a]=queue.splice(j,1);queue.splice(idx+1,0,a);closeModal();brkSub();saveRun()}
-function endBreak(sound){running=false;clearInterval(timer);if(sound){beep();say('Se acabó el descanso')}go(idx+1)}
+let brkChosen=false;
+function skipBreak(){if(!inBreak)return;brkChosen=false;$('brkAct').style.display='none';endBreak(false)}
+function restChosen(){brkChosen=true;$('brkAct').style.display='none'}
+function endBreak(sound){brkChosen=false;const ba=$('brkAct');if(ba)ba.style.display='none';running=false;clearInterval(timer);if(sound){beep();say('Se acabó el descanso')}go(idx+1)}
 function done(){
   $('run').classList.remove('mini');document.body.classList.remove('hasbar');$('brkBar').style.display='none';
   $('run').classList.remove('on');release();clearRun();
@@ -1000,7 +1006,7 @@ function endMini(sound,silent){if(!inMini)return;inMini=false;const m=miniSaved;
   clearInterval(timer);if(sound){beep();say('Se acabó el mini descanso')}
   if(silent){total=m.total;remain=m.remain;warned=m.warned;return}
   begin(m.total,m.remain);warned=m.warned;segOpen();}
-function startBreakAt(t,rem){inBreak=true;stopAlarm();total=t;remain=rem;const el=$('run');el.classList.add('on','brk');$('clock').textContent='';$('label').textContent='Descanso';brkSub();
+function startBreakAt(t,rem){brkChosen=false;inBreak=true;stopAlarm();total=t;remain=rem;const el=$('run');el.classList.add('on','brk');$('clock').textContent='';$('label').textContent='Descanso';brkSub();
   running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();saveRun()}
 
 /* ---- Recuperar actividad interrumpida (a mano) ---- */
@@ -1899,7 +1905,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=103;
+const APP_VER=104;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
