@@ -293,7 +293,7 @@ li.dsrc{opacity:.3}
 .ptrow .sync{margin:0;flex:0 1 auto;min-width:0;padding:6px 10px;font-size:13px;gap:8px}.ptrow .sync button{padding:6px 10px;font-size:13px}.ptrow .sync button.lnk{padding:2px 4px}
 .ntb{background:none;border:1px solid #3a3a3c;border-radius:8px;width:30px;height:30px;flex:none;font-size:14px;padding:0;cursor:pointer;position:relative;opacity:.55;display:flex;align-items:center;justify-content:center}
 .ntb.has{opacity:1;border-color:#64d2ff}.ntb i{position:absolute;top:-6px;right:-6px;background:#64d2ff;color:#000;font-style:normal;font-size:10px;font-weight:700;border-radius:8px;min-width:15px;height:15px;line-height:15px;text-align:center;padding:0 3px}
-li.done .ntb{opacity:.35}.lkb{background:none;border:1px solid #3a3a3c;border-radius:8px;width:30px;height:30px;flex:none;font-size:13px;padding:0;cursor:pointer;opacity:.45;display:flex;align-items:center;justify-content:center;margin-right:4px}.lkb.on{opacity:1;border-color:#ff9f0a}.dpb.lkx{outline:2px solid #ff453a;outline-offset:-2px}li.done .ntb.has{opacity:.8}
+li.done .ntb{opacity:.35}.lkb{background:none;border:1px solid #3a3a3c;border-radius:8px;width:30px;height:30px;flex:none;font-size:13px;padding:0;cursor:pointer;opacity:.45;display:flex;align-items:center;justify-content:center;margin-right:4px}.lkcol{display:flex;flex-direction:column;gap:4px;margin-right:4px;flex:none}.lkcol .lkb{margin-right:0}.lkb.trb.on{border-color:#64d2ff}.dpb.trv{background:#0e2433;border-left-color:#64d2ff}.dpb.trv .tm{color:#9fdcff}.lkb.on{opacity:1;border-color:#ff9f0a}.dpb.lkx{outline:2px solid #ff453a;outline-offset:-2px}li.done .ntb.has{opacity:.8}
 .notebtn{background:#1c1c1e;border:1px solid #3a3a3c;color:#fff;border-radius:12px;padding:7px 12px;font-size:18px;display:flex;align-items:center;gap:6px;cursor:pointer}
 .notebtn span{font-size:14px;color:#c7c7cc}
 #ntTxt{width:100%;min-height:150px;resize:vertical;font:inherit;font-size:16px;line-height:1.4;padding:12px;box-sizing:border-box}
@@ -473,7 +473,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v112</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v113</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -570,7 +570,7 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v112</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v113</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -633,7 +633,7 @@ function render(){
   acts.forEach(a=>{if(!a.id)a.id=uid()});
   const ncnt={};notes.forEach(n=>{if(!n.del&&n.act)ncnt[n.act]=(ncnt[n.act]||0)+1});
   const nDone=acts.filter(a=>a.done).length,hb=$('hideBtn');if(hb){hb.innerHTML=hideDone?`👁<span class="lg"> Mostrar terminadas</span>${nDone?' ('+nDone+')':''}`:'<svg class="eyec" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10c2.5 3.5 5.5 5 9 5s6.5-1.5 9-5"/><path d="M6.5 13.6 5 16M12 15v2.8M17.5 13.6 19 16"/></svg><span class="lg"> Ocultar terminadas</span>';hb.title=hideDone?'Mostrar terminadas':'Ocultar terminadas';hb.classList.toggle('on',hideDone)}
-  $('list').innerHTML=acts.length?acts.map((a,i)=>hideDone&&a.done?'':`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip tc1${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span>${a.t&&!a.done?`<button class="lkb${isLk(a)?' on':''}" onclick="toggleLock(${i})" title="${isLk(a)?'No se puede traslapar':'Se puede traslapar'}">${isLk(a)?'🔒':'🔓'}</button>`:''}<button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button>${liveFor(a)}<span class="tcol">${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}<span class="tcrow">${a.done||(a.quick&&!a.prog)?'':`<span class="tchip tc2${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}${a.prog&&!a.done?`<button class="rstb r2" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}</span></span>${a.prog&&!a.done?`<button class="rstb r1" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}${a.done||(a.quick&&!a.prog)||liveKind(a)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join('')+(hideDone&&nDone===acts.length?'<div class="empty">Todo lo de este día está terminado 🎉</div>':''):'<div class="empty">Agrega tus actividades</div>';
+  $('list').innerHTML=acts.length?acts.map((a,i)=>hideDone&&a.done?'':`<li data-i="${i}" class="${a.done?'done':''}"><button class="chk" onclick="toggleDone(${i})">${a.done?'✓':''}</button>${a.done?'':`<span class="tchip tc1${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}<span class="n">${a.rid?'<span class="rico">🔁</span>':''}${esc(a.n)}</span>${a.t&&!a.done?`<span class="lkcol"><button class="lkb${isLk(a)?' on':''}" onclick="toggleLock(${i})" title="${isLk(a)?'No se puede traslapar':'Se puede traslapar'}">${isLk(a)?'🔒':'🔓'}</button><button class="lkb trb${a.tr?' on':''}" onclick="toggleTr(${i})" title="${a.tr?'Sales '+a.tr+' min antes':'Agregar 30 min de traslado antes'}">🚗</button></span>`:''}<button class="ntb${ncnt[a.n]?' has':''}" onclick="notesOpen(${i})" title="Notas">📝${ncnt[a.n]?`<i>${ncnt[a.n]}</i>`:''}</button>${liveFor(a)}<span class="tcol">${a.prog&&!a.done?`<span class="t tprog" onclick="editT(${i})"><span>Llevas ${fmtMin(a.prog.el/60)}</span><span>Quedan ${fmtMin(Math.max(0,a.prog.rem)/60)}</span></span>`:`<span class="t${a.quick?' quick':''}" onclick="${a.done?'':`editT(${i})`}">${a.quick?'⚡ <5 min':a.m+' min'}</span>`}<span class="tcrow">${a.done||(a.quick&&!a.prog)?'':`<span class="tchip tc2${a.t?'':' none'}" onclick="editTime(${i})">${a.t?fmt12(a.t):'🕒'}</span>`}${a.prog&&!a.done?`<button class="rstb r2" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}</span></span>${a.prog&&!a.done?`<button class="rstb r1" onclick="resetLast(${i})" title="Borrar el último bloque">↺</button>`:''}${a.done||(a.quick&&!a.prog)||liveKind(a)?'':`<button class="playb${a.prog?' paused':''}" onclick="resumeItem(${i})" aria-label="Iniciar"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>`}<button class="delb" onclick="del(${i})">✕</button></li>`).join('')+(hideDone&&nDone===acts.length?'<div class="empty">Todo lo de este día está terminado 🎉</div>':''):'<div class="empty">Agrega tus actividades</div>';
   const dn=dayName(planDay),[py,pm,pd]=planDay.split('-').map(Number);
   $('planTitle').textContent=/^(hoy|mañana|pasado mañana|ayer)$/.test(dn)?'Plan de '+dn:'Plan del '+dn;
   $('planDate').textContent=new Date(py,pm-1,pd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
@@ -705,6 +705,8 @@ function toast(msg,btn,fn,ms){let t=$('toast');if(!t){t=document.createElement('
 function hideToast(){const t=$('toast');if(t)t.classList.remove('on')}
 function isLk(a){return a&&(a.lk!=null?!!a.lk:/traslado/i.test(a.n||''))}
 function toggleLock(i){const a=acts[i];if(!a)return;a.lk=!isLk(a);if(a.rid){const r=recs.find(x=>x.id===a.rid);if(r){r.lk=a.lk;store('recs',recs)}}store('acts',acts);render();toast(a.lk?'🔒 '+a.n+' no se puede traslapar':'🔓 '+a.n+' ya se puede traslapar')}
+function toggleTr(i){const a=acts[i];if(!a)return;a.tr=a.tr?0:30;if(a.tr)a.lk=true;if(a.rid){const r=recs.find(x=>x.id===a.rid);if(r){r.tr=a.tr;if(a.tr)r.lk=true;store('recs',recs)}}store('acts',acts);render();
+  if(a.tr&&a.t){const [h,m]=a.t.split(':').map(Number),x=((h*60+m-a.tr)%1440+1440)%1440;toast('🚗 Sales a las '+fmt12(pad(Math.floor(x/60))+':'+pad(x%60))+' · 30 min de traslado')}else toast(a.tr?'🚗 30 min de traslado':'🚗 Sin traslado')}
 function del(i){const a=acts[i];if(a&&a.rid)recSkip(a.rid,a.rk||planDay);acts.splice(i,1);store('acts',acts);render()}
 function fmt12(t){let [h,m]=t.split(':').map(Number);const ap=h>=12?'pm':'am';h=h%12||12;return h+':'+pad(m)+' '+ap}
 function editTime(i){editAct(i,'t')}
@@ -1095,7 +1097,7 @@ function occurs(r,k){if(k<r.from||k>r.until)return false;const d=kDate(k),dim=ne
 function recDur(r){if(r.start&&r.end){const [a,b]=r.start.split(':').map(Number),[c,e]=r.end.split(':').map(Number);let m=c*60+e-(a*60+b);if(m<=0)m+=1440;return m}return r.dur||30}
 function materialize(k){if(!k||!recs.length||k<dkey(new Date()))return;let add=false;const l=plans[k]=plans[k]||[];
   recs.forEach(r=>{if(!occurs(r,k)||(r.skip||[]).includes(k)||l.some(a=>a.rid===r.id&&(a.rk||k)===k))return;
-    l.push({n:r.n,m:recDur(r),id:uid(),rid:r.id,rk:k,...(r.start?{t:r.start}:{}),...(r.lk!=null?{lk:r.lk}:{})});add=true});
+    l.push({n:r.n,m:recDur(r),id:uid(),rid:r.id,rk:k,...(r.start?{t:r.start}:{}),...(r.lk!=null?{lk:r.lk}:{}),...(r.tr?{tr:r.tr}:{})});add=true});
   if(add){if(k===planDay)acts=l;try{localStorage.setItem('plans',JSON.stringify(plans))}catch(e){}queueSync()}else if(!l.length)delete plans[k]}
 function recSkip(id,k){const r=recs.find(x=>x.id===id);if(!r)return;r.skip=(r.skip||[]).concat(k);store('recs',recs)}
 function recTxt(r){let t=r.type==='week'?((r.days||[]).length===7?'Todos los días':(r.days||[]).length===5&&!r.days.includes(5)&&!r.days.includes(6)?'Lunes a viernes':'Cada '+(r.days||[]).map(i=>WDN[i]).join(', ')):r.type==='monthday'?`Día ${r.md} de cada mes`:`${NTH[r.nth]} ${WDN[r.wd]} de cada mes`;
@@ -1157,7 +1159,7 @@ function renderPrev(){placePrev();const box=$('dayPrev');if(!box||!(isDesk()||mm
   const durOf=a=>(a.prog?Math.max(0,a.prog.rem)/60:a.m)*60000;
   const fixAt=a=>{if(!a.t)return null;const [hh,mm]=a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const st=d.getTime();return !a.prog&&st+durOf(a)>t0?st:null};
   const fixed=[],flex=[];
-  pend.forEach(a=>{const fs=fixAt(a);if(fs!=null)fixed.push({n:a.n,st:fs,en:fs+durOf(a),cls:'fix',a});else flex.push(a)});
+  pend.forEach(a=>{const fs=fixAt(a);if(fs!=null){if(a.tr&&fs>t0)fixed.push({n:'🚗 Traslado',st:fs-a.tr*60000,en:fs,cls:'fix trv',a:{n:'Traslado',lk:true}});fixed.push({n:a.n,st:fs,en:fs+durOf(a),cls:'fix',a})}else flex.push(a)});
   fixed.sort((p,q)=>p.st-q.st);
   // las flexibles se acomodan en los huecos libres y se brincan los bloques con hora fija
   const B=brk*60000,fitAt=(s,dur)=>{for(let g=0;g<60;g++){const hit=fixed.find(f=>s<f.en&&s+dur>f.st);if(!hit)return s;s=hit.en+B}return s};
@@ -1189,7 +1191,7 @@ function renderPrev(){placePrev();const box=$('dayPrev');if(!box||!(isDesk()||mm
     let late='';if(b.cls==='fix')late='';else if(b.a&&b.a.t){const [hh,mm]=b.a.t.split(':').map(Number),d=kDate(planDay);d.setHours(hh,mm,0,0);const diff=Math.round((b.st-d.getTime())/60000);
       late=diff>5?` <span class="late">⏰ ${fmt12(b.a.t)} · llegarías ${fmtMin(diff)} tarde</span>`:diff<-5?(b.a.prog?'':` <span class="early">⏰ es a las ${fmt12(b.a.t)} · aquí irías ${fmtMin(-diff)} antes</span>`):` <span class="tm">⏰ ${fmt12(b.a.t)}</span>`}
     const tiny=ht<34,min=(b.en-b.st)/60000;
-    const lkI=isLk(b.a)?'🔒 ':'';h+=`<div class="dpb ${b.cls}${b.lkx?' lkx':''}${tiny?' tiny':''}${b.ncol>1?' narrow':''}" style="top:${top}px;height:${ht}px;${pos}" title="${esc(b.n)} · ${hhmm(b.st)}–${hhmm(b.en)}">${tiny?`<b>${lkI}${esc(b.n)}</b><span class="tm">${hhmm(b.st)}</span>${late}`:`<div class="tm">${hhmm(b.st)}–${hhmm(b.en)} · ${b.cls==='cur'?(inOver?'en tiempo extra':'en curso'):fmtMin(min)}</div><b>${lkI}${b.a&&b.a.rid?'🔁 ':''}${esc(b.n)}</b>${late?'<div>'+late+'</div>':''}`}</div>`});
+    const lkI=isLk(b.a)&&b.cls!=='fix trv'?'🔒 ':'';h+=`<div class="dpb ${b.cls}${b.lkx?' lkx':''}${tiny?' tiny':''}${b.ncol>1?' narrow':''}" style="top:${top}px;height:${ht}px;${pos}" title="${esc(b.n)} · ${hhmm(b.st)}–${hhmm(b.en)}">${tiny?`<b>${lkI}${esc(b.n)}</b><span class="tm">${hhmm(b.st)}</span>${late}`:`<div class="tm">${hhmm(b.st)}–${hhmm(b.en)} · ${b.cls==='cur'?(inOver?'en tiempo extra':'en curso'):fmtMin(min)}</div><b>${lkI}${b.a&&b.a.rid?'🔁 ':''}${esc(b.n)}</b>${late?'<div>'+late+'</div>':''}`}</div>`});
   const endD=new Date(t),endTxt=fmt12(pad(endD.getHours())+':'+pad(endD.getMinutes()));
   const clTxt=clash.length?`<div class="late" style="color:#ff6961;font-size:13px;margin-top:4px">⚠️ ${clash.slice(0,3).map(c=>esc(c[0])+' choca con 🔒 '+esc(c[1])).join('; ')}${clash.length>3?'…':''}</div>`:'';
   const foot=(!blocks.length?'<div class="muted">No hay actividades pendientes.</div>':
@@ -1844,7 +1846,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=112;
+const APP_VER=113;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
