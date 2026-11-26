@@ -415,10 +415,11 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 .side .ntrun{font-size:min(7vw,30px);flex-direction:column;line-height:1;border:2px solid currentColor;border-radius:16px;padding:8px 10px;margin-top:4px}.side .ntrun small{font-size:min(3vw,13px);font-weight:600}
 .ntmid{display:none}
 @media (orientation:portrait){#run .lbl{display:flex;flex-direction:column;align-items:center}.ntmid{display:block;margin:1.4vh auto 0}#ntRun{display:none!important}}
-#calView{display:flex;flex-direction:column}.rgL,.rgR{display:contents}.rgL>*{order:0}.rgR>*{order:1}.rgL>.rgb{order:2}
+#calView{display:flex;flex-direction:column}.rgL,.rgM,.rgR{display:contents}.rgL>*{order:0}.rgM>*{order:1}.rgR>*{order:2}.rgL>.rgb{order:3}
 @media (min-width:1100px){#s2.on{max-width:1500px}
-  #calView{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;align-items:start}
-  .rgL,.rgR{display:block}.rgR{position:sticky;top:16px;max-height:calc(100vh - 110px);overflow:auto;padding-right:4px}.rgR .dnote{margin-top:14px}
+  #calView{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr) minmax(0,1.1fr);gap:24px;align-items:start}
+  .rgL,.rgM,.rgR{display:block;position:sticky;top:16px;max-height:calc(100vh - 250px);overflow:auto;padding-right:4px}
+  .rgM #dayTitle{margin-top:0}.rgR .dnote{margin-top:14px}.rgR .tlwrap{max-height:calc(100vh - 420px);min-height:300px}
   #calView .grid .day{aspect-ratio:auto;height:54px;min-height:0}
   #calView[style*="display: none"],#calView[style*="display:none"]{display:none!important}}
 </style>
@@ -426,7 +427,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v88</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v89</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -496,10 +497,11 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
   <div id="calView"><div class="rgL">
     <div class="calhead"><button onclick="month(-1)">‹</button><b id="mLabel"></b><button onclick="month(1)">›</button></div>
     <div class="grid" id="grid"></div>
-    <h3 id="dayTitle"></h3>
-    <div id="dayList"></div>
     <button class="btn gray rgb" style="width:100%;margin-top:6px" onclick="manualForm()">＋ Agregar registro manual</button>
     <button class="btn gray rgb" style="width:100%;margin-top:8px" onclick="recoverForm()">↺ ¿Se borró tu actividad? Recuperarla</button>
+    </div><div class="rgM">
+    <h3 id="dayTitle"></h3>
+    <div id="dayList"></div>
     </div><div class="rgR">
     <div id="dayTl"></div>
     <div class="dnote"><div class="dnh"><b>📝 Notas del día</b><span id="dnSt"></span></div>
@@ -521,7 +523,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v88</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v89</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1752,7 +1754,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=88;
+const APP_VER=89;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
