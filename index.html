@@ -417,7 +417,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v83</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v84</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -511,7 +511,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v83</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v84</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -593,7 +593,7 @@ $('aName').addEventListener('input',()=>{
   if(s){$('hint').textContent=`Histórico: promedio real ${fmtMin(s.avg)} (${s.c} veces) · sin minutos = tarea rápida`}
   else $('hint').textContent='';
 });
-function add(){const n=$('aName').value.trim();let m=parseFloat($('aMin').value);if(!n)return;const tm=$('aTime').value;if(!(m>0)&&tm)m=30;const q=!(m>0);acts.push({n,m:q?5:m,id:uid(),...(q?{quick:true}:{}),...(tm&&!q?{t:tm}:{})});$('aName').value='';$('aMin').value='';$('aTime').value='';$('hint').textContent='';store('acts',acts);render()}
+function add(){const n=$('aName').value.trim();let m=parseFloat($('aMin').value);if(!n)return;const tm=$('aTime').value;if(!(m>0)&&tm)m=30;const q=!(m>0);const nid=uid();acts.push({n,m:q?5:m,id:nid,...(q?{quick:true}:{}),...(tm&&!q?{t:tm}:{})});if(tm&&!q)setTimeout(()=>calAsk(planDay,nid),50);$('aName').value='';$('aMin').value='';$('aTime').value='';$('hint').textContent='';store('acts',acts);render()}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function toggleDone(i){const a=acts[i];if(!a)return;
   if(a.done){a.done=false;if(a.cid){log=log.filter(e=>e.cid!==a.cid);delete a.cid;store('log',log)}store('acts',acts);render();return}
@@ -641,8 +641,8 @@ function pickDayFor(i){const a=acts[i];if(!a)return;const t=dkey(new Date());
   ${isDesk()?`<button class="calbtn" style="margin-top:8px" onclick="closeModal();toBacklog(${i})">📥 Mandar al Backlog</button>`:''}
   <label>Otra fecha</label><input type="date" id="pkD" value="${shiftDay(planDay,1)}">
   <div class="row"><button class="btn gray" onclick="closeModal()">Cancelar</button><button class="btn" onclick="const v=$('pkD').value;if(v){closeModal();sendTo(${i},v)}">Mover</button></div>`)}
-function toast(msg,btn,fn){let t=$('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}
-  t.innerHTML=`<span>${msg}</span>${btn?`<button onclick="${fn}">${btn}</button>`:''}`;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(hideToast,5000)}
+function toast(msg,btn,fn,ms){let t=$('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}
+  t.innerHTML=`<span>${msg}</span>${btn?`<button onclick="${fn}">${btn}</button>`:''}`;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(hideToast,ms||5000)}
 function hideToast(){const t=$('toast');if(t)t.classList.remove('on')}
 function del(i){const a=acts[i];if(a&&a.rid)recSkip(a.rid,a.rk||planDay);acts.splice(i,1);store('acts',acts);render()}
 function fmt12(t){let [h,m]=t.split(':').map(Number);const ap=h>=12?'pm':'am';h=h%12||12;return h+':'+pad(m)+' '+ap}
@@ -661,19 +661,20 @@ function saveEdit(i){const a=acts[i];if(!a)return closeModal();
   if(!n){$('eN').style.borderColor='#ff3b30';return}if(!(m>0)){$('eM').style.borderColor='#ff3b30';return}
   if(a.quick&&m!==a.m)delete a.quick;a.n=n;a.m=m;if(t){if(a.t!==t)delete a.warned30;a.t=t}else delete a.t;
   store('acts',acts);closeModal();render()}
-function toCalendar(){
-  const ev=acts.filter(a=>a.t&&!a.done);if(!ev.length)return;
-  const d=planDay.replace(/-/g,''),st=(t,add)=>{const [y,mo,da]=planDay.split('-').map(Number),[h,m]=t.split(':').map(Number);const x=new Date(y,mo-1,da,h,m+(add||0));return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate())+'T'+pad(x.getHours())+pad(x.getMinutes())+'00'};
-  const now=new Date(),stamp=now.getUTCFullYear()+pad(now.getUTCMonth()+1)+pad(now.getUTCDate())+'T'+pad(now.getUTCHours())+pad(now.getUTCMinutes())+'00Z';
-  const esc2=x=>String(x).replace(/[\\,;]/g,c=>'\\'+c);
-  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Temporizador//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
-  ev.forEach(a=>{L.push('BEGIN:VEVENT','UID:'+a.id+'-'+d+'@temporizador','DTSTAMP:'+stamp,'DTSTART:'+st(a.t),'DTEND:'+st(a.t,a.m),'SUMMARY:'+esc2(a.n),
-    'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc2(a.n),'TRIGGER:-PT30M','END:VALARM','END:VEVENT')});
-  L.push('END:VCALENDAR');
-  const blob=new Blob([L.join('\r\n')],{type:'text/calendar'}),name='actividades-'+planDay+'.ics';
+function toCalendar(){const ev=acts.filter(a=>a.t&&!a.done);if(!ev.length)return;calExport(ev.map(a=>({a,k:planDay})),'actividades-'+planDay)}
+function calOne(k,id){hideToast();const a=(plans[k]||[]).find(x=>x.id===id);if(!a||!a.t)return;calExport([{a,k}],a.n.replace(/[^\wáéíóúñÁÉÍÓÚÑ -]/g,'').slice(0,40)||'actividad')}
+function calAsk(k,id){const a=(plans[k]||[]).find(x=>x.id===id);if(!a||!a.t)return;toast(`📅 ¿Agrego "${esc(a.n)}" a tu Calendario?`,'Sí, agregar',`calOne('${k}','${id}')`,10000)}
+function calExport(items,fname){
+  const stamp0=new Date(),stamp=stamp0.getUTCFullYear()+pad(stamp0.getUTCMonth()+1)+pad(stamp0.getUTCDate())+'T'+pad(stamp0.getUTCHours())+pad(stamp0.getUTCMinutes())+'00Z';
+  const L0=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Temporizador//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+  const esc3=x=>String(x).replace(/[\\,;]/g,c=>'\\'+c);
+  items.forEach(({a,k})=>{const d=k.replace(/-/g,''),st=(t,add)=>{const [y,mo,da]=k.split('-').map(Number),[h,m]=t.split(':').map(Number);const x=new Date(y,mo-1,da,h,m+(add||0));return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate())+'T'+pad(x.getHours())+pad(x.getMinutes())+'00'};
+    L0.push('BEGIN:VEVENT','UID:'+a.id+'-'+d+'@temporizador','DTSTAMP:'+stamp,'DTSTART:'+st(a.t),'DTEND:'+st(a.t,a.m),'SUMMARY:'+esc3(a.n),'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc3(a.n),'TRIGGER:-PT30M','END:VALARM','END:VEVENT')});
+  L0.push('END:VCALENDAR');calDownload(L0,fname)}
+function calDownload(L,fname){
+  const blob=new Blob([L.join('\r\n')],{type:'text/calendar'}),name=fname+'.ics';
   try{const f=new File([blob],name,{type:'text/calendar'});if(/iPhone|iPad|Macintosh/.test(navigator.userAgent)&&'ontouchend' in document){location.href=URL.createObjectURL(f);return}}catch(e){}
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
-}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove()}
 /* ---- Aviso 30 min antes de una actividad programada ---- */
 let lastSched=0;
 function checkSched(){
@@ -1370,12 +1371,12 @@ function evLink(w){setTimeout(evHi,0);const s=$('evS').value,e=$('evE').value,m=
   else if(w==='e'&&s&&e){let d=tm(e)-tm(s);if(d<=0)d+=1440;$('evM').value=d}}
 function evSave(){const n=$('evN').value.trim();if(!n){$('evN').focus();return}const k=$('evD').value||dkey(new Date()),all=$('evAll').checked,s=all?'':$('evS').value,e=all?'':$('evE').value,m=Math.max(1,parseFloat($('evM').value)||30),r=$('evR').value,note=$('evNote').value.trim();
   let msg;
-  if(r==='no'){const it={n,m,id:uid(),...(s?{t:s}:{})};plans[k]=plans[k]||[];plans[k].push(it);store('plans',plans);msg=`Agregada a ${dayName(k)}${s?' a las '+fmt12(s):''}`}
+  let askId=null;if(r==='no'){const it={n,m,id:uid(),...(s?{t:s}:{})};plans[k]=plans[k]||[];plans[k].push(it);store('plans',plans);msg=`Agregada a ${dayName(k)}${s?' a las '+fmt12(s):''}`;if(s)askId=it.id}
   else{const d=kDate(k),wd=(d.getDay()+6)%7,yEnd=d.getFullYear()+'-12-31';
     const rec={id:uid(),n,type:r==='month'?'monthday':'week',days:r==='day'?[0,1,2,3,4,5,6]:r==='wkday'?[0,1,2,3,4]:r==='week'?[wd]:[],md:d.getDate(),nth:1,wd,start:s||'',end:s?e:'',dur:m,from:k,until:$('evU').value||yEnd,skip:[]};
     recs.push(rec);store('recs',recs);msg=`🔁 ${n} se repetirá desde ${dayName(k)}`}
   if(note){notes.unshift({id:uid(),ts:Date.now(),txt:note,act:n});store('notes',notes)}
-  closeModal();setPlanDay(planDay);render();if($('s4')&&$('s4').classList.contains('on'))renderWeek();toast(esc(msg))}
+  closeModal();setPlanDay(planDay);render();if($('s4')&&$('s4').classList.contains('on'))renderWeek();if(askId){const a=plans[k].find(x=>x.id===askId);toast(`${esc(msg)}. 📅 ¿La agrego a tu Calendario?`,'Sí, agregar',`calOne('${k}','${askId}')`,10000)}else toast(esc(msg))}
 
 /* ===== Notas del día (Registro) ===== */
 function mergeDn(r,l){const o={...(l||{})};Object.entries(r||{}).forEach(([k,v])=>{if(!v)return;if(!o[k]||(v.u||0)>(o[k].u||0))o[k]=v});return o}
@@ -1729,7 +1730,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=83;
+const APP_VER=84;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
