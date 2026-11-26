@@ -419,7 +419,8 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 @media (min-width:1100px){#s2.on{max-width:1500px}
   #calView{display:grid;grid-template-columns:minmax(230px,.5fr) minmax(0,1.25fr) minmax(0,1.35fr);gap:24px;align-items:start}
   .rgL,.rgM,.rgR{display:block;position:sticky;top:16px;max-height:calc(100vh - 250px);overflow:auto;padding-right:4px}
-  .rgM #dayTitle{margin-top:0}.rgR .dnote{margin-top:14px}.rgR .tlwrap{max-height:calc(100vh - 420px);min-height:300px}
+  .rgM #dayTitle{margin-top:0}.rgR .dnote{margin-top:14px}
+  #dayTl{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,210px);column-gap:14px;align-items:start}#dayTl>h3,#dayTl>.tlsum,#dayTl>.tlstrip,#dayTl>.tlax{grid-column:1/-1}#dayTl>.tlwrap{grid-column:1}#dayTl>.tlleg{grid-column:2;margin-top:0;max-height:calc(100vh - 420px);overflow:auto}#dayTl .tll{font-size:13px}.rgR .tlwrap{max-height:calc(100vh - 420px);min-height:300px}
   #calView .grid .day{aspect-ratio:auto;height:30px;min-height:0;font-size:13px;border-radius:7px}#calView .grid .day small{font-size:9px;line-height:1}#calView .grid{gap:4px}
   .rgL .calhead b{font-size:15px}.rgL .calhead button{width:34px;height:32px;font-size:16px}.rgL .rgb{font-size:14px;padding:10px 8px}
   #calView[style*="display: none"],#calView[style*="display:none"]{display:none!important}}
@@ -428,7 +429,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v90</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v91</span></h2>
   <div id="updBox"></div>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
@@ -524,7 +525,7 @@ nav button b{font-weight:inherit}nav button .lg{display:none}@media (min-width:7
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div>
-<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v90</div>
+<div id="run"><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v91</div>
   <div class="side">
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
@@ -1755,7 +1756,7 @@ try{
   fbAuth.onAuthStateChanged(onLogin);
 }catch(e){console.error(e)}
 drawSync();
-const APP_VER=90;
+const APP_VER=91;
 async function latestVer(){
   const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});const t=await r.text();
   const m=t.match(/const APP_VER=(\d+)/);return m?+m[1]:0;
