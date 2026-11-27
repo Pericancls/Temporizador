@@ -1,0 +1,19 @@
+name: Avisos por inactividad
+on:
+  schedule:
+    - cron: '*/10 14-23 * * 1-6'   # 8:00-17:59 CDMX, lun-sáb
+    - cron: '*/10 0 * * 2-7'       # 18:00-18:59 CDMX
+  workflow_dispatch:
+jobs:
+  aviso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: robot }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: cd robot && npm install --no-audit --no-fund --silent && node aviso.mjs
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}

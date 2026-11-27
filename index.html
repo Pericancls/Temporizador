@@ -3,14 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Temporizador del día</title>
-<link rel="stylesheet" href="css/app.css?v=122">
+<link rel="stylesheet" href="css/app.css?v=123">
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v122</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v123</span></h2>
   <div id="updBox"></div>
+  <button id="avisoBtn" class="btn gray" style="width:100%;margin-bottom:8px;display:none" onclick="avisoOn()">🔔 Activar avisos si me quedo parado</button>
   <div class="preview" id="tPrev">20:00</div>
   <div class="presets">
     <button onclick="setT(5)">5</button><button onclick="setT(10)">10</button>
@@ -104,7 +109,7 @@
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v122</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v123</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -127,21 +132,22 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script>const APP_VER=122;</script>
-<script src="js/core.js?v=122"></script>
-<script src="js/actividades.js?v=122"></script>
-<script src="js/temporizador.js?v=122"></script>
-<script src="js/recurrentes.js?v=122"></script>
-<script src="js/minuto-a-minuto.js?v=122"></script>
-<script src="js/backlog.js?v=122"></script>
-<script src="js/notas.js?v=122"></script>
-<script src="js/panoramica.js?v=122"></script>
-<script src="js/nueva-actividad.js?v=122"></script>
-<script src="js/uso.js?v=122"></script>
-<script src="js/reportes.js?v=122"></script>
-<script src="js/registro.js?v=122"></script>
-<script src="js/sync.js?v=122"></script>
-<script src="js/rapidos.js?v=122"></script>
-<script src="js/arranque.js?v=122"></script>
+<script>const APP_VER=123;</script>
+<script src="js/core.js?v=123"></script>
+<script src="js/actividades.js?v=123"></script>
+<script src="js/temporizador.js?v=123"></script>
+<script src="js/recurrentes.js?v=123"></script>
+<script src="js/minuto-a-minuto.js?v=123"></script>
+<script src="js/backlog.js?v=123"></script>
+<script src="js/notas.js?v=123"></script>
+<script src="js/panoramica.js?v=123"></script>
+<script src="js/nueva-actividad.js?v=123"></script>
+<script src="js/uso.js?v=123"></script>
+<script src="js/reportes.js?v=123"></script>
+<script src="js/registro.js?v=123"></script>
+<script src="js/sync.js?v=123"></script>
+<script src="js/rapidos.js?v=123"></script>
+<script src="js/aviso.js?v=123"></script>
+<script src="js/arranque.js?v=123"></script>
 </body>
 </html>

@@ -469,3 +469,4 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 
 /* Botones más usados */
 .clkt{width:100%;border-collapse:collapse;font-size:13px}.clkt td{padding:5px 4px;border-bottom:1px solid #333}.clkt td:last-child{text-align:right;font-weight:700}.clkt small{color:#888}
+.frn{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}.frn .btn{padding:10px 6px;font-size:14px}
