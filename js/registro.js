@@ -136,7 +136,7 @@ function renderAct(){
 }
 
 function exportData(){
-  const data=JSON.stringify({app:'temporizador',v:3,plans,log,recs,bl,notes,dnotes,qb});
+  const data=JSON.stringify({app:'temporizador',v:3,plans,log,recs,bl,notes,dnotes,qb,clk});
   const blob=new Blob([data],{type:'application/json'}),name='temporizador-'+dkey(new Date())+'.json';
   try{const f=new File([blob],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f]}).catch(()=>{});return}}catch(e){}
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
