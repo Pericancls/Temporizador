@@ -30,11 +30,7 @@ function renderRep(){
   const avgDev=devs.length?devs.reduce((p,q)=>p+q,0)/devs.length:null;
   const byN={};act.forEach(e=>{const k=e.n.trim();byN[k]=(byN[k]||0)+e.real});
   const top=Object.entries(byN).sort((p,q)=>q[1]-p[1]).slice(0,6),topMax=top.length?top[0][1]:1;
-  let h=`<div class="tiles">
-    <div class="tile"><span>Tiempo en actividades</span><b>${fmtMin(totAct)}</b></div>
-    <div class="tile"><span>Terminadas</span><b>${done.length}</b></div>
-    <div class="tile"><span>Dentro de ±10% de lo estimado</span><b>${devs.length?Math.round(within/devs.length*100)+'%':'—'}</b></div>
-    <div class="tile"><span>Desviación promedio</span><b class="${avgDev>10?'over':avgDev<-10?'under':''}">${avgDev==null?'—':(avgDev>0?'+':'')+Math.round(avgDev)+'%'}</b></div></div>`;
+  let h=rangeCharts(R);
   if(top.length)h+=`<h3>Dónde se fue tu tiempo</h3><div class="hbars">${top.map(([n,v])=>`<div class="hb"><span class="hn">${esc(n)}</span><div class="ht"><i style="width:${Math.max(2,v/topMax*100)}%"></i></div><span class="hv">${fmtMin(v)}</span></div>`).join('')}</div>`;
   // ---- uso del día
   h+=`<h3>⏳ Uso de tu día hábil <small>(5:00 am – 11:00 pm, 18 h)</small></h3>`+dayUse(R,actIv,restIv);

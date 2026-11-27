@@ -36,8 +36,7 @@ function baseReport(){const D=baseDays(),t=dkey(new Date()),dn=Math.min(BASE.n,M
   const row=(lb,v,u,dec=0)=>{const ok=v.filter(x=>x!=null);if(!ok.length)return`<tr><td>${lb}</td><td>—</td><td>—</td></tr>`;const m=avg(ok),s=sd(ok);return`<tr><td>${lb}</td><td>${m.toFixed(dec)}${u}</td><td>± ${s.toFixed(dec)}${u}</td></tr>`};
   h+=`<table class="clkt bst"><tr><td></td><td><b>Promedio</b></td><td><b>Variación</b></td></tr>
     ${row('⚡ Eficiencia',D.map(d=>d.efi),'%')}${row('🎯 Efectividad',D.map(d=>d.efe),'%')}${row('🕳️ Huecos',D.map(d=>d.gap),' min')}${row('Huecos >20 min',D.map(d=>d.gap20),'',1)}<tr><td>🛌 Dormir ≤11:15 pm</td><td>${(()=>{const v=D.map(d=>d.sleepOk).filter(x=>x!=null);return v.length?Math.round(v.filter(Boolean).length/v.length*100)+'% de los días':'—'})()}</td><td></td></tr></table>
-  <table class="clkt bst"><tr><td><b>Día</b></td><td><b>Efic.</b></td><td><b>Efect.</b></td><td><b>Huecos</b></td></tr>
-    ${D.map(d=>`<tr><td>${kDate(d.k).toLocaleDateString('es-MX',{weekday:'short',day:'numeric'})}</td><td>${Math.round(d.efi)}%</td><td>${d.efe==null?'—':Math.round(d.efe)+'%'} <small>${d.done}/${d.planned}</small></td><td>${Math.round(d.gap)} min</td></tr>`).join('')}</table>
+
   <button class="btn gray" style="width:100%;margin-top:8px" onclick="exportDays()">📤 Exportar días (CSV para Excel)</button>`;
   return h}
 
@@ -49,3 +48,20 @@ function exportDays(){const ks=new Set();log.forEach(e=>ks.add(e.d));Object.keys
   const csv='﻿'+rows.map(r=>r.map(x=>/[",\n]/.test(String(x))?'"'+String(x).replace(/"/g,'""')+'"':x).join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='temporizador-dias.csv';a.click();toast('📤 CSV listo')}
 setTimeout(()=>{try{dstTrack()}catch(e){}},1000);
+
+/* Gráficas del periodo (semana/mes): barras = eficiencia, línea = efectividad; y huecos por día */
+function rangeCharts(R){const D=[];for(let i=0;i<R.days;i++){const d=new Date(R.a);d.setDate(d.getDate()+i);const k=dkey(d);D.push({k,d,n:dayNums(k)})}
+  const W=340,H=170,B=H-24,LW=26,n=D.length,cw=(W-LW-6)/n,Y=v=>B-v/100*(B-12),X=i=>LW+cw*i+cw/2,lab=d=>R.days<=7?d.toLocaleDateString('es-MX',{weekday:'narrow'}):(d.getDate()%5===1?d.getDate():'');
+  const has=D.filter(x=>x.n&&(x.n.A>0||x.n.planned>0));if(!has.length)return'<div class="empty">Sin registros en este periodo</div>';
+  const mE=avg(has.map(x=>x.n.efi)),eV=has.map(x=>x.n.efe).filter(v=>v!=null),mF=eV.length?avg(eV):null;
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="gsvg">`;[0,25,50,75,100].forEach(v=>s+=`<line x1="${LW}" x2="${W}" y1="${Y(v)}" y2="${Y(v)}" stroke="#2a2a2a"/><text x="${LW-4}" y="${Y(v)+3}" fill="#777" font-size="9" text-anchor="end">${v}</text>`);
+  D.forEach((x,i)=>{s+=`<text x="${X(i)}" y="${H-8}" fill="#999" font-size="9" text-anchor="middle">${lab(x.d)}</text>`;if(x.n&&(x.n.A>0||x.n.planned>0))s+=`<rect x="${X(i)-cw*.3}" y="${Y(Math.min(100,x.n.efi))}" width="${cw*.6}" height="${B-Y(Math.min(100,x.n.efi))}" fill="#34c759" opacity=".8" rx="2"/>`});
+  const pts=D.map((x,i)=>x.n&&x.n.efe!=null?[X(i),Y(x.n.efe)]:null).filter(Boolean);
+  if(pts.length)s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#0a84ff" stroke-width="2"/>`+pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#0a84ff"/>`).join('');
+  s+=`<line x1="${LW}" x2="${W}" y1="${Y(mE)}" y2="${Y(mE)}" stroke="#34c759" stroke-dasharray="4 3"/>`+(mF!=null?`<line x1="${LW}" x2="${W}" y1="${Y(mF)}" y2="${Y(mF)}" stroke="#0a84ff" stroke-dasharray="4 3"/>`:'')+'</svg>';
+  const mxG=Math.max(30,...has.map(x=>x.n.gap)),YG=v=>B-v/mxG*(B-12);let g=`<svg viewBox="0 0 ${W} ${H}" class="gsvg">`;
+  const st=mxG>180?60:30;for(let v=0;v<=mxG;v+=st)g+=`<line x1="${LW}" x2="${W}" y1="${YG(v)}" y2="${YG(v)}" stroke="#2a2a2a"/><text x="${LW-4}" y="${YG(v)+3}" fill="#777" font-size="9" text-anchor="end">${v}</text>`;
+  D.forEach((x,i)=>{g+=`<text x="${X(i)}" y="${H-8}" fill="#999" font-size="9" text-anchor="middle">${lab(x.d)}</text>`;if(x.n&&x.n.gap>0)g+=`<rect x="${X(i)-cw*.3}" y="${YG(x.n.gap)}" width="${cw*.6}" height="${B-YG(x.n.gap)}" fill="${x.n.gap20?'#ff453a':'#ff9f0a'}" opacity=".85" rx="2"/>`});g+='</svg>';
+  return`<div class="dmet"><h4>⚡ Eficiencia y 🎯 efectividad <small>(% por día)</small></h4>${s}
+    <div class="dmleg"><span><i class="a"></i>Eficiencia · prom ${Math.round(mE)}%</span><span><i class="rl"></i>Efectividad${mF!=null?' · prom '+Math.round(mF)+'%':''}</span><span>┄ promedio</span></div></div>
+  <div class="dmet"><h4>🕳️ Huecos por día <small>(min)</small></h4>${g}<div class="dmleg"><span><i style="background:#ff453a"></i>Con hueco +20 min</span></div></div>`}
