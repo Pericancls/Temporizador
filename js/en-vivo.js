@@ -16,8 +16,10 @@ function liveRunRemote(L){
     closeModal&&closeModal();restoreRun();toast('▶ Retomado de tu otro dispositivo');return}
   /* El otro lo pausó o terminó: aquí se detiene sin guardar (el otro ya guardó) */
   if(lrLocalOn()&&load('run',{}).running!==false&&(typeof user!=='undefined'&&user)){
+    /* Nunca se tira lo que llevabas: se guarda como pausa antes de detener */
+    try{if(cur&&cur.id&&!inBreak){segClose();const it=findItem(cur.id);if(it&&!it.done&&!(it.prog&&it.prog.el>cur.elapsed)){it.prog={el:cur.elapsed,rem:Math.max(0,remain),tot:total,ext:cur.ext,mb:cur.mb||0,st:cur.start,segs:cur.segs||[]};store('plans',plans)}}}catch(e){}
     running=false;clearInterval(timer);inBreak=false;inOver=false;cur=null;
     $('run').classList.remove('on','brk','mini');document.body.classList.remove('hasbar');const bb=$('brkBar');if(bb)bb.style.display='none';
-    release();try{localStorage.removeItem('run')}catch(e){}liveRun=null;render();toast('⏸ Se detuvo en tu otro dispositivo')}
+    release();try{localStorage.removeItem('run')}catch(e){}liveRun=null;render();toast('⏸ Se pausó (en tu otro dispositivo se detuvo). Tu tiempo quedó guardado')}
   else if(!lrLocalOn())liveRun=L||null;
 }

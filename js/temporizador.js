@@ -140,7 +140,7 @@ function yes(){if(inOver)segClose(overStart);inOver=false;running=false;clearInt
 function endAct(){if(inBreak)return;if(isRest())return restDone(false);finish()}
 function endBtnUpd(){const b=$('endBtn');if(!b)return;const show=!inBreak&&!!cur;const t=cur&&cur.rest?'✓ Terminar descanso':'✓ Terminar actividad';if(b._s!==show){b._s=show;b.style.display=show?'':'none'}if(b.textContent!==t)b.textContent=t}
 function finish(){if(inBreak)return endBreak(false);running=false;clearInterval(timer);save(true);beep(true);advance()}
-function skip(){running=false;clearInterval(timer);if(cur.elapsed>=60)save(false);advance()}
+function skip(){running=false;clearInterval(timer);if(cur.elapsed>=60)save(false);if(cur&&cur.id){const it=findItem(cur.id);if(it&&it.prog){delete it.prog;store('plans',plans)}}advance()}
 function advance(){if(idx+1<queue.length){if(brk>0)startBreak();else go(idx+1)}else{done()}}
 function startBreak(){
   brkChosen=false;inBreak=true;cur=null;stopAlarm();total=brk*60;remain=total;
@@ -363,3 +363,14 @@ function bgMenu(){if(!cur2)return;modal(`<h1>▶▶ ${esc(cur2.n)}</h1><div clas
   <div class="picklist"><button onclick="closeModal();bgFinish()">✓ Terminarla y registrar</button><button onclick="closeModal();bgPause()">⏸ Pausarla</button></div>
   <div class="row"><button class="btn gray" onclick="closeModal()">Cerrar</button></div>`)}
 setTimeout(c2Start,400);
+
+/* Respaldo del progreso mientras corre: cada 20 min y al salir de la app se guarda en el plan (como si fuera pausa, pero sigue corriendo).
+   Si la app se cierra o algo falla, la actividad queda con su hora de inicio y lo que llevabas. */
+let ckLast=Date.now();
+function checkpoint(why){if(!cur||!cur.id||inBreak||!$('run').classList.contains('on'))return;const it=findItem(cur.id);if(!it||it.done)return;
+  const now=Date.now(),sg=normSegs(cur.segs||[]).map(x=>({s:x.s,e:x.e==null?now:x.e}));
+  if(it.prog&&it.prog.el>cur.elapsed+5)return; /* nunca bajar lo ya guardado */
+  it.prog={el:cur.elapsed,rem:Math.max(0,remain),tot:total,ext:cur.ext,mb:cur.mb||0,st:cur.start,segs:sg};it.done=false;ckLast=now;store('plans',plans)}
+setInterval(()=>{if(Date.now()-ckLast>=20*60e3)checkpoint('20min')},60e3);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)checkpoint('salir')});
+window.addEventListener('pagehide',()=>checkpoint('salir'));
