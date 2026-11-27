@@ -169,10 +169,20 @@ function dayMetric(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,
 /* Estimado vs real: solo las actividades que sí terminaste ese día */
 function dayEst(k){const L=log.filter(e=>e.d===k&&e.ok&&e.plan>0&&!isRestN(e.n)).sort((a,b)=>a.h.localeCompare(b.h));if(!L.length)return'';
   const mx=Math.max(...L.map(e=>Math.max(e.plan,e.real))),P=L.reduce((s,e)=>s+e.plan,0),R=L.reduce((s,e)=>s+e.real,0),dv=Math.round((R-P)/P*100);
-  return`<div class="dmet"><h4>🎯 Estimado vs real <small>(terminadas)</small></h4>${L.map(e=>{const d=Math.round((e.real-e.plan)/e.plan*100);
-    return`<div class="ev"><div class="evn"><span>${esc(e.n)}</span><b class="${d>10?'over':d<-10?'under':''}">${fmtMin(e.plan)} → ${fmtMin(e.real)} (${d>0?'+':''}${d}%)</b></div>
-    <div class="evb"><i class="p" style="width:${e.plan/mx*100}%"></i></div><div class="evb"><i class="rl ${d>10?'over':''}" style="width:${e.real/mx*100}%"></i></div></div>`}).join('')}
-  <div class="dmleg"><span><i class="p"></i>Estimado</span><span><i class="rl"></i>Real</span><span>Total ${fmtMin(P)} → ${fmtMin(R)} (${dv>0?'+':''}${dv}%)</span></div></div>`}
+  /* Columnas: barra sólida = real; línea = estimado (si te pasaste); punteado arriba = lo que te sobró del estimado */
+  const W=340,H=170,B=H-34,LW=30,n=L.length,cw=Math.min(46,(W-LW-10)/n*0.6),gap=(W-LW-10)/n,Yv=v=>B-v/mx*(B-14);
+  const step=mx>240?60:mx>90?30:15;let svg=`<svg viewBox="0 0 ${W} ${H}" class="gsvg">`;
+  for(let v=0;v<=mx;v+=step)svg+=`<line x1="${LW}" x2="${W}" y1="${Yv(v)}" y2="${Yv(v)}" stroke="#2a2a2a"/><text x="${LW-4}" y="${Yv(v)+3}" fill="#777" font-size="9" text-anchor="end">${v}</text>`;
+  svg+=`<line x1="${LW}" x2="${W}" y1="${B}" y2="${B}" stroke="#555"/>`;
+  L.forEach((e,r)=>{const x=LW+gap*r+(gap-cw)/2,d=Math.round((e.real-e.plan)/e.plan*100),over=e.real>e.plan,c=d>10?'#ff453a':d<-10?'#34c759':'#0a84ff';
+    svg+=`<rect x="${x}" y="${Yv(e.real)}" width="${cw}" height="${B-Yv(e.real)}" fill="${c}" opacity=".85" rx="2"/>`;
+    if(over)svg+=`<line x1="${x-3}" x2="${x+cw+3}" y1="${Yv(e.plan)}" y2="${Yv(e.plan)}" stroke="#fff" stroke-width="2"/>`;
+    else if(e.plan>e.real)svg+=`<rect x="${x}" y="${Yv(e.plan)}" width="${cw}" height="${Yv(e.real)-Yv(e.plan)}" fill="none" stroke="#aaa" stroke-width="1.5" stroke-dasharray="3 3"/>`;
+    svg+=`<text x="${x+cw/2}" y="${Yv(Math.max(e.real,e.plan))-4}" fill="${c}" font-size="9" font-weight="700" text-anchor="middle">${d>0?'+':''}${d}%</text>
+      <text x="${x+cw/2}" y="${B+12}" fill="#ccc" font-size="9" text-anchor="middle">${esc(e.n.length>9?e.n.slice(0,8)+'…':e.n)}</text>`});
+  svg+='</svg>';
+  return`<div class="dmet"><h4>🎯 Estimado vs real <small>(terminadas, en min)</small></h4>${svg}
+  <div class="dmleg"><span><i class="rl"></i>Real</span><span>— Estimado</span><span>┆ Te sobró</span><span>Total ${fmtMin(P)} → ${fmtMin(R)} (${dv>0?'+':''}${dv}%)</span></div></div>`}
 
 /* Huecos entre actividades: tiempo sin nada corriendo entre que termina una y empieza la siguiente */
 function dayGaps(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,5).getTime(),b=Math.min(new Date(y,m-1,d,23).getTime(),Date.now());
