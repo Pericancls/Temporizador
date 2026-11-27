@@ -159,7 +159,14 @@ function setNext(j){const [a]=queue.splice(j,1);queue.splice(idx+1,0,a);closeMod
 let brkChosen=false;
 function skipBreak(){if(!inBreak)return;brkChosen=false;$('brkAct').style.display='none';endBreak(false)}
 function restChosen(){brkChosen=true;$('brkAct').style.display='none'}
-function endBreak(sound){brkChosen=false;const ba=$('brkAct');if(ba)ba.style.display='none';running=false;clearInterval(timer);if(sound){beep();say('Se acabó el descanso')}go(idx+1)}
+function endBreak(sound){brkChosen=false;const ba=$('brkAct');if(ba)ba.style.display='none';running=false;clearInterval(timer);if(sound){beep();say('Se acabó el descanso');return brkWait()}go(idx+1)}
+/* Al acabarse el descanso NO arranca la siguiente: espera a que le des ▶ (el tiempo de espera queda como hueco) */
+function brkWait(){const nx=queue[idx+1];inBreak=false;cur=null;
+  $('run').classList.remove('on','brk','mini');document.body.classList.remove('hasbar');$('brkBar').style.display='none';release();clearRun();
+  modal(`<h1>☕ Se acabó el descanso</h1>${nx?`<div class="muted">Sigue:</div><h2 style="margin:4px 0 14px">${esc(nx.n)}</h2>
+  <button class="btn big" style="width:100%" onclick="closeModal();brkGo('${nx.id}')">▶ Empezar</button>`:''}
+  <div class="row"><button class="btn gray" onclick="closeModal();tab(1)">Elegir otra</button><button class="btn gray" onclick="closeModal()">Después</button></div>`)}
+function brkGo(id){setPlanDay(dkey(new Date()));const i=acts.findIndex(a=>a.id===id);if(i>=0)resumeItem(i);else tab(1)}
 function done(){
   $('run').classList.remove('mini');document.body.classList.remove('hasbar');$('brkBar').style.display='none';
   $('run').classList.remove('on');release();clearRun();
