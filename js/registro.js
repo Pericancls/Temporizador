@@ -52,7 +52,7 @@ function renderTl(){
   <div class="tlsum">En actividades: <b>${fmtMin(sum)}</b> · <span>${Math.round(sum/14.4)}% del día</span></div>
   <div class="tlstrip">${blocks.map(x=>`<i style="left:${(x.a-d0)/864e5*100}%;width:${Math.max(.4,(x.b-x.a)/864e5*100)}%;background:${col(x.n)}"></i>`).join('')}</div>
   <div class="tlax"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>12am</span></div>
-  <div class="tlwrap" id="tlWrap"><div class="tl" style="height:${H}px">${hrs}${bl}${nl}</div></div>
+  <div class="tlwrap" id="tlWrap" style="height:${19*36}px;max-height:none;overflow:hidden"><div class="tl" style="height:${H}px;margin-top:-${5*36}px">${hrs}${bl}${nl}</div></div>
   <div class="tlleg">${leg}</div>`;
   const w=$('tlWrap');if(w)w.scrollTop=Math.max(0,(blocks[0].a-d0)/864e5*H-40);
 }
