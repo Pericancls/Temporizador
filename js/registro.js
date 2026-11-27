@@ -164,7 +164,7 @@ function dayMetric(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,
   const hh=m=>(m/60).toFixed(1).replace('.0','')+' h';
   return`<div class="dmet"><div class="dmbig"><b>${hh(A)}</b><span> de 18 h · ${pct}%</span></div>
   <div class="dmbar"><i class="a" style="width:${A/10.8}%"></i><i class="r" style="width:${R/10.8}%"></i><i class="s" style="width:${sin/10.8}%"></i><i class="z" style="width:${slp/10.8}%"></i></div>
-  <div class="dmleg"><span><i class="a"></i>Actividad ${hh(A)}</span><span><i class="r"></i>Descanso ${hh(R)}</span><span><i class="s"></i>Sin registrar ${hh(sin)}</span><span><i class="z"></i>Dormir ${hh(slp)}</span>${live?`<span>⏳ Quedan ${hh(left)}</span>`:''}</div></div>`}
+  <div class="dmleg"><span><i class="a"></i>Actividad ${hh(A)}</span><span><i class="r"></i>Descanso ${hh(R)}</span><span><i class="s"></i>Sin registrar ${hh(sin)}</span><span><i class="z"></i>Fuera de tu día ${hh(slp)}</span>${live?`<span>⏳ Quedan ${hh(left)}</span>`:''}</div></div>`}
 
 /* Estimado vs real: solo las actividades que sí terminaste ese día */
 function dayEst(k){const L=log.filter(e=>e.d===k&&e.ok&&e.plan>0&&!isRestN(e.n)).sort((a,b)=>a.h.localeCompare(b.h));if(!L.length)return'';
@@ -182,12 +182,16 @@ function dayGaps(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,5)
   for(const x of S.slice(1)){if(x.s>last.e+60e3)gaps.push({s:last.e,e:x.s,from:last.n,to:x.n,fromLen:(last.e-last.s)/6e4});if(x.e>=last.e)last=x}
   const G=gaps.filter(g=>g.e-g.s>=5*60e3);if(!G.length)return'';
   const tot=G.reduce((s,g)=>s+(g.e-g.s),0)/6e4,big=G.filter(g=>g.e-g.s>=20*60e3);
-  const t0=S[0].s,t1=Math.max(...S.map(x=>x.e)),W=340,X=t=>8+(t-t0)/(t1-t0)*(W-16),U=union(S.map(x=>({s:x.s,e:x.e})));
-  const ticks=[];for(let h=new Date(t0).getHours()+1;h<=new Date(t1).getHours();h++){const tt=new Date(y,m-1,d,h).getTime();if(X(tt)>30&&X(tt)<W-34)ticks.push(tt)}
-  const svg=`<svg viewBox="0 0 ${W} 78" class="gsvg">
-    ${ticks.map(tt=>`<line x1="${X(tt)}" x2="${X(tt)}" y1="30" y2="50" stroke="#333"/><text x="${X(tt)}" y="68" fill="#777" font-size="9" text-anchor="middle">${new Date(tt).getHours()%12||12}</text>`).join('')}
-    ${G.map(g=>{const mn=(g.e-g.s)/6e4,c=mn>=20?'#ff453a':'#ff9f0a';return`<line x1="${X(g.s)}" x2="${X(g.e)}" y1="40" y2="40" stroke="${c}" stroke-width="3" stroke-dasharray="4 4"/>${mn>=20?`<text x="${(X(g.s)+X(g.e))/2}" y="24" fill="${c}" font-size="10" font-weight="700" text-anchor="middle">${Math.round(mn)}′</text>`:''}`}).join('')}
-    ${U.map(x=>`<line x1="${X(x.s)}" x2="${Math.max(X(x.e),X(x.s)+1.5)}" y1="40" y2="40" stroke="#34c759" stroke-width="6" stroke-linecap="round"/>`).join('')}
-    <text x="8" y="68" fill="#aaa" font-size="9">${hm(t0)}</text><text x="${W-8}" y="68" fill="#aaa" font-size="9" text-anchor="end">${hm(t1)}</text></svg>`;
+  /* Gráfica tipo escalera: cada bloque en su renglón (tiempo en X); el hueco es el espacio entre el fin de uno y el inicio del siguiente */
+  const t0=S[0].s,t1=Math.max(...S.map(x=>x.e)),RH=20,LW=92,W=340,H=S.length*RH+26,X=t=>LW+(t-t0)/(t1-t0)*(W-LW-10),Y=r=>12+r*RH;
+  const ticks=[];for(let h=new Date(t0).getHours()+1;h<=new Date(t1).getHours();h++){const tt=new Date(y,m-1,d,h).getTime();if(X(tt)>LW+38&&X(tt)<W-38)ticks.push(tt)}
+  let svg=`<svg viewBox="0 0 ${W} ${H}" class="gsvg"><line x1="${LW-4}" x2="${LW-4}" y1="2" y2="${H-18}" stroke="#444"/><line x1="${LW-4}" x2="${W}" y1="${H-18}" y2="${H-18}" stroke="#444"/>`;
+  ticks.forEach(tt=>svg+=`<line x1="${X(tt)}" x2="${X(tt)}" y1="2" y2="${H-18}" stroke="#222"/><text x="${X(tt)}" y="${H-5}" fill="#777" font-size="9" text-anchor="middle">${new Date(tt).getHours()%12||12}</text>`);
+  svg+=`<text x="${LW}" y="${H-5}" fill="#aaa" font-size="9">${hm(t0)}</text><text x="${W-4}" y="${H-5}" fill="#aaa" font-size="9" text-anchor="end">${hm(t1)}</text>`;
+  S.forEach((x,r)=>{if(r){const p=S[r-1],gm=(x.s-p.e)/6e4;if(gm>=5){const c=gm>=20?'#ff453a':'#ff9f0a';
+      svg+=`<line x1="${X(p.e)}" x2="${X(x.s)}" y1="${Y(r)}" y2="${Y(r)}" stroke="${c}" stroke-width="2" stroke-dasharray="3 3"/>${gm>=20?`<text x="${(X(p.e)+X(x.s))/2}" y="${Y(r)-4}" fill="${c}" font-size="9" font-weight="700" text-anchor="middle">${Math.round(gm)}′</text>`:''}`}}
+    const nm=x.n.length>14?x.n.slice(0,13)+'…':x.n;
+    svg+=`<text x="${LW-8}" y="${Y(r)+3}" fill="#ccc" font-size="9" text-anchor="end">${esc(nm)}</text><line x1="${X(x.s)}" x2="${Math.max(X(x.e),X(x.s)+1)}" y1="${Y(r)}" y2="${Y(r)}" stroke="#34c759" stroke-width="3"/><circle cx="${X(x.s)}" cy="${Y(r)}" r="3" fill="#34c759"/><circle cx="${X(x.e)}" cy="${Y(r)}" r="3" fill="#34c759"/>`});
+  svg+='</svg>';
   return`<div class="dmet"><h4>🕳️ Huecos entre actividades</h4><div class="dmbig"><b>${fmtMin(tot)}</b><span> en ${G.length} hueco${G.length>1?'s':''}${big.length?` · ${big.length} de +20 min`:''}</span></div>${svg}
-  <div class="dmleg"><span><i class="a"></i>Trabajando</span><span><i style="background:#ff9f0a"></i>Hueco</span><span><i style="background:#ff453a"></i>Hueco +20 min</span></div></div>`}
+  <div class="dmleg"><span><i class="a"></i>Actividad</span><span><i style="background:#ff9f0a"></i>Hueco</span><span><i style="background:#ff453a"></i>Hueco +20 min</span></div></div>`}
