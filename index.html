@@ -8,12 +8,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Temporizador del día</title>
-<link rel="stylesheet" href="css/app.css?v=124">
+<link rel="stylesheet" href="css/app.css?v=125">
 </head>
 <body>
 
 <section id="s0" class="on">
-  <h2>Temporizador <span style="color:#444;font-size:12px">v124</span></h2>
+  <h2>Temporizador <span style="color:#444;font-size:12px">v125</span></h2>
   <div id="updBox"></div>
   <button id="avisoBtn" class="btn gray" style="width:100%;margin-bottom:8px;display:none" onclick="avisoOn()">🔔 Activar avisos si me quedo parado</button>
   <div class="preview" id="tPrev">20:00</div>
@@ -105,12 +105,12 @@
   <button id="n2" onclick="tab(2)"><span>📓</span>Registro</button>
   <button id="n0" class="on" onclick="tab(0)"><span>⏱</span>Temporizador</button>
   <div class="navpair"><button id="n5" onclick="tab(5)"><span>📥</span>Backlog</button><button id="n1" onclick="tab(1)"><span>📋</span>Actividades</button></div>
-  <button id="n4" onclick="tab(4)"><span>📅</span><b class="lg">Vista panorámica</b><b class="sm">Panorámica</b></button>
+  <button id="n4" onclick="tab(4)" style="display:none"><span>📅</span><b class="lg">Vista panorámica</b><b class="sm">Panorámica</b></button>
   <button id="n3" onclick="tab(3)"><span>📊</span>Reportes</button>
 </nav>
 
 <div id="brkBar" class="brkbar" onclick="restoreRunView()" style="display:none"></div><div id="bar2" class="bar2" style="display:none"></div>
-<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v124</div>
+<div id="run"><div id="runTop"></div><div id="ver" style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);color:#333;font-size:11px">v125</div>
   <div class="side">
     <button id="p5" class="p5" onclick="plus5()">+5<small>min</small></button>
     <button onclick="pause()"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
@@ -133,22 +133,22 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script>const APP_VER=124;</script>
-<script src="js/core.js?v=124"></script>
-<script src="js/actividades.js?v=124"></script>
-<script src="js/temporizador.js?v=124"></script>
-<script src="js/recurrentes.js?v=124"></script>
-<script src="js/minuto-a-minuto.js?v=124"></script>
-<script src="js/backlog.js?v=124"></script>
-<script src="js/notas.js?v=124"></script>
-<script src="js/panoramica.js?v=124"></script>
-<script src="js/nueva-actividad.js?v=124"></script>
-<script src="js/uso.js?v=124"></script>
-<script src="js/reportes.js?v=124"></script>
-<script src="js/registro.js?v=124"></script>
-<script src="js/sync.js?v=124"></script>
-<script src="js/rapidos.js?v=124"></script>
-<script src="js/aviso.js?v=124"></script>
-<script src="js/arranque.js?v=124"></script>
+<script>const APP_VER=125;</script>
+<script src="js/core.js?v=125"></script>
+<script src="js/actividades.js?v=125"></script>
+<script src="js/temporizador.js?v=125"></script>
+<script src="js/recurrentes.js?v=125"></script>
+<script src="js/minuto-a-minuto.js?v=125"></script>
+<script src="js/backlog.js?v=125"></script>
+<script src="js/notas.js?v=125"></script>
+<script src="js/panoramica.js?v=125"></script>
+<script src="js/nueva-actividad.js?v=125"></script>
+<script src="js/uso.js?v=125"></script>
+<script src="js/reportes.js?v=125"></script>
+<script src="js/registro.js?v=125"></script>
+<script src="js/sync.js?v=125"></script>
+<script src="js/rapidos.js?v=125"></script>
+<script src="js/aviso.js?v=125"></script>
+<script src="js/arranque.js?v=125"></script>
 </body>
 </html>

@@ -473,3 +473,8 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 .dmet{background:#1c1c1e;border-radius:14px;padding:12px;margin:6px 0 12px}.dmbig b{font-size:28px}.dmbig span{color:#888}
 .dmbar{display:flex;height:10px;border-radius:5px;background:#2c2c2e;overflow:hidden;margin:8px 0}.dmbar i,.dmleg i{display:inline-block}.dmbar i{height:100%}
 .dmet .a{background:#34c759}.dmet .r{background:#ff9f0a}.dmet .s{background:#ff453a}.dmleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:#aaa}.dmleg i{width:8px;height:8px;border-radius:2px;margin-right:4px}
+.dmet h4{margin:0 0 8px;font-size:15px}.dmet h4 small{color:#888;font-weight:400}
+.ev{margin-bottom:10px}.evn{display:flex;justify-content:space-between;gap:8px;font-size:13px}.evn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.evn b{white-space:nowrap;font-weight:600}
+.evb{height:6px;background:#2c2c2e;border-radius:3px;margin-top:3px;overflow:hidden}.evb i{display:block;height:100%}.dmet .p{background:#636366}.evb i.rl{background:#0a84ff}.evb i.rl.over{background:#ff453a}.dmleg i.rl{background:#0a84ff}
+.gp{font-size:13px;padding:6px 0;border-top:1px solid #2c2c2e}.gp.over b{color:#ff453a}.gp small{color:#888}
+.evn b.over{color:#ff453a}.evn b.under{color:#34c759}

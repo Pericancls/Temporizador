@@ -17,7 +17,7 @@ function renderLog(){
   const [y,m,dd]=selDay.split('-').map(Number);
   $('dayTitle').textContent=new Date(y,m-1,dd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   const items=log.map((e,i)=>({...e,i})).filter(e=>e.d===selDay).sort((a,b)=>a.h.localeCompare(b.h));
-  renderTl();dnDraw();$('dayMet').innerHTML=dayMetric(selDay);
+  renderTl();dnDraw();$('dayMet').innerHTML=dayMetric(selDay)+dayGaps(selDay)+dayEst(selDay);
   const d0=new Date(y,m-1,dd).getTime(),d1=new Date(y,m-1,dd+1).getTime();
   const ow=openWork().map(w=>({...w,day:w.segs.filter(x=>x.e>d0&&x.s<d1).map(x=>({s:Math.max(x.s,d0),e:Math.min(x.e,d1)}))})).filter(w=>w.day.length);
   const owHtml=ow.length?`<h3 style="font-size:16px">⏸ Sin terminar</h3>`+ow.map(w=>{const mins=w.day.reduce((a,x)=>a+(x.e-x.s),0)/60000;
@@ -163,3 +163,22 @@ function dayMetric(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,
   return`<div class="dmet"><div class="dmbig"><b>${hh(A)}</b><span> de 18 h · ${pct}%</span></div>
   <div class="dmbar"><i class="a" style="width:${A/10.8}%"></i><i class="r" style="width:${R/10.8}%"></i><i class="s" style="width:${sin/10.8}%"></i></div>
   <div class="dmleg"><span><i class="a"></i>Actividad ${hh(A)}</span><span><i class="r"></i>Descanso ${hh(R)}</span><span><i class="s"></i>Sin registrar ${hh(sin)}</span>${live?`<span>⏳ Quedan ${hh(left)}</span>`:''}</div></div>`}
+
+/* Estimado vs real: solo las actividades que sí terminaste ese día */
+function dayEst(k){const L=log.filter(e=>e.d===k&&e.ok&&e.plan>0&&!isRestN(e.n)).sort((a,b)=>a.h.localeCompare(b.h));if(!L.length)return'';
+  const mx=Math.max(...L.map(e=>Math.max(e.plan,e.real))),P=L.reduce((s,e)=>s+e.plan,0),R=L.reduce((s,e)=>s+e.real,0),dv=Math.round((R-P)/P*100);
+  return`<div class="dmet"><h4>🎯 Estimado vs real <small>(terminadas)</small></h4>${L.map(e=>{const d=Math.round((e.real-e.plan)/e.plan*100);
+    return`<div class="ev"><div class="evn"><span>${esc(e.n)}</span><b class="${d>10?'over':d<-10?'under':''}">${fmtMin(e.plan)} → ${fmtMin(e.real)} (${d>0?'+':''}${d}%)</b></div>
+    <div class="evb"><i class="p" style="width:${e.plan/mx*100}%"></i></div><div class="evb"><i class="rl ${d>10?'over':''}" style="width:${e.real/mx*100}%"></i></div></div>`}).join('')}
+  <div class="dmleg"><span><i class="p"></i>Estimado</span><span><i class="rl"></i>Real</span><span>Total ${fmtMin(P)} → ${fmtMin(R)} (${dv>0?'+':''}${dv}%)</span></div></div>`}
+
+/* Huecos entre actividades: tiempo sin nada corriendo entre que termina una y empieza la siguiente */
+function dayGaps(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,5).getTime(),b=Math.min(new Date(y,m-1,d,23).getTime(),Date.now());
+  const sg=[];log.forEach(e=>segsOf(e).forEach(x=>sg.push({...x,n:e.n})));openWork().forEach(w=>w.segs.forEach(x=>sg.push({...x,n:w.n})));
+  const S=sg.map(x=>({s:Math.max(x.s,a),e:Math.min(x.e,b),n:x.n})).filter(x=>x.e>x.s).sort((p,q)=>p.s-q.s);if(S.length<2)return'';
+  const gaps=[];let last=S[0];
+  for(const x of S.slice(1)){if(x.s>last.e+60e3)gaps.push({s:last.e,e:x.s,from:last.n,to:x.n,fromLen:(last.e-last.s)/6e4});if(x.e>=last.e)last=x}
+  const G=gaps.filter(g=>g.e-g.s>=5*60e3);if(!G.length)return'';
+  const tot=G.reduce((s,g)=>s+(g.e-g.s),0)/6e4,big=G.filter(g=>g.e-g.s>=20*60e3);
+  return`<div class="dmet"><h4>🕳️ Huecos entre actividades</h4><div class="dmbig"><b>${fmtMin(tot)}</b><span> en ${G.length} hueco${G.length>1?'s':''}${big.length?` · ${big.length} de más de 20 min`:''}</span></div>
+  ${G.sort((p,q)=>(q.e-q.s)-(p.e-p.s)).slice(0,5).map(g=>{const mn=(g.e-g.s)/6e4;return`<div class="gp ${mn>=20?'over':''}"><b>${fmtMin(mn)}</b> ${hm(g.s)}–${hm(g.e)}<br><small>después de ${esc(g.from)}${g.fromLen>=60?' ('+fmtMin(g.fromLen)+')':''} → antes de ${esc(g.to)}</small></div>`}).join('')}</div>`}
