@@ -480,3 +480,5 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 .evn b.over{color:#ff453a}.evn b.under{color:#34c759}
 .bst{margin:6px 0 10px}.bst td{text-align:right}.bst td:first-child{text-align:left}
 .dmet .z{background:#5e5ce6}
+/* Registro = solo datos: calendario + línea de 24 h (v129) */
+#s2>.seg,#dayMet,#dayList,.dnote{display:none!important}

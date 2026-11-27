@@ -2,8 +2,8 @@
 
 /* ===================== REPORTES ===================== */
 const C_ACT='#2fb350',C_REST='#3b8ef5',C_GRAY='#6e6e73',C_BAD='#ff453a';
-let rpMode='sem',rpOff=0;
-function rpSet(m){rpMode=m;rpOff=0;$('rpW').classList.toggle('on',m==='sem');$('rpM').classList.toggle('on',m==='mes');renderRep()}
+let rpMode='dia',rpOff=0;
+function rpSet(m){rpMode=m;rpOff=0;$('rpD').classList.toggle('on',m==='dia');$('rpW').classList.toggle('on',m==='sem');$('rpM').classList.toggle('on',m==='mes');renderRep()}
 function rpMove(n){rpOff+=n;renderRep()}
 function rpRange(){const t=new Date();t.setHours(0,0,0,0);
   if(rpMode==='sem'){const dow=(t.getDay()+6)%7;const a=new Date(t.getFullYear(),t.getMonth(),t.getDate()-dow+7*rpOff);const b=new Date(a.getFullYear(),a.getMonth(),a.getDate()+7);return{a:a.getTime(),b:b.getTime(),days:7}}
@@ -14,6 +14,8 @@ function clip(iv,a,b){return iv.map(x=>({s:Math.max(x.s,a),e:Math.min(x.e,b)})).
 function sumMin(iv){return iv.reduce((p,x)=>p+(x.e-x.s),0)/60000}
 function minus(A,B){const out=[];A.forEach(a=>{let segs=[{...a}];B.forEach(b=>{segs=segs.flatMap(x=>{if(b.e<=x.s||b.s>=x.e)return[x];const r=[];if(b.s>x.s)r.push({s:x.s,e:b.s});if(b.e<x.e)r.push({s:b.e,e:x.e});return r})});out.push(...segs)});return out}
 function renderRep(){
+  if(rpMode==='dia'){const k=shiftDay(dkey(new Date()),rpOff);$('rpLabel').textContent=dayName(k).replace(/^./,c=>c.toUpperCase());
+    $('rpBody').innerHTML=(dayMetric(k)+dayGaps(k)+dayEst(k))||'<div class="empty">Sin registros este día</div>';return}
   const R=rpRange(),a0=new Date(R.a),b1=new Date(R.b-1);
   $('rpLabel').textContent=rpMode==='sem'?`${a0.getDate()} ${a0.toLocaleDateString('es-MX',{month:'short'})} – ${b1.getDate()} ${b1.toLocaleDateString('es-MX',{month:'short'})}`:a0.toLocaleDateString('es-MX',{month:'long',year:'numeric'});
   const ent=log.map((e,i)=>({...e,i,sg:segsOf(e)})).filter(e=>e.sg.length&&e.sg[0].s>=R.a&&e.sg[0].s<R.b);
