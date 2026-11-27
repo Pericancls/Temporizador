@@ -478,3 +478,4 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 .evb{height:6px;background:#2c2c2e;border-radius:3px;margin-top:3px;overflow:hidden}.evb i{display:block;height:100%}.dmet .p{background:#636366}.evb i.rl{background:#0a84ff}.evb i.rl.over{background:#ff453a}.dmleg i.rl{background:#0a84ff}
 .gp{font-size:13px;padding:6px 0;border-top:1px solid #2c2c2e}.gp.over b{color:#ff453a}.gp small{color:#888}
 .evn b.over{color:#ff453a}.evn b.under{color:#34c759}
+.bst{margin:6px 0 10px}.bst td{text-align:right}.bst td:first-child{text-align:left}

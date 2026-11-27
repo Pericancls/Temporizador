@@ -36,7 +36,7 @@ function renderRep(){
   if(top.length)h+=`<h3>Dónde se fue tu tiempo</h3><div class="hbars">${top.map(([n,v])=>`<div class="hb"><span class="hn">${esc(n)}</span><div class="ht"><i style="width:${Math.max(2,v/topMax*100)}%"></i></div><span class="hv">${fmtMin(v)}</span></div>`).join('')}</div>`;
   // ---- uso del día
   h+=`<h3>⏳ Uso de tu día hábil <small>(5:00 am – 11:00 pm, 18 h)</small></h3>`+dayUse(R,actIv,restIv);
-  $('rpBody').innerHTML=h+(typeof clkReport==='function'?clkReport():'');
+  $('rpBody').innerHTML=(typeof baseReport==='function'?baseReport():'')+h+(typeof clkReport==='function'?clkReport():'');
 }
 function dayUse(R,actIv,restIv){
   const WIN=1080,now=Date.now();let tA=0,tR=0,tW=0,cols=[];
