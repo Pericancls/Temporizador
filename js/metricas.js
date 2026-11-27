@@ -18,8 +18,9 @@ function dayNums(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,5)
   const G=[];if(S.length>1){let l=S[0];for(const x of S.slice(1)){if(x.s>l.e+5*60e3)G.push({s:l.e,e:x.s,from:l.n,to:x.n,fromLen:(l.e-l.s)/6e4});if(x.e>=l.e)l=x}}
   const done=log.filter(e=>e.d===k&&e.ok&&!isRestN(e.n)),ids=new Set(((dst[k]||{}).ids)||[]);done.forEach(e=>e.id&&ids.add(e.id));
   const planned=Math.max(ids.size,done.length),fr={};notes.filter(n=>!n.del&&n.cause&&dkey(new Date(n.ts))===k).forEach(n=>fr[n.cause]=(fr[n.cause]||0)+1);
+  const U=union(clip(act.concat(rest),a,end)),slp=U.length?(U[0].s-a)/6e4+(now<b?0:(b-U[U.length-1].e)/6e4):0,sin=Math.max(0,(end-a)/6e4-A-R-slp);
   const nx=a+864e5,lastAny=sg.filter(x=>x.e>a&&x.s<nx&&x.e!=null).reduce((m,x)=>Math.max(m,Math.min(x.e,nx)),0)||null,bed=new Date(y,m-1,d,23,15).getTime();
-  return{k,A,R,G,lastAny,sleepOk:lastAny&&!(now<nx)?lastAny<=bed:null,gap:G.reduce((s,g)=>s+(g.e-g.s),0)/6e4,gap20:G.filter(g=>g.e-g.s>=20*60e3).length,
+  return{k,A,R,G,sin,slp,lastAny,sleepOk:lastAny&&!(now<nx)?lastAny<=bed:null,gap:G.reduce((s,g)=>s+(g.e-g.s),0)/6e4,gap20:G.filter(g=>g.e-g.s>=20*60e3).length,
     efi:A/1080*100,efe:planned?done.length/planned*100:null,done:done.length,planned,fr,
     first:S.length?S[0].s:null,last:S.length?S[S.length-1].e:null,live:now<b,left:now<b?(b-now)/6e4:0}}
 
@@ -42,9 +43,9 @@ function baseReport(){const D=baseDays(),t=dkey(new Date()),dn=Math.min(BASE.n,M
 
 function exportDays(){const ks=new Set();log.forEach(e=>ks.add(e.d));Object.keys(dst).forEach(k=>ks.add(k));
   const C=['Falta de material','Miedo','Parálisis','Falta de preparación','Estoy descansando'];
-  const rows=[['fecha','dia_semana','eficiencia_pct','efectividad_pct','terminadas','planeadas','min_actividad','min_descanso','min_huecos','huecos_20','primer_bloque','ultimo_bloque','ultima_actividad','durmio_a_tiempo',...C.map(c=>'freno_'+c.toLowerCase().replace(/ /g,'_'))]];
+  const rows=[['fecha','dia_semana','eficiencia_pct','efectividad_pct','terminadas','planeadas','min_actividad','min_descanso','min_sin_registrar','min_dormir','min_huecos','huecos_20','primer_bloque','ultimo_bloque','ultima_actividad','durmio_a_tiempo',...C.map(c=>'freno_'+c.toLowerCase().replace(/ /g,'_'))]];
   [...ks].sort().forEach(k=>{const d=dayNums(k);if(!d||d.live)return;const t=x=>x?new Date(x).toTimeString().slice(0,5):'';
-    rows.push([k,kDate(k).toLocaleDateString('es-MX',{weekday:'long'}),d.efi.toFixed(1),d.efe==null?'':d.efe.toFixed(1),d.done,d.planned,Math.round(d.A),Math.round(d.R),Math.round(d.gap),d.gap20,t(d.first),t(d.last),t(d.lastAny),d.sleepOk==null?'':d.sleepOk?1:0,...C.map(c=>d.fr[c]||0)])});
+    rows.push([k,kDate(k).toLocaleDateString('es-MX',{weekday:'long'}),d.efi.toFixed(1),d.efe==null?'':d.efe.toFixed(1),d.done,d.planned,Math.round(d.A),Math.round(d.R),Math.round(d.sin),Math.round(d.slp),Math.round(d.gap),d.gap20,t(d.first),t(d.last),t(d.lastAny),d.sleepOk==null?'':d.sleepOk?1:0,...C.map(c=>d.fr[c]||0)])});
   const csv='﻿'+rows.map(r=>r.map(x=>/[",\n]/.test(String(x))?'"'+String(x).replace(/"/g,'""')+'"':x).join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='temporizador-dias.csv';a.click();toast('📤 CSV listo')}
 setTimeout(()=>{try{dstTrack()}catch(e){}},1000);

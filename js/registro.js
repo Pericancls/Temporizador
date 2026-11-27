@@ -158,11 +158,13 @@ function dayMetric(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,
   log.forEach(e=>segsOf(e).forEach(x=>(isRestN(e.n)?rest:act).push(x)));
   openWork().forEach(w=>w.segs.forEach(x=>(isRestN(w.n)?rest:act).push(x)));
   const A=sumMin(union(clip(act,a,b))),R=sumMin(union(clip(rest,a,b))),pct=Math.round(A/1080*100);
-  const live=now<b,left=live?(b-now)/60000:0,sin=Math.max(0,1080-A-R-left);
+  const live=now<b,left=live?(b-now)/60000:0,U=union(clip(act.concat(rest),a,Math.min(b,now)));
+  /* Dormir: de las 5:00 a tu primer bloque y (si el día ya acabó) de tu último bloque a las 23:00. No cuenta como sin registrar */
+  const slp=U.length?(U[0].s-a)/6e4+(live?0:(b-U[U.length-1].e)/6e4):0,sin=Math.max(0,1080-A-R-left-slp);
   const hh=m=>(m/60).toFixed(1).replace('.0','')+' h';
   return`<div class="dmet"><div class="dmbig"><b>${hh(A)}</b><span> de 18 h · ${pct}%</span></div>
-  <div class="dmbar"><i class="a" style="width:${A/10.8}%"></i><i class="r" style="width:${R/10.8}%"></i><i class="s" style="width:${sin/10.8}%"></i></div>
-  <div class="dmleg"><span><i class="a"></i>Actividad ${hh(A)}</span><span><i class="r"></i>Descanso ${hh(R)}</span><span><i class="s"></i>Sin registrar ${hh(sin)}</span>${live?`<span>⏳ Quedan ${hh(left)}</span>`:''}</div></div>`}
+  <div class="dmbar"><i class="a" style="width:${A/10.8}%"></i><i class="r" style="width:${R/10.8}%"></i><i class="s" style="width:${sin/10.8}%"></i><i class="z" style="width:${slp/10.8}%"></i></div>
+  <div class="dmleg"><span><i class="a"></i>Actividad ${hh(A)}</span><span><i class="r"></i>Descanso ${hh(R)}</span><span><i class="s"></i>Sin registrar ${hh(sin)}</span><span><i class="z"></i>Dormir ${hh(slp)}</span>${live?`<span>⏳ Quedan ${hh(left)}</span>`:''}</div></div>`}
 
 /* Estimado vs real: solo las actividades que sí terminaste ese día */
 function dayEst(k){const L=log.filter(e=>e.d===k&&e.ok&&e.plan>0&&!isRestN(e.n)).sort((a,b)=>a.h.localeCompare(b.h));if(!L.length)return'';
