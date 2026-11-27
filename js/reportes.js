@@ -31,7 +31,7 @@ function renderRep(){
   const byN={};act.forEach(e=>{const k=e.n.trim();byN[k]=(byN[k]||0)+e.real});
   
   let h=rangeCharts(R);
-  h+=paretoTime(byN);
+  h+=paretoTime(byN)+frenosPareto(R)+imrCharts(R);
   // ---- uso del día
   h+=`<h3>⏳ Uso de tu día hábil <small>(5:00 am – 11:00 pm, 18 h)</small></h3>`+dayUse(R,actIv,restIv);
   $('rpBody').innerHTML=(typeof baseReport==='function'?baseReport():'')+h;
@@ -65,17 +65,45 @@ function duShow(k){const c=(window._du||[])[k];if(!c||c.fut||c.empty)return;
   $('duInfo').innerHTML=`<b style="text-transform:capitalize">${c.d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'short'})}</b>${c.today?' (hasta ahora)':''}<br><span style="color:${C_ACT}">■</span> Actividades ${fmtMin(c.a)} · <span style="color:${C_REST}">■</span> Descanso ${fmtMin(c.r)} · <span style="color:#aaa">■</span> Sin rastrear ${fmtMin(c.g)}`}
 
 /* Pareto de dónde se fue el tiempo: barras ordenadas de mayor a menor + línea de % acumulado (referencia 80%) */
-function paretoTime(byN){let E=Object.entries(byN).filter(e=>e[1]>0).sort((p,q)=>q[1]-p[1]);if(!E.length)return'';
+function paretoTime(byN,o){o=o||{};let E=Object.entries(byN).filter(e=>e[1]>0).sort((p,q)=>q[1]-p[1]);if(!E.length)return'';
   if(E.length>10){const o=E.slice(9).reduce((t,e)=>t+e[1],0);E=E.slice(0,9).concat([['Otros',o]])}
   const T=E.reduce((t,e)=>t+e[1],0),mx=E[0][1],W=340,H=200,B=H-46,LW=26,RW=34,n=E.length,cw=(W-LW-RW)/n,X=i=>LW+cw*i+cw/2,Y=v=>B-v/mx*(B-10),Yp=p=>B-p/100*(B-10);
   let s=`<svg viewBox="0 0 ${W} ${H}" class="gsvg">`,acc=0;const pts=[];
   [0,25,50,75,100].forEach(p=>s+=`<line x1="${LW}" x2="${W-RW}" y1="${Yp(p)}" y2="${Yp(p)}" stroke="#2a2a2a"/><text x="${W-RW+4}" y="${Yp(p)+3}" fill="#777" font-size="9">${p}%</text>`);
-  [0,.5,1].forEach(f=>s+=`<text x="${LW-4}" y="${Y(mx*f)+3}" fill="#777" font-size="9" text-anchor="end">${Math.round(mx*f/60)}h</text>`);
+  [0,.5,1].forEach(f=>s+=`<text x="${LW-4}" y="${Y(mx*f)+3}" fill="#777" font-size="9" text-anchor="end">${o.ax?o.ax(mx*f):Math.round(mx*f/60)+'h'}</text>`);
   s+=`<line x1="${LW}" x2="${W-RW}" y1="${Yp(80)}" y2="${Yp(80)}" stroke="#ff9f0a" stroke-dasharray="4 3"/>`;
   E.forEach(([nm,v],i)=>{const before=acc;acc+=v;const p=acc/T*100;pts.push([X(i),Yp(p)]);const vital=before/T<.8;
     s+=`<rect x="${X(i)-cw*.35}" y="${Y(v)}" width="${cw*.7}" height="${B-Y(v)}" fill="${vital?'#0a84ff':'#3a3a3c'}" rx="2"/>
     <text transform="translate(${X(i)+3},${B+6}) rotate(45)" fill="#bbb" font-size="9">${esc(nm.length>11?nm.slice(0,10)+'…':nm)}</text>`});
   s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#ff9f0a" stroke-width="2"/>`+pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.5" fill="#ff9f0a"/>`).join('')+'</svg>';
   const k=E.findIndex((e,i)=>E.slice(0,i+1).reduce((t,x)=>t+x[1],0)/T>=.8)+1;
-  return`<div class="dmet"><h4>📊 Dónde se fue tu tiempo <small>(Pareto)</small></h4>${s}
-  <div class="dmleg"><span><i class="rl"></i>${k} actividad${k>1?'es':''} = 80% de tu tiempo</span><span><i style="background:#ff9f0a"></i>% acumulado</span></div></div>`}
+  return`<div class="dmet"><h4>${o.t||'📊 Dónde se fue tu tiempo <small>(Pareto)</small>'}</h4>${s}
+  <div class="dmleg"><span><i class="rl"></i>${o.k?o.k(k):k+' actividad'+(k>1?'es':'')+' = 80% de tu tiempo'}</span><span><i style="background:#ff9f0a"></i>% acumulado</span></div></div>`}
+
+/* Pareto de frenos (causas del aviso ¿qué te frena?) en el periodo */
+function frenosPareto(R){const c={};notes.filter(n=>!n.del&&n.cause&&n.cause!=='Estoy descansando'&&n.ts>=R.a&&n.ts<R.b).forEach(n=>c[n.cause]=(c[n.cause]||0)+1);
+  const N=Object.values(c).reduce((a,b)=>a+b,0);
+  if(!N)return`<div class="dmet"><h4>🧊 Qué te frena <small>(Pareto)</small></h4><div class="muted" style="font-size:13px">Aún no hay frenos registrados en este periodo. Se llenan cuando contestas el aviso "¿Qué te está frenando?".</div></div>`;
+  return paretoTime(c,{t:`🧊 Qué te frena <small>(Pareto · ${N} registro${N>1?'s':''})</small>`,ax:v=>Math.round(v),k:k=>`${k} causa${k>1?'s':''} = 80% de tus frenos`})}
+
+/* Carta de control I-MR (individuales + rango móvil). Límites fijos con la línea base; si aún no hay 2 días, provisionales con el periodo */
+function imrLimits(v){const mr=v.slice(1).map((x,i)=>Math.abs(x-v[i])),m=avg(v),r=mr.length?avg(mr):0;return{m,r,ucl:m+2.66*r,lcl:Math.max(0,m-2.66*r),mrU:3.267*r}}
+function imrCharts(R){const D=[];for(let i=0;i<R.days;i++){const d=new Date(R.a);d.setDate(d.getDate()+i);const n=dayNums(dkey(d));if(n&&(n.A>0||n.planned>0)&&!n.live)D.push({d,n})}
+  const B=baseDays().filter(x=>!x.live);
+  const one=(lab,get,col)=>{const pts=D.map(x=>({d:x.d,v:get(x.n)})).filter(x=>x.v!=null);if(pts.length<2)return'';
+    const bv=B.map(get).filter(v=>v!=null),prov=bv.length<2||B.length<BASE.n,L=imrLimits(bv.length>=2?bv:pts.map(p=>p.v));
+    const W=340,H=150,T=10,Bt=H-20,LW=30,RW=34,n=pts.length,X=i=>LW+(n>1?i*(W-LW-RW)/(n-1):0),hi=Math.max(100,L.ucl+5,...pts.map(p=>p.v)),Y=v=>Bt-v/hi*(Bt-T);
+    let s=`<svg viewBox="0 0 ${W} ${H}" class="gsvg">`;
+    [[L.ucl,'LCS','#ff453a'],[L.m,'X̄','#aaa'],[L.lcl,'LCI','#ff453a']].forEach(([v,t,c])=>s+=`<line x1="${LW}" x2="${W-RW}" y1="${Y(v)}" y2="${Y(v)}" stroke="${c}" stroke-dasharray="${t==='X̄'?'':'4 3'}"/><text x="${W-RW+3}" y="${Y(v)+3}" fill="${c}" font-size="8">${t} ${Math.round(v)}</text>`);
+    [0,50,100].forEach(v=>s+=`<text x="${LW-4}" y="${Y(v)+3}" fill="#777" font-size="9" text-anchor="end">${v}%</text>`);
+    s+=`<polyline points="${pts.map((p,i)=>X(i)+','+Y(p.v)).join(' ')}" fill="none" stroke="${col}" stroke-width="1.5"/>`;
+    pts.forEach((p,i)=>{const out=p.v>L.ucl||p.v<L.lcl;s+=`<circle cx="${X(i)}" cy="${Y(p.v)}" r="${out?4:3}" fill="${out?'#ff453a':col}"/>`;if(n<=14)s+=`<text x="${X(i)}" y="${H-6}" fill="#888" font-size="8" text-anchor="middle">${p.d.getDate()}</text>`});
+    s+='</svg>';
+    const mr=pts.slice(1).map((p,i)=>Math.abs(p.v-pts[i].v)),hm=Math.max(L.mrU+5,...mr,10),Hm=80,Bm=Hm-8,Ym=v=>Bm-v/hm*(Bm-6);
+    let m=`<svg viewBox="0 0 ${W} ${Hm}" class="gsvg"><line x1="${LW}" x2="${W-RW}" y1="${Ym(L.mrU)}" y2="${Ym(L.mrU)}" stroke="#ff453a" stroke-dasharray="4 3"/><text x="${W-RW+3}" y="${Ym(L.mrU)+3}" fill="#ff453a" font-size="8">LCS ${Math.round(L.mrU)}</text>
+      <line x1="${LW}" x2="${W-RW}" y1="${Ym(L.r)}" y2="${Ym(L.r)}" stroke="#aaa"/><text x="${W-RW+3}" y="${Ym(L.r)+3}" fill="#aaa" font-size="8">R̄ ${Math.round(L.r)}</text><text x="${LW-4}" y="${Ym(0)+3}" fill="#777" font-size="9" text-anchor="end">MR</text>
+      <polyline points="${mr.map((v,i)=>X(i+1)+','+Ym(v)).join(' ')}" fill="none" stroke="#888" stroke-width="1.2"/>${mr.map((v,i)=>`<circle cx="${X(i+1)}" cy="${Ym(v)}" r="2.5" fill="${v>L.mrU?'#ff453a':'#888'}"/>`).join('')}</svg>`;
+    const outN=pts.filter(p=>p.v>L.ucl||p.v<L.lcl).length;
+    return`<div class="dmet"><h4>${lab} <small>(carta I-MR${prov?' · límites provisionales':' · límites de la línea base'})</small></h4>${s}${m}
+      <div class="dmleg"><span>${outN?`🔴 ${outN} día${outN>1?'s':''} fuera de control`:'✅ Todo dentro de control'}</span><span>Variación (R̄): ${Math.round(L.r)} pts</span></div></div>`};
+  return one('⚡ Eficiencia',n=>n.efi,'#34c759')+one('🎯 Efectividad',n=>n.efe,'#0a84ff')}
