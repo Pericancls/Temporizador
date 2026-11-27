@@ -1,7 +1,20 @@
 # Handoff — App Temporizador de David
 
 > Léelo completo antes de tocar algo. Resume ~120 versiones de trabajo y la forma en que trabajamos.
-> Última versión publicada: **v121** (26 nov 2026).
+> Última versión publicada: **v127** (26 nov 2026).
+
+
+## 0) OBJETIVOS DEFINITIVOS (26 nov 2026, v127) — la regla para todo
+
+1. **Aprovechar el día y traer resultados.** Se mide con dos números diarios:
+   - **Eficiencia** = min de actividad real entre 5:00 y 23:00 / 1080 (18 h). Los descansos no cuentan.
+   - **Efectividad** = terminadas / planeadas del día (planeadas se guardan en `dst`).
+2. **Probar técnicas con método científico:** una técnica a la vez, 2 semanas cada una, comparando contra la línea base.
+3. **Constancia:** bajar la **variación (desviación estándar)** diaria de eficiencia y efectividad, no solo subir el promedio.
+4. **Micro-hábitos (sí/no):** planear el día siguiente, ejercicio, **dormir ≤ 11:15 pm** (última actividad del día). Comidas: ignorado por ahora.
+5. **Patrones en silencio:** frenos (chips del aviso), huecos entre actividades, hora de dormir, etc. → CSV (📤 en Reportes) → Excel → regresión (variable objetivo sugerida: efectividad). Se necesitan ~30-60 días.
+
+**Línea base:** 27 nov – 10 dic 2026 (`BASE` en `js/metricas.js`). **No meter técnicas nuevas en ese periodo.** Al terminar, fijar el objetivo con promedio y variación.
 
 ---
 
@@ -123,6 +136,13 @@ Para fijar la hora: `pg.clock.install(time=datetime(...,tzinfo=timezone.utc))` (
 - **Pruebas viejas que fallan sin que sea un error:** `t86` depende de la hora y `t53` usaba `dpsub`, que ya no existe.
 
 ---
+
+## 4b) Cambios v122–v127
+- v122 contador de botones (`js/uso.js`, clave `clk`) → ranking en Reportes. Revisar ~10 dic para decidir qué quitar.
+- v123–124 avisos por inactividad: `sw.js`, `manifest.webmanifest`, `js/aviso.js` (claves `push`, `live`), robot `robot/aviso.mjs` + `.github/workflows/aviso.yml` (40 min sin nada corriendo, 6:00–22:30 lun–sáb, máx 1/h). Necesita secretos `FIREBASE_SA` y `VAPID_PRIVATE` (David los pone) y app instalada en inicio del iPhone. El aviso abre `?nudge=1` → chips de freno (nota `act:'⏸ Freno'`, `cause`).
+- v124–125 Registro: métrica del día (18 h), huecos entre actividades, estimado vs real de terminadas. Panorámica oculta (`#n4` display:none).
+- v126 al acabar el descanso la siguiente YA NO arranca sola (`brkWait`): espera ▶. ⏭ Saltar sí arranca.
+- v127 `js/metricas.js`: `dayNums`, línea base en Reportes, exportar CSV, `dst` sincronizado.
 
 ## 5) Próximos pasos
 
