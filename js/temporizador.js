@@ -78,7 +78,7 @@ function tick(){
   draw();
 }
 function draw(){p5Upd();brkUpd();runTopUpd();endBtnUpd();const s=Math.ceil(remain),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
-  const txt=pad(Math.floor(s/60))+':'+pad(x);if($('clock').textContent!==txt){const L=$('clock').textContent.length;$('clock').textContent=txt;if(L!==txt.length)fit()}
+  const txt=s<0?'+'+pad(Math.floor(-s/60))+':'+pad(-s%60):pad(Math.floor(s/60))+':'+pad(x);if($('clock').textContent!==txt){const L=$('clock').textContent.length;$('clock').textContent=txt;if(L!==txt.length)fit()}
   const mm=document.querySelector('.mid');if(mm.clientWidth&&$('clock').scrollWidth>mm.clientWidth+2)fit();$('clock').style.color=(inBreak||(cur&&cur.rest))?'#fff':color(total?remain/total:0)}
 function color(r){
   if(r>0.3)return'rgb(52,199,89)';
@@ -199,10 +199,10 @@ function restoreRun(){
   if(r.inOver&&r.overStart){$('run').classList.remove('brk');inBreak=false;begin(total,-(Date.now()-r.overStart)/1000);return}
   if(r.inMini&&r.miniSaved){inBreak=false;total=r.miniSaved.total;remain=r.miniSaved.remain;$('run').classList.remove('brk');begin(total,remain);pause();return} // estado viejo del mini descanso (ya no existe)
   remain-=gone;if(cur&&!inBreak)cur.elapsed+=gone;
-  if(inBreak){if(remain<=0)return go(idx+1);startBreakAt(total,remain);return}
+  if(inBreak){if(remain<=0)return brkWait();startBreakAt(total,remain);return}
   $('run').classList.remove('brk');
   if(remain<=0){cur.elapsed+=remain;begin(total,remain);return}
-  begin(total,remain);if(!r.running)pause();
+  begin(total,remain);if(!r.running){pause();if(remain<0)draw()}
 }
 function startBreakAt(t,rem){brkChosen=false;inBreak=true;stopAlarm();total=t;remain=rem;const el=$('run');el.classList.add('on','brk');$('clock').textContent='';$('label').textContent='Descanso';brkSub();
   running=true;last=Date.now();setPP(true);draw();requestAnimationFrame(fit);clearInterval(timer);timer=setInterval(tick,200);lock();saveRun()}
