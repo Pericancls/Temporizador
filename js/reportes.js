@@ -29,9 +29,9 @@ function renderRep(){
   const devs=wp.map(e=>(e.real-e.plan)/e.plan*100),within=devs.filter(d=>Math.abs(d)<=10).length;
   const avgDev=devs.length?devs.reduce((p,q)=>p+q,0)/devs.length:null;
   const byN={};act.forEach(e=>{const k=e.n.trim();byN[k]=(byN[k]||0)+e.real});
-  const top=Object.entries(byN).sort((p,q)=>q[1]-p[1]).slice(0,6),topMax=top.length?top[0][1]:1;
+  
   let h=rangeCharts(R);
-  if(top.length)h+=`<h3>Dónde se fue tu tiempo</h3><div class="hbars">${top.map(([n,v])=>`<div class="hb"><span class="hn">${esc(n)}</span><div class="ht"><i style="width:${Math.max(2,v/topMax*100)}%"></i></div><span class="hv">${fmtMin(v)}</span></div>`).join('')}</div>`;
+  h+=paretoTime(byN);
   // ---- uso del día
   h+=`<h3>⏳ Uso de tu día hábil <small>(5:00 am – 11:00 pm, 18 h)</small></h3>`+dayUse(R,actIv,restIv);
   $('rpBody').innerHTML=(typeof baseReport==='function'?baseReport():'')+h;
@@ -63,3 +63,19 @@ function dayUse(R,actIv,restIv){
 }
 function duShow(k){const c=(window._du||[])[k];if(!c||c.fut||c.empty)return;
   $('duInfo').innerHTML=`<b style="text-transform:capitalize">${c.d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'short'})}</b>${c.today?' (hasta ahora)':''}<br><span style="color:${C_ACT}">■</span> Actividades ${fmtMin(c.a)} · <span style="color:${C_REST}">■</span> Descanso ${fmtMin(c.r)} · <span style="color:#aaa">■</span> Sin rastrear ${fmtMin(c.g)}`}
+
+/* Pareto de dónde se fue el tiempo: barras ordenadas de mayor a menor + línea de % acumulado (referencia 80%) */
+function paretoTime(byN){let E=Object.entries(byN).filter(e=>e[1]>0).sort((p,q)=>q[1]-p[1]);if(!E.length)return'';
+  if(E.length>10){const o=E.slice(9).reduce((t,e)=>t+e[1],0);E=E.slice(0,9).concat([['Otros',o]])}
+  const T=E.reduce((t,e)=>t+e[1],0),mx=E[0][1],W=340,H=200,B=H-46,LW=26,RW=34,n=E.length,cw=(W-LW-RW)/n,X=i=>LW+cw*i+cw/2,Y=v=>B-v/mx*(B-10),Yp=p=>B-p/100*(B-10);
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="gsvg">`,acc=0;const pts=[];
+  [0,25,50,75,100].forEach(p=>s+=`<line x1="${LW}" x2="${W-RW}" y1="${Yp(p)}" y2="${Yp(p)}" stroke="#2a2a2a"/><text x="${W-RW+4}" y="${Yp(p)+3}" fill="#777" font-size="9">${p}%</text>`);
+  [0,.5,1].forEach(f=>s+=`<text x="${LW-4}" y="${Y(mx*f)+3}" fill="#777" font-size="9" text-anchor="end">${Math.round(mx*f/60)}h</text>`);
+  s+=`<line x1="${LW}" x2="${W-RW}" y1="${Yp(80)}" y2="${Yp(80)}" stroke="#ff9f0a" stroke-dasharray="4 3"/>`;
+  E.forEach(([nm,v],i)=>{const before=acc;acc+=v;const p=acc/T*100;pts.push([X(i),Yp(p)]);const vital=before/T<.8;
+    s+=`<rect x="${X(i)-cw*.35}" y="${Y(v)}" width="${cw*.7}" height="${B-Y(v)}" fill="${vital?'#0a84ff':'#3a3a3c'}" rx="2"/>
+    <text transform="translate(${X(i)+3},${B+6}) rotate(45)" fill="#bbb" font-size="9">${esc(nm.length>11?nm.slice(0,10)+'…':nm)}</text>`});
+  s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#ff9f0a" stroke-width="2"/>`+pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.5" fill="#ff9f0a"/>`).join('')+'</svg>';
+  const k=E.findIndex((e,i)=>E.slice(0,i+1).reduce((t,x)=>t+x[1],0)/T>=.8)+1;
+  return`<div class="dmet"><h4>📊 Dónde se fue tu tiempo <small>(Pareto)</small></h4>${s}
+  <div class="dmleg"><span><i class="rl"></i>${k} actividad${k>1?'es':''} = 80% de tu tiempo</span><span><i style="background:#ff9f0a"></i>% acumulado</span></div></div>`}
