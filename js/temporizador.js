@@ -184,8 +184,8 @@ function stop(){if(cur&&cur.rest&&!inBreak){segClose();running=false;clearInterv
   else quit()}
 function quit(){$('run').classList.remove('on','mini');document.body.classList.remove('hasbar');$('brkBar').style.display='none';release();clearRun()}
 /* ---- Guardar estado en curso (por si se cierra la app) ---- */
-function saveRun(){if(!$('run').classList.contains('on'))return;try{localStorage.setItem('run',JSON.stringify({queue,idx,inBreak,inOver,overStart,cur,total,remain,running,at:Date.now()}))}catch(e){}}
-function clearRun(){try{localStorage.removeItem('run')}catch(e){}}
+function saveRun(){if(!$('run').classList.contains('on'))return;try{localStorage.setItem('run',JSON.stringify({queue,idx,inBreak,inOver,overStart,cur,total,remain,running,at:Date.now()}))}catch(e){}if(typeof liveRunSet==='function')liveRunSet()}
+function clearRun(){if(typeof liveRunClear==='function')liveRunClear();try{localStorage.removeItem('run')}catch(e){}}
 function checkRun(){if($('run').classList.contains('on'))return;
   const r=load('run',null);if(!r||!r.queue||Date.now()-r.at>24*3600e3){clearRun();return}
   const nm=r.inBreak?'Descanso':(r.cur&&r.cur.n);
