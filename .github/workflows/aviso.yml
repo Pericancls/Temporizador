@@ -1,8 +1,8 @@
 name: Avisos por inactividad
 on:
   schedule:
-    - cron: '*/10 14-23 * * 1-6'   # 8:00-17:59 CDMX, lun-sáb
-    - cron: '*/10 0 * * 2-7'       # 18:00-18:59 CDMX
+    - cron: '*/10 12-23 * * 1-6'   # 6:00-17:59 CDMX, lun-sáb
+    - cron: '*/10 0-4 * * 2-7'     # 18:00-22:59 CDMX (el robot corta a las 22:30)
   workflow_dispatch:
 jobs:
   aviso:

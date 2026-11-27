@@ -35,12 +35,12 @@ function renderRep(){
     <div class="tile"><span>Desviación promedio</span><b class="${avgDev>10?'over':avgDev<-10?'under':''}">${avgDev==null?'—':(avgDev>0?'+':'')+Math.round(avgDev)+'%'}</b></div></div>`;
   if(top.length)h+=`<h3>Dónde se fue tu tiempo</h3><div class="hbars">${top.map(([n,v])=>`<div class="hb"><span class="hn">${esc(n)}</span><div class="ht"><i style="width:${Math.max(2,v/topMax*100)}%"></i></div><span class="hv">${fmtMin(v)}</span></div>`).join('')}</div>`;
   // ---- uso del día
-  h+=`<h3>⏳ Uso de tu día hábil <small>(5:00 am – 11:59 pm)</small></h3>`+dayUse(R,actIv,restIv);
+  h+=`<h3>⏳ Uso de tu día hábil <small>(5:00 am – 11:00 pm, 18 h)</small></h3>`+dayUse(R,actIv,restIv);
   $('rpBody').innerHTML=h+(typeof clkReport==='function'?clkReport():'');
 }
 function dayUse(R,actIv,restIv){
-  const WIN=1139,now=Date.now();let tA=0,tR=0,tW=0,cols=[];
-  for(let k=0;k<R.days;k++){const d=new Date(R.a);d.setDate(d.getDate()+k);const ws=new Date(d.getFullYear(),d.getMonth(),d.getDate(),5,0).getTime(),we=new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59).getTime();
+  const WIN=1080,now=Date.now();let tA=0,tR=0,tW=0,cols=[];
+  for(let k=0;k<R.days;k++){const d=new Date(R.a);d.setDate(d.getDate()+k);const ws=new Date(d.getFullYear(),d.getMonth(),d.getDate(),5,0).getTime(),we=new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,0).getTime();
     if(ws>now){cols.push({d,fut:true});continue}
     const end=Math.min(we,now),win=(end-ws)/60000;
     const A=union(clip(actIv,ws,end)),Rs=minus(union(clip(restIv,ws,end)),A);

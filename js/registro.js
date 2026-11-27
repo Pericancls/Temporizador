@@ -17,7 +17,7 @@ function renderLog(){
   const [y,m,dd]=selDay.split('-').map(Number);
   $('dayTitle').textContent=new Date(y,m-1,dd).toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
   const items=log.map((e,i)=>({...e,i})).filter(e=>e.d===selDay).sort((a,b)=>a.h.localeCompare(b.h));
-  renderTl();dnDraw();
+  renderTl();dnDraw();$('dayMet').innerHTML=dayMetric(selDay);
   const d0=new Date(y,m-1,dd).getTime(),d1=new Date(y,m-1,dd+1).getTime();
   const ow=openWork().map(w=>({...w,day:w.segs.filter(x=>x.e>d0&&x.s<d1).map(x=>({s:Math.max(x.s,d0),e:Math.min(x.e,d1)}))})).filter(w=>w.day.length);
   const owHtml=ow.length?`<h3 style="font-size:16px">⏸ Sin terminar</h3>`+ow.map(w=>{const mins=w.day.reduce((a,x)=>a+(x.e-x.s),0)/60000;
@@ -151,3 +151,15 @@ function importData(inp){
   catch(e){modal(`<h1>Archivo no válido</h1><div class="row"><button class="btn" onclick="closeModal()">OK</button></div>`)}inp.value=''};
   r.readAsText(f);
 }
+
+/* Métrica del día: actividad real sobre el día hábil de 18 h (5:00 am – 11:00 pm) */
+function dayMetric(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,5).getTime(),b=new Date(y,m-1,d,23).getTime(),now=Date.now();
+  if(a>now)return'';const act=[],rest=[];
+  log.forEach(e=>segsOf(e).forEach(x=>(isRestN(e.n)?rest:act).push(x)));
+  openWork().forEach(w=>w.segs.forEach(x=>(isRestN(w.n)?rest:act).push(x)));
+  const A=sumMin(union(clip(act,a,b))),R=sumMin(union(clip(rest,a,b))),pct=Math.round(A/1080*100);
+  const live=now<b,left=live?(b-now)/60000:0,sin=Math.max(0,1080-A-R-left);
+  const hh=m=>(m/60).toFixed(1).replace('.0','')+' h';
+  return`<div class="dmet"><div class="dmbig"><b>${hh(A)}</b><span> de 18 h · ${pct}%</span></div>
+  <div class="dmbar"><i class="a" style="width:${A/10.8}%"></i><i class="r" style="width:${R/10.8}%"></i><i class="s" style="width:${sin/10.8}%"></i></div>
+  <div class="dmleg"><span><i class="a"></i>Actividad ${hh(A)}</span><span><i class="r"></i>Descanso ${hh(R)}</span><span><i class="s"></i>Sin registrar ${hh(sin)}</span>${live?`<span>⏳ Quedan ${hh(left)}</span>`:''}</div></div>`}

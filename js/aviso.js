@@ -1,6 +1,6 @@
 /* Avisos por inactividad: la app guarda en Firestore si estás haciendo algo (live) y la suscripción
    de notificaciones de cada dispositivo (push). El robot de GitHub (robot/aviso.mjs) revisa cada 10 min
-   y, si no hay nada corriendo en 30 min, manda "¿Qué estás haciendo?". Al tocarla se abre ?nudge=1. */
+   y, si no hay nada corriendo en 40 min, manda "¿Qué estás haciendo?". Al tocarla se abre ?nudge=1. */
 const VAPID_PUB='BKcrVbQ62HCTyQhPRfae_8GL0adXkF-mymUT2zR4OIkjSdRPVUdTcKnDq_rkLs5-vrvoGS7zGCgUCWHuw6gdtAQ';
 let pushSubs=(()=>{const v=load('pushSubs',{});return v&&typeof v==='object'?v:{}})();
 let liveAt=Date.now();
