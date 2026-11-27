@@ -1,7 +1,7 @@
 # Handoff — App Temporizador de David
 
 > Léelo completo antes de tocar algo. Resume ~120 versiones de trabajo y la forma en que trabajamos.
-> Última versión publicada: **v127** (26 nov 2026).
+> Última versión publicada: **v143** (26 nov 2026).
 
 
 ## 0) OBJETIVOS DEFINITIVOS (26 nov 2026, v127) — la regla para todo
@@ -143,6 +143,14 @@ Para fijar la hora: `pg.clock.install(time=datetime(...,tzinfo=timezone.utc))` (
 - v124–125 Registro: métrica del día (18 h), huecos entre actividades, estimado vs real de terminadas. Panorámica oculta (`#n4` display:none).
 - v126 al acabar el descanso la siguiente YA NO arranca sola (`brkWait`): espera ▶. ⏭ Saltar sí arranca.
 - v127 `js/metricas.js`: `dayNums`, línea base en Reportes, exportar CSV, `dst` sincronizado.
+- v128–133 "Fuera de tu día" (5:00→1er bloque y último→23:00) no cuenta como sin registrar; ya no se dibuja.
+- v129 **Registro = solo datos** (calendario + línea de 24 h editable tocando bloques + recuperar + respaldo). Ocultos por CSS: notas del día, lista de bloques, vista "Por actividad". **Reportes = interpretación**: pestaña Día (default hoy): barra 18 h, huecos (gráfica escalera, v131), estimado vs real en columnas (v132).
+- v134 horario 5am–12am completo sin scroll interno; v139 layout compu (calendario izq + horario).
+- v135 oculto botón 🔁 recurrentes en Temporizador (siguen funcionando). v136 sin zoom doble tap. v137 Actividades al centro del menú.
+- v138 `js/en-vivo.js`: la actividad corriendo se sincroniza (`liveRun`); el otro dispositivo la retoma con `restoreRun` y se detiene si el otro pausa.
+- v140 ranking de botones oculto (se sigue contando en `clk`; revisarlo vía respaldo exportado).
+- v141–143 Semanal/Mensual en gráficas: eficiencia/efectividad por día, huecos por día, Pareto de tiempo, Pareto de frenos, carta I-MR (límites provisionales hasta completar la línea base; luego fijos).
+- Próximo (después del 10 dic): fijar objetivo, capacidad Cp/Cpk vs meta, prueba t por técnica, regresión con CSV, MSA (% bloques editados). David prefiere gráficas, odia el texto.
 
 ## 5) Próximos pasos
 
