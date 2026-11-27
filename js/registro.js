@@ -182,5 +182,12 @@ function dayGaps(k){const [y,m,d]=k.split('-').map(Number),a=new Date(y,m-1,d,5)
   for(const x of S.slice(1)){if(x.s>last.e+60e3)gaps.push({s:last.e,e:x.s,from:last.n,to:x.n,fromLen:(last.e-last.s)/6e4});if(x.e>=last.e)last=x}
   const G=gaps.filter(g=>g.e-g.s>=5*60e3);if(!G.length)return'';
   const tot=G.reduce((s,g)=>s+(g.e-g.s),0)/6e4,big=G.filter(g=>g.e-g.s>=20*60e3);
-  return`<div class="dmet"><h4>🕳️ Huecos entre actividades</h4><div class="dmbig"><b>${fmtMin(tot)}</b><span> en ${G.length} hueco${G.length>1?'s':''}${big.length?` · ${big.length} de más de 20 min`:''}</span></div>
-  ${G.sort((p,q)=>(q.e-q.s)-(p.e-p.s)).slice(0,5).map(g=>{const mn=(g.e-g.s)/6e4;return`<div class="gp ${mn>=20?'over':''}"><b>${fmtMin(mn)}</b> ${hm(g.s)}–${hm(g.e)}<br><small>después de ${esc(g.from)}${g.fromLen>=60?' ('+fmtMin(g.fromLen)+')':''} → antes de ${esc(g.to)}</small></div>`}).join('')}</div>`}
+  const t0=S[0].s,t1=Math.max(...S.map(x=>x.e)),W=340,X=t=>8+(t-t0)/(t1-t0)*(W-16),U=union(S.map(x=>({s:x.s,e:x.e})));
+  const ticks=[];for(let h=new Date(t0).getHours()+1;h<=new Date(t1).getHours();h++){const tt=new Date(y,m-1,d,h).getTime();if(X(tt)>30&&X(tt)<W-34)ticks.push(tt)}
+  const svg=`<svg viewBox="0 0 ${W} 78" class="gsvg">
+    ${ticks.map(tt=>`<line x1="${X(tt)}" x2="${X(tt)}" y1="30" y2="50" stroke="#333"/><text x="${X(tt)}" y="68" fill="#777" font-size="9" text-anchor="middle">${new Date(tt).getHours()%12||12}</text>`).join('')}
+    ${G.map(g=>{const mn=(g.e-g.s)/6e4,c=mn>=20?'#ff453a':'#ff9f0a';return`<line x1="${X(g.s)}" x2="${X(g.e)}" y1="40" y2="40" stroke="${c}" stroke-width="3" stroke-dasharray="4 4"/>${mn>=20?`<text x="${(X(g.s)+X(g.e))/2}" y="24" fill="${c}" font-size="10" font-weight="700" text-anchor="middle">${Math.round(mn)}′</text>`:''}`}).join('')}
+    ${U.map(x=>`<line x1="${X(x.s)}" x2="${Math.max(X(x.e),X(x.s)+1.5)}" y1="40" y2="40" stroke="#34c759" stroke-width="6" stroke-linecap="round"/>`).join('')}
+    <text x="8" y="68" fill="#aaa" font-size="9">${hm(t0)}</text><text x="${W-8}" y="68" fill="#aaa" font-size="9" text-anchor="end">${hm(t1)}</text></svg>`;
+  return`<div class="dmet"><h4>🕳️ Huecos entre actividades</h4><div class="dmbig"><b>${fmtMin(tot)}</b><span> en ${G.length} hueco${G.length>1?'s':''}${big.length?` · ${big.length} de +20 min`:''}</span></div>${svg}
+  <div class="dmleg"><span><i class="a"></i>Trabajando</span><span><i style="background:#ff9f0a"></i>Hueco</span><span><i style="background:#ff453a"></i>Hueco +20 min</span></div></div>`}
