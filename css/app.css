@@ -483,3 +483,4 @@ body.hasbar2 #run{padding-top:calc(max(12px,env(safe-area-inset-top)) + 50px)}bo
 /* Registro = solo datos: calendario + línea de 24 h (v129) */
 #s2>.seg,#dayMet,#dayList,.dnote{display:none!important}
 .gsvg{width:100%;height:auto;display:block;margin:4px 0}
+html,body,button,a,input,textarea,select,label,[onclick]{touch-action:manipulation}
